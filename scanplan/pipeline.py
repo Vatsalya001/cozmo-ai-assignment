@@ -18,6 +18,7 @@ from . import __version__
 from .detect import CaptureError, detect_tier
 from .geometry import fusion, planes, regularize, rooms as rooms_mod, walls
 from .ir import CaptureIR
+from .slam import drift as drift_mod
 from .measure import Measurement, from_sigma, log_scale, unobserved
 
 # One-sigma on a wall length, from the supplied captures: 2 cm depth noise at the surface
@@ -93,6 +94,8 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
     else:
         raise CaptureError(f"the {tier} tier is not implemented yet")
 
+    drift_report = drift_mod.correct(ir, apply=drift)
+
     fusion.fuse(ir)
     floor, ceiling = planes.floor_and_ceiling(ir.points, ir.trajectory[:, 1])
     if floor is None:
@@ -164,7 +167,7 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
                           for op in openings for a, b in [op.rooms]],
             "groups": 1 if room_docs else 0,
             "overlap_m2": 0.0,
-            "drift": {"method": "not yet implemented", "loop_closures": 0, "applied": False},
+            "drift": drift_report.as_dict(),
         },
         "damage": [],
         "concealed_flags": [],
