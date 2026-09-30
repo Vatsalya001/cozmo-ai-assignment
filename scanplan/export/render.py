@@ -119,4 +119,14 @@ def write_all(doc: dict, out_dir) -> list[str]:
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "plan.svg").write_text(plan_svg(doc))
     (out_dir / "summary.md").write_text(summary_md(doc))
-    return ["plan.svg", "summary.md"]
+    written = ["plan.svg", "summary.md"]
+
+    # The visual report is the only artifact a reader will open without being told to, so a
+    # failure to draw it must not lose them the plan and the JSON they already have.
+    try:
+        from .report import write_pdf
+        written += write_pdf(doc, out_dir)
+    except Exception as e:                      # noqa: BLE001 -- deliberate
+        (out_dir / "report_failed.txt").write_text(f"{type(e).__name__}: {e}\n")
+        written.append("report_failed.txt")
+    return written
