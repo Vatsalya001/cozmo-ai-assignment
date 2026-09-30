@@ -4,9 +4,9 @@
       "gate": "A-RUNTIME",
       "tier": "lidar",
       "target": "<= 60 s",
-      "result": "worst 42.8 s",
+      "result": "worst 43.0 s",
       "status": "MET",
-      "detail": "c00a170fe1 6.7s, 1a8384c3f6 22.1s, c7d28f72c6 42.8s"
+      "detail": "c00a170fe1 5.8s, 1a8384c3f6 22.4s, c7d28f72c6 43.0s"
     },
     {
       "gate": "A-DET",

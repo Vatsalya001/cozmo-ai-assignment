@@ -18,7 +18,7 @@ import json
 import sys
 from pathlib import Path
 
-MANIFEST = Path("data/captures_manifest.json")
+MANIFEST = Path(__file__).resolve().parents[1] / "data" / "captures_manifest.json"
 
 
 def digest(path: Path) -> str:

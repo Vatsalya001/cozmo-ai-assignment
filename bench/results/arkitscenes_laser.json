@@ -3,8 +3,8 @@
     {
       "file": "173174.ply",
       "floor_m": 392.72709344334885,
-      "ceiling_m": 395.04705102776217,
-      "storey_m": 2.3199575844133165,
+      "ceiling_m": 395.047051027763,
+      "storey_m": 2.319957584414169,
       "floor_points": 297778,
       "ceiling_points": 1114921
     },
@@ -33,7 +33,7 @@
       "ceiling_points": 1154119
     }
   ],
-  "reference_storey_m": 2.319052719274822,
+  "reference_storey_m": 2.3190527192752484,
   "reference_spread_m": 0.037263747102883826,
   "device": [],
   "rejected": [
