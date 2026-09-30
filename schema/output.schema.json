@@ -1,0 +1,205 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.invalid/scanplan/output.schema.json",
+  "title": "scanplan capture result",
+  "description": "One measured property from one capture, at any tier. Every physical quantity is a measurement object carrying a confidence interval.",
+  "type": "object",
+  "required": ["schema_version", "capture", "units", "rooms", "plan", "damage", "concealed_flags", "scope", "quality"],
+  "additionalProperties": false,
+  "definitions": {
+    "measurement": {
+      "type": "object",
+      "description": "A physical quantity with a nominal interval. ci_low <= value <= ci_high is enforced by the validator.",
+      "required": ["value", "ci_low", "ci_high", "confidence"],
+      "additionalProperties": false,
+      "properties": {
+        "value": {"type": "number"},
+        "ci_low": {"type": "number"},
+        "ci_high": {"type": "number"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "method": {"type": "string", "description": "how it was measured, e.g. 'corner to corner, inside faces'"},
+        "observed": {"type": "boolean", "description": "false when the sensor never saw this; the interval is then wide"}
+      }
+    },
+    "point2d": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}
+  },
+  "properties": {
+    "schema_version": {"type": "string"},
+    "units": {"type": "string", "enum": ["m"]},
+    "capture": {
+      "type": "object",
+      "required": ["id", "tier", "pipeline_version"],
+      "properties": {
+        "id": {"type": "string"},
+        "tier": {"type": "string", "enum": ["lidar", "video", "photo"]},
+        "source_path": {"type": "string"},
+        "frames": {"type": "integer"},
+        "duration_s": {"type": "number"},
+        "pipeline_version": {"type": "string"},
+        "git_commit": {"type": "string"},
+        "runtime_s": {"type": "number"},
+        "drift_correction": {"type": "boolean"}
+      }
+    },
+    "rooms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "polygon", "walls", "floor_area_m2", "ceiling_height_m", "openings"],
+        "properties": {
+          "id": {"type": "string"},
+          "label": {"type": "string"},
+          "polygon": {"type": "array", "items": {"$ref": "#/definitions/point2d"}, "minItems": 3},
+          "floor_area_m2": {"$ref": "#/definitions/measurement"},
+          "perimeter_m": {"$ref": "#/definitions/measurement"},
+          "ceiling_height_m": {"$ref": "#/definitions/measurement"},
+          "walls": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "start", "end", "length_m"],
+              "properties": {
+                "id": {"type": "string"},
+                "start": {"$ref": "#/definitions/point2d"},
+                "end": {"$ref": "#/definitions/point2d"},
+                "length_m": {"$ref": "#/definitions/measurement"},
+                "thickness_m": {"$ref": "#/definitions/measurement"},
+                "surface_id": {"type": "string"}
+              }
+            }
+          },
+          "openings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "kind", "wall_id", "width_m"],
+              "properties": {
+                "id": {"type": "string"},
+                "kind": {"type": "string", "enum": ["door", "window", "gap"]},
+                "wall_id": {"type": "string"},
+                "width_m": {"$ref": "#/definitions/measurement"},
+                "height_m": {"$ref": "#/definitions/measurement"},
+                "connects_to": {"type": ["string", "null"], "description": "room id on the far side"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "plan": {
+      "type": "object",
+      "required": ["footprint_m2", "adjacency"],
+      "properties": {
+        "footprint_m2": {"$ref": "#/definitions/measurement"},
+        "outer_outline_m2": {"$ref": "#/definitions/measurement"},
+        "adjacency": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["from", "to", "via"],
+            "properties": {
+              "from": {"type": "string"},
+              "to": {"type": "string"},
+              "via": {"type": "string", "description": "opening id"}
+            }
+          }
+        },
+        "groups": {"type": "integer", "description": "connected components; 1 means fully stitched"},
+        "overlap_m2": {"type": "number"},
+        "drift": {
+          "type": "object",
+          "properties": {
+            "method": {"type": "string"},
+            "loop_closures": {"type": "integer"},
+            "applied": {"type": "boolean"}
+          }
+        }
+      }
+    },
+    "damage": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "surface_id", "class", "width_m", "height_m"],
+        "properties": {
+          "id": {"type": "string"},
+          "surface_id": {"type": "string"},
+          "class": {"type": "string", "enum": ["crack", "water_stain", "mould", "peeling_paint", "hole", "other"]},
+          "width_m": {"$ref": "#/definitions/measurement"},
+          "height_m": {"$ref": "#/definitions/measurement"},
+          "area_m2": {"$ref": "#/definitions/measurement"},
+          "height_above_floor_m": {"$ref": "#/definitions/measurement"},
+          "outline": {"type": "array", "items": {"$ref": "#/definitions/point2d"}},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "views": {"type": "integer", "description": "how many frames it was seen in"}
+        }
+      }
+    },
+    "concealed_flags": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "rule_id", "surface_id", "description"],
+        "properties": {
+          "id": {"type": "string"},
+          "rule_id": {"type": "string", "description": "must exist in docs/damage_rules.md"},
+          "surface_id": {"type": "string"},
+          "description": {"type": "string"},
+          "evidence": {"type": "array", "items": {"type": "string"}},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    },
+    "scope": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "surface_id", "item", "unit", "quantity", "because"],
+        "properties": {
+          "id": {"type": "string"},
+          "surface_id": {"type": "string"},
+          "item": {"type": "string"},
+          "unit": {"type": "string", "enum": ["m2", "m", "each"]},
+          "quantity": {"$ref": "#/definitions/measurement"},
+          "because": {"type": "string", "description": "damage id or rule id this item exists for"}
+        }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "required": ["warnings"],
+      "properties": {
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["code", "message"],
+            "properties": {
+              "code": {"type": "string"},
+              "message": {"type": "string"},
+              "severity": {"type": "string", "enum": ["info", "warning", "error"]}
+            }
+          }
+        },
+        "scene_conditions": {
+          "type": "object",
+          "properties": {
+            "mirror": {"type": "boolean"},
+            "glass": {"type": "boolean"},
+            "wet_floor": {"type": "boolean"},
+            "low_light": {"type": "boolean"}
+          }
+        },
+        "interval_widening_factor": {"type": "number", "description": "calibrated from measured error at this tier"}
+      }
+    },
+    "render": {
+      "type": "object",
+      "properties": {
+        "plan_svg": {"type": "string"},
+        "report_pdf": {"type": "string"},
+        "summary_md": {"type": "string"}
+      }
+    }
+  }
+}

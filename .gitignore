@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+
+# Captures and derived model outputs are large; they are fetched, not committed.
+data/captures/
+data/derived/
+out/
+
+# Ground truth measurements ARE committed (they are a deliverable):
+!gt/*.csv

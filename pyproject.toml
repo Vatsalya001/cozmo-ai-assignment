@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scanplan"
+version = "0.1.0"
+description = "Phone captures to dimensioned, stitched floor plans with damage scope and calibrated intervals"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24,<2",
+  "scipy>=1.10",
+  "opencv-python>=4.8",
+  "shapely>=2.0",
+  "jsonschema>=4.18",
+  "pillow>=10",
+  "pillow-heif>=0.16",
+  "matplotlib>=3.7",
+  "pandas>=2.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+models = ["torch>=2.4,<2.10", "torchvision>=0.19,<0.25", "transformers>=4.40,<5", "huggingface-hub>=0.23,<1"]
+
+[project.scripts]
+scanplan = "scanplan.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["scanplan*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

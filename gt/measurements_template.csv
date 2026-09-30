@@ -1,0 +1,14 @@
+capture_id,room_id,element_id,element_type,value_m,repeat_m,method,measured_at,notes
+# element_type: wall | diagonal | ceiling | opening_width | opening_height | damage_w | damage_h | damage_above_floor
+# value_m and repeat_m are the two independent readings. Add a third column-less row if they differ by >5 mm.
+# method: laser | tape
+# Example rows (delete before use):
+flat_walk_a,R1,R1.W1,wall,3.412,3.414,laser,2026-09-30T10:14,inside face at 1.2 m
+flat_walk_a,R1,R1.D1,diagonal,4.286,4.288,laser,2026-09-30T10:16,NE to SW corner
+flat_walk_a,R1,R1.C1,ceiling,2.706,2.705,laser,2026-09-30T10:17,near window
+flat_walk_a,R1,R1.C2,ceiling,2.704,2.707,laser,2026-09-30T10:18,near door
+flat_walk_a,R1,R1.O1,opening_width,0.812,0.813,laser,2026-09-30T10:20,clear width jamb to jamb
+flat_walk_a,R1,R1.O1,opening_height,2.031,2.030,laser,2026-09-30T10:21,to underside of head jamb
+flat_walk_a,R3,R3.DMG1,damage_w,0.400,0.400,tape,2026-09-30T10:44,printed water stain decal
+flat_walk_a,R3,R3.DMG1,damage_h,0.300,0.300,tape,2026-09-30T10:44,printed water stain decal
+flat_walk_a,R3,R3.DMG1,damage_above_floor,1.250,1.251,laser,2026-09-30T10:45,lower edge above floor
