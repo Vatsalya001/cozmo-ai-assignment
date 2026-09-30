@@ -19,7 +19,7 @@ import numpy as np
 
 from .walls import Grid
 
-DOOR_MAX_M = 1.30           # anything narrower than this may be a doorway
+DOOR_MAX_M = 0.95           # a doorway is narrower than this; rooms are wider
 ROOM_MIN_AREA_M2 = 1.20     # smaller than a shower tray: not a room
 SIMPLIFY_M = 0.15          # polygon simplification tolerance: below a wall thickness
 
@@ -58,7 +58,14 @@ def split_rooms(free: np.ndarray, grid: Grid, *, door_max_m: float = DOOR_MAX_M,
     Returns an int32 label image, 0 = not floor.
     """
     cell = grid.cell_m
-    # Erode by half a door width: necks vanish, room interiors survive.
+    # Erode by half a doorway: necks vanish, room interiors survive.
+    #
+    # Distance-transform peaks were tried here instead, to seed one marker per room at
+    # whatever scale the room happens to be. They over-segment badly: the peak set of a
+    # distance field is a medial axis, a ridge rather than a point, so a single room yields a
+    # line of seeds and the plan comes back as one large room plus a dozen 1.5 m2 slivers.
+    # Erosion under-splits instead, which is the safer failure -- a merged pair of rooms is
+    # still a correct floor area, an invented sliver is not.
     r = max(int((door_max_m / 2) / cell), 1)
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))
     cores = cv2.erode(free, kernel)
@@ -67,7 +74,6 @@ def split_rooms(free: np.ndarray, grid: Grid, *, door_max_m: float = DOOR_MAX_M,
     min_cells = int(min_area_m2 / cell ** 2)
     keep, next_id = np.zeros_like(labels), 1
     for i in range(1, n):
-        # Compare against the eroded area, which is much smaller than the room itself.
         if stats[i, cv2.CC_STAT_AREA] >= max(min_cells // 4, 16):
             keep[labels == i] = next_id
             next_id += 1
