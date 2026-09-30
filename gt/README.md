@@ -7,17 +7,39 @@ head-to-head both use them.
 
 ## Conventions
 
-| Quantity | Definition |
-|---|---|
-| **Wall length** | Inside face, corner to corner, measured at **1.2 m** above the floor |
-| **Room diagonal** | Inside corner to opposite inside corner, at 1.2 m |
-| **Ceiling height** | Floor to ceiling, measured at **two points** per room, at least 1 m apart |
-| **Opening width** | **Clear width**, inner jamb face to inner jamb face. Trim and architrave excluded |
-| **Opening height** | Floor to the underside of the head jamb |
-| **Damage extent** | Bounding box on the wall plane: width × height, plus height of its lower edge above the floor |
-| **Footprint** | Sum of room floor areas, inside faces |
+Ground truth on this benchmark is taken with a **steel measuring tape**, which the brief
+permits ("laser or tape ground truth on everything"). The conventions below are chosen so a
+tape can realise them repeatably by one person.
+
+| Quantity | Definition | Tape technique |
+|---|---|---|
+| **Wall length** | Inside face, corner to corner, at **skirting top** height | Lay the tape along the wall base, hooked into the corner |
+| **Room diagonal** | Inside corner to opposite inside corner, **along the floor** | Floor diagonal equals the 1.2 m diagonal because walls are vertical; the floor is the only surface a tape can span unsupported |
+| **Ceiling height** | Floor to ceiling, at **two points** per room, ≥ 1 m apart | Two-part: floor→table top, then table top→ceiling. Record both parts |
+| **Opening width** | **Clear width**, inner jamb face to inner jamb face. Trim excluded | Across the opening at waist height |
+| **Opening height** | Floor to the underside of the head jamb | Two-part if the tape buckles |
+| **Damage extent** | Bounding box on the wall plane: width × height, plus height of its lower edge above the floor | Direct |
+| **Footprint** | Sum of room floor areas, inside faces | Derived |
 
 **Error** = |our value − measured value| for the same element measured the same way.
+
+## Ground-truth uncertainty (must be stated in the report)
+
+A tape is not a laser, and a benchmark that does not state the uncertainty of its own
+reference is not a benchmark. Estimated one-sigma, from the repeat readings recorded in
+`measurements.csv`:
+
+| Quantity | Estimated sigma | Why |
+|---|---|---|
+| Wall length | ~3 mm | Tape sag and corner hooking |
+| Diagonal | ~4 mm | Longer span, more sag |
+| **Ceiling height** | **~6 mm** | Two-part measurement, two hooking errors added |
+| Opening width | ~2 mm | Short, well-defined faces |
+
+Consequence, stated plainly rather than hidden: G-CEIL asks for ≤ 1.5 cm, and our reference
+for it carries ~6 mm of its own. A measured 1.4 cm error therefore cannot be called a pass
+with confidence. Every gate result is reported alongside the reference uncertainty, and
+"within the gate" is claimed only when the error clears it by more than the reference sigma.
 
 ## Why diagonals are mandatory
 
