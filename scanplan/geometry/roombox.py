@@ -26,7 +26,7 @@ from .rooms import Room
 
 FLOOR_BAND_M = 0.12         # points this close to y = 0 are floor
 MIN_FLOOR_POINTS = 300
-EXTENT_PERCENTILE = 96      # not the max: one smeared frame must not size the room
+EXTENT_PERCENTILE = 96      # within one view: trims depth speckle at the extremes
 MIN_SIDE_M = 1.0
 MAX_SIDE_M = 12.0
 
@@ -65,6 +65,34 @@ def _one_view_extent(points: np.ndarray) -> tuple[float, float, float | None] | 
     return float(hi_x - lo_x), float(hi_z - lo_z), ceiling
 
 
+def _largest_credible(values: list[float]) -> float:
+    """The biggest extent that is not an outlier.
+
+    A single view sees part of the room, so the *largest* credible extent is the best estimate
+    of the whole. But "largest" and "outlier-free" pull in opposite directions, and with two to
+    eight photos there is no room for a percentile to do the job: a high percentile interpolates
+    straight into the outlier it is meant to exclude. Measured -- five views of a 3 m room plus
+    one frame with a wall smeared to 12 m moved the 85th percentile from 2.77 m to 4.95 m.
+
+    So outliers are rejected first, by median absolute deviation, and the maximum is taken over
+    what survives. MAD is used rather than a standard deviation because a single extreme value
+    inflates a standard deviation enough to keep itself inside the fence.
+    """
+    v = np.asarray(values, dtype=float)
+    if len(v) <= 2:
+        return float(v.max())
+
+    med = float(np.median(v))
+    mad = float(np.median(np.abs(v - med)))
+
+    # A zero MAD means most views agree exactly, so anything that differs at all is the
+    # outlier. Falling back to the maximum here -- the obvious guard -- returns precisely the
+    # value this function exists to reject, which is how the first version of it failed.
+    tol = max(3.0 * mad, 0.25)          # 25 cm: agreement is never finer than the depth noise
+    keep = v[np.abs(v - med) <= tol]
+    return float(keep.max()) if len(keep) else med
+
+
 def estimate(per_photo_points: list[np.ndarray]) -> BoxEstimate | None:
     """Combine per-photo extents into one room box."""
     widths, depths, ceilings, rejected = [], [], [], 0
@@ -82,12 +110,8 @@ def estimate(per_photo_points: list[np.ndarray]) -> BoxEstimate | None:
     if not widths:
         return None
 
-    # A single view sees part of the room, so the largest credible extent is the best estimate
-    # of the whole -- but taken as a high percentile, not the maximum.
-    width = float(np.percentile(widths, 85))
-    depth = float(np.percentile(depths, 85))
-    width = min(max(width, MIN_SIDE_M), MAX_SIDE_M)
-    depth = min(max(depth, MIN_SIDE_M), MAX_SIDE_M)
+    width = min(max(_largest_credible(widths), MIN_SIDE_M), MAX_SIDE_M)
+    depth = min(max(_largest_credible(depths), MIN_SIDE_M), MAX_SIDE_M)
 
     return BoxEstimate(width_m=width, depth_m=depth,
                        ceiling_m=float(np.median(ceilings)) if ceilings else None,

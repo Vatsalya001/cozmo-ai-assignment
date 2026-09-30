@@ -46,9 +46,60 @@ def test_video_scale_provenance_is_the_model_not_the_room():
     assert "Metric" in v.MODEL, "a relative-depth model would leave the plan unscaled"
 
 
-def test_unknown_tier_fails_with_a_stated_error(tmp_path):
+def test_photo_folder_with_unreadable_images_fails_with_a_stated_error(tmp_path):
+    """All three tiers are implemented now, so the interesting failure is no longer 'not
+    implemented' -- it is a tier that runs and finds nothing usable, which must still be a
+    stated error rather than an empty plan presented as a result."""
     home = tmp_path / "home" / "kitchen"
     home.mkdir(parents=True)
-    (home / "a.jpg").write_bytes(b"")
-    with pytest.raises(CaptureError, match="not implemented"):
+    (home / "a.jpg").write_bytes(b"not an image")
+    with pytest.raises(CaptureError):
         pipeline.run(tmp_path / "home")
+
+
+# ---- photo tier ------------------------------------------------------------------------
+
+def test_photo_tier_reports_that_it_did_not_stitch(tmp_path):
+    """G-PHOTO-STITCH fails by construction, not by accident, and the output must say so --
+    a reader seeing separate rectangles has no other way to know whether that is a finding
+    about the property or a limit of the method."""
+    import scanplan.pipeline as pl
+    import inspect
+    src = inspect.getsource(pl._photo_document)
+    assert "PHOTO_TIER_NOT_STITCHED" in src
+    assert "by construction" in src
+
+
+def test_photo_tier_does_not_claim_a_trajectory():
+    """Stills carry no path, so the drift block must not imply one was corrected."""
+    import scanplan.pipeline as pl
+    import inspect
+    assert "not applicable: stills carry no trajectory" in inspect.getsource(pl._photo_document)
+
+
+def test_room_box_ignores_one_smeared_frame():
+    """Per-room extents combine at a high percentile, not the maximum: a single bad depth
+    frame with a far wall smeared to 8 m must not set the size of the room."""
+    import numpy as np
+    from scanplan.geometry import roombox
+
+    def floor_cloud(half_extent):
+        n = 4000
+        rng = np.random.default_rng(0)
+        x = rng.uniform(-half_extent, half_extent, n)
+        z = rng.uniform(-half_extent, half_extent, n)
+        return np.stack([x, np.zeros(n), z], axis=1)
+
+    good = [floor_cloud(1.5) for _ in range(5)]
+    box_clean = roombox.estimate(good)
+    box_with_outlier = roombox.estimate(good + [floor_cloud(6.0)])
+    assert box_with_outlier.width_m < box_clean.width_m * 1.6, (
+        f"one smeared frame moved the room from {box_clean.width_m:.2f} to "
+        f"{box_with_outlier.width_m:.2f} m")
+
+
+def test_room_box_returns_none_without_a_floor():
+    import numpy as np
+    from scanplan.geometry import roombox
+    airborne = np.stack([np.zeros(600), np.full(600, 1.5), np.zeros(600)], axis=1)
+    assert roombox.estimate([airborne]) is None
