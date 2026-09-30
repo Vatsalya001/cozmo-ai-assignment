@@ -1,0 +1,66 @@
+{
+  "laser": [
+    {
+      "file": "173174.ply",
+      "floor_m": 392.72709344334885,
+      "ceiling_m": 395.04705102776217,
+      "storey_m": 2.3199575844133165,
+      "floor_points": 297778,
+      "ceiling_points": 1114921
+    },
+    {
+      "file": "173175.ply",
+      "floor_m": 392.7202643459519,
+      "ceiling_m": 395.0384122000882,
+      "storey_m": 2.3181478541363276,
+      "floor_points": 136215,
+      "ceiling_points": 965254
+    },
+    {
+      "file": "173178.ply",
+      "floor_m": 392.7270625860932,
+      "ceiling_m": 395.02327792684326,
+      "storey_m": 2.2962153407500523,
+      "floor_points": 256668,
+      "ceiling_points": 903902
+    },
+    {
+      "file": "173180.ply",
+      "floor_m": 392.7287993506658,
+      "ceiling_m": 395.0622784385187,
+      "storey_m": 2.333479087852936,
+      "floor_points": 271305,
+      "ceiling_points": 1154119
+    }
+  ],
+  "reference_storey_m": 2.319052719274822,
+  "reference_spread_m": 0.037263747102883826,
+  "device": [],
+  "rejected": [
+    {
+      "scan": "42445198",
+      "vertical_axis": "y",
+      "frames": 1573,
+      "floor_m": -0.09056596167982713,
+      "ceiling_m": 1.621937030971975,
+      "storey_m": 1.712502992651802,
+      "camera_rise_m": 4.32033,
+      "floor_points": 13970,
+      "ceiling_points": 159144,
+      "rejected": "the camera changed height by 4.32 m, so this is not a single-level walk and there is no one floor to measure from"
+    },
+    {
+      "scan": "42445205",
+      "vertical_axis": "y",
+      "frames": 1054,
+      "floor_m": -0.14810262924900905,
+      "ceiling_m": 2.5256938307994967,
+      "storey_m": 2.673796460048506,
+      "camera_rise_m": 4.0231200000000005,
+      "floor_points": 9845,
+      "ceiling_points": 142327,
+      "rejected": "the camera changed height by 4.02 m, so this is not a single-level walk and there is no one floor to measure from"
+    }
+  ],
+  "conclusion": "NOT MEASURED. Every downloaded scan failed admissibility, so no depth bias is claimed and the pipeline keeps its unmeasured 12 mm allowance. More single-level scans with a clearly observed ceiling are needed."
+}
