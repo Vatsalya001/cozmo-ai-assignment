@@ -132,9 +132,18 @@ def load(path, *, stride: int = 3) -> CaptureIR:
     ir = CaptureIR(capture_id=Path(path).name, tier="lidar",
                    scale=ScaleEstimate(1.0, 0.0, "lidar_depth", "device LiDAR, metric by construction"))
 
+    unreadable = []
     for i in range(0, len(cap), stride):
-        depth = cap.depth_m(i)
-        conf = cap.confidence(i)
+        try:
+            depth = cap.depth_m(i)
+            conf = cap.confidence(i)
+        except CaptureError:
+            # A frame that will not decode is dropped, not fatal. At 60 fps its neighbours
+            # cover the same surfaces, and the walk-in test is a live cold run on someone
+            # else's capture -- refusing to produce a plan because one frame of nine thousand
+            # is damaged would be the wrong trade every time.
+            unreadable.append(i)
+            continue
         h, w = depth.shape
         ir.frames.append(Frame(
             index=i,
@@ -144,6 +153,13 @@ def load(path, *, stride: int = 3) -> CaptureIR:
             depth_m=depth,
             depth_confidence=conf,
         ))
+
+    if unreadable:
+        ir.warnings.append(
+            f"{len(unreadable)} of {len(range(0, len(cap), stride))} sampled depth frames "
+            f"could not be decoded and were skipped (first: {unreadable[0]})")
+    if not ir.frames:
+        raise CaptureError(f"{path}: no depth frame could be decoded")
 
     jumps = cap.pose_jumps()
     if jumps:
