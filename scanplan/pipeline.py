@@ -83,6 +83,69 @@ def _room_document(room: rooms_mod.Room, storey: tuple[float, float] | None,
     }
 
 
+def _photo_document(ir, source, started, drift, damage) -> dict:
+    """The photo tier's own assembly: a room box per folder, joined to nothing.
+
+    It does not reuse the walked-capture path because that path asks questions -- where is the
+    connected floor, where are the necks between rooms -- that a handful of unposed stills
+    cannot answer. Running it anyway returns zero rooms, which is the honest answer to the
+    wrong question.
+    """
+    from .geometry import roombox
+
+    widen = 11.0
+    rooms_out, origin_x, boxes = [], 0.0, []
+    for i, (name, clouds) in enumerate(ir.photo_room_clouds.items(), 1):
+        box = roombox.estimate(clouds)
+        if box is None:
+            continue
+        boxes.append((name, box))
+        room = roombox.as_room(box, i, origin_x)
+        storey = (box.ceiling_m, 0.25) if box.ceiling_m else None
+        doc = _room_document(room, storey, [], widen)
+        doc["label"] = name
+        rooms_out.append(doc)
+        origin_x += box.width_m + 2.0
+
+    if not rooms_out:
+        raise CaptureError(f"{source}: no room folder produced a usable box")
+
+    footprint = sum(b.area_m2 for _, b in boxes)
+    warnings = [{"code": "GEOMETRY_WARNING", "severity": "warning", "message": w}
+                for w in ir.warnings]
+    warnings.append({
+        "code": "PHOTO_TIER_NOT_STITCHED", "severity": "error",
+        "message": f"{len(rooms_out)} room(s) are reported as separate rectangles, laid out side "
+                   f"by side and joined to nothing. With no camera poses there is nothing in the "
+                   f"input that says how the rooms relate, so the whole-property stitch gate "
+                   f"fails by construction rather than by accident. Each room is the bounding "
+                   f"box of what one view could see: an L-shaped room returns as a rectangle"})
+
+    return {
+        "schema_version": "0.1.0", "units": "m",
+        "capture": {"id": source.stem or source.name, "tier": "photo",
+                    "source_path": str(source), "frames": len(ir.frames),
+                    "pipeline_version": __version__,
+                    "runtime_s": round(time.perf_counter() - started, 2),
+                    "drift_correction": False},
+        "rooms": rooms_out,
+        "plan": {
+            "footprint_m2": from_sigma(footprint, footprint * AREA_RELATIVE_SIGMA, widen=widen,
+                                       method="sum of per-room boxes from unposed views").as_dict(),
+            "adjacency": [],
+            "groups": len(rooms_out),
+            "overlap_m2": 0.0,
+            "drift": {"method": "not applicable: stills carry no trajectory",
+                      "loop_closures": 0, "applied": False},
+        },
+        "damage": [], "concealed_flags": [], "scope": [],
+        "quality": {"warnings": warnings,
+                    "scene_conditions": {"mirror": False, "glass": False,
+                                         "wet_floor": False, "low_light": False},
+                    "interval_widening_factor": widen},
+    }
+
+
 def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
         damage: bool = True, door_max_m: float | None = None,
         min_seed_area_m2: float | None = None) -> dict:
@@ -105,10 +168,16 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
     elif tier == "video":
         from .ingest import video
         ir = video.load(source)
+    elif tier == "photo":
+        from .ingest import photos
+        ir = photos.load(source)
     else:
         raise CaptureError(f"the {tier} tier is not implemented yet")
 
     drift_report = drift_mod.correct(ir, apply=drift)
+
+    if tier == "photo":
+        return _photo_document(ir, source, started, drift, damage)
 
     fusion.fuse(ir, min_confidence=0 if tier == 'video' else 1)
     floor, ceiling = planes.floor_and_ceiling(ir.points, ir.trajectory[:, 1])

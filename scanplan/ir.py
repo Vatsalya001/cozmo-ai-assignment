@@ -102,6 +102,9 @@ class CaptureIR:
     scale: ScaleEstimate = field(default_factory=ScaleEstimate)
     gravity: np.ndarray = field(default_factory=lambda: np.array([0.0, -1.0, 0.0]))
     loop_closures: list[tuple[int, int]] = field(default_factory=list)
+    # Photo tier only: levelled single-view clouds per room folder. The walked-capture fields
+    # above stay empty, because a set of stills is not a traversal.
+    photo_room_clouds: dict = field(default_factory=dict)
     warnings: list[str] = field(default_factory=list)
 
     @property
