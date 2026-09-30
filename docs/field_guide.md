@@ -1,9 +1,31 @@
 # Field guide — what to do, step by step
 
-Print this. Take it with you. Tick each box as you finish it.
+> ## ⚠️ SCOPE REDUCED — read this first
+>
+> The benchmark now runs on public data (ARKitScenes, with FARO laser-scanner ground truth)
+> plus the three captures Cozmo supplied. Laser truth is better than anything a tape can
+> produce, so **the walk, the photos and the full measuring session are no longer needed.**
+>
+> **Only ONE thing still requires you and a real room: the head-to-head (Part E).**
+> It is worth **10% of the total score**, and it cannot be done from a dataset — the brief
+> requires running a consumer app on rooms you can measure, and submitting its export.
+>
+> **What you still have to do — about 45 minutes:**
+>
+> | Do | Where |
+> |---|---|
+> | Set up the Camera app | **A3** |
+> | Scan 2 rooms with magicplan, record its numbers, export its file | **PART E** |
+> | Tape-measure only those 2 rooms — about 15 measurements | **D2, D3, D4, D5**, those rooms only |
+>
+> **What you can now SKIP entirely:** A4, A5 (except the tape), all of PART B, all of
+> PART C, and the rest of PART D.
+>
+> Everything below is kept for reference in case the plan changes back.
+
 Device: **iPhone 16 (base)**. Measuring tool: **steel tape**. Property: **your 1 RK**.
 
-Total time: about **2 hours 15 minutes**.
+Original full-session time: about 2 hours 15 minutes. **Reduced scope: about 45 minutes.**
 
 ## What your flat is for, and what it is not for
 
