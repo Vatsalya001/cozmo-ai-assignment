@@ -1,0 +1,47 @@
+room,element,type,reading1_m,reading2_m,note
+# ============================================================================
+# Fill in reading1_m and reading2_m with your tape. Two readings for every row.
+# If the two differ by more than 0.005 m, take a third and add it in the note.
+#
+# MEASURE BLIND. The magicplan column is deliberately NOT in this file so you
+# cannot drift toward its values. Its numbers are in magicplan_results.md and
+# will be joined afterwards.
+#
+# Conventions:
+#   wall      = inside face, corner to corner, tape along the floor
+#   diagonal  = inside corner to opposite inside corner, across the floor,
+#               and NAME the two corners in the note
+#   ceiling   = two parts: floor->chair seat, then chair seat->ceiling.
+#               Record each part on its own row. Do not add them up yourself.
+#   opening   = clear width, inner frame face to inner frame face, trim excluded
+# ============================================================================
+
+# ---- R1 Bedroom: main room, open plan, L-shaped -----------------------------
+R1,R1.W-left,wall,,,left wall (the long one on the left side)
+R1,R1.W-right,wall,,,right wall (the long one on the right side)
+R1,R1.W-bottom,wall,,,bottom wall, full length end to end
+R1,R1.W-topleft,wall,,,top-left segment, up to where the notch starts
+R1,R1.W-notch,wall,,,notch depth - the short step in the top-left corner
+R1,R1.W-topright,wall,,,top-right segment
+R1,R1.X1,diagonal,,,NAME THE CORNERS eg bottom-left to top-right
+R1,R1.X2,diagonal,,,NAME THE CORNERS eg bottom-right to top-left
+R1,R1.C1a,ceiling_part1,,,floor to top of chair seat
+R1,R1.C1b,ceiling_part2,,,chair seat to ceiling
+R1,R1.C2a,ceiling_part1,,,second spot at least 1 m away - floor to seat
+R1,R1.C2b,ceiling_part2,,,second spot - seat to ceiling
+R1,R1.O-bottom,opening_width,,,door on the bottom wall
+R1,R1.O-right,opening_width,,,door on the upper-right wall
+R1,R1.O-bottom,opening_height,,,floor to underside of the door frame
+R1,R1.O-right,opening_height,,,floor to underside of the door frame
+
+# ---- R2 Bathroom ------------------------------------------------------------
+R2,R2.W1,wall,,,clockwise from the doorway
+R2,R2.W2,wall,,,
+R2,R2.W3,wall,,,
+R2,R2.W4,wall,,,
+R2,R2.X1,diagonal,,,NAME THE CORNERS
+R2,R2.X2,diagonal,,,NAME THE CORNERS
+R2,R2.C1a,ceiling_part1,,,floor to top of chair seat
+R2,R2.C1b,ceiling_part2,,,chair seat to ceiling
+R2,R2.O1,opening_width,,,bathroom doorway clear width
+R2,R2.O1,opening_height,,,floor to underside of the door frame
