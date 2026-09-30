@@ -18,6 +18,7 @@ from . import __version__
 from .detect import CaptureError, detect_tier
 from .geometry import fusion, planes, regularize, rooms as rooms_mod, walls
 from .ir import CaptureIR
+from . import quality
 from .damage import detect as damage_detect, rules as damage_rules
 from .slam import drift as drift_mod
 from .measure import Measurement, from_sigma, log_scale, unobserved
@@ -151,12 +152,17 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
                                       storey[0] if storey else None)
         scope_items = damage_rules.scope(regions, flags)
 
+    rgb = source / "rgb.mp4"
+    conditions = quality.assess(ir, found, coverage=coverage, grid=grid,
+                                video_path=rgb if rgb.is_file() else None)
+
     widen = {"lidar": 1.0, "video": 4.5, "photo": 5.1}[tier]
     room_docs = [_room_document(r, storey, openings, widen) for r in found]
     footprint = sum(r.area_m2 for r in found)
 
     warnings = [{"code": "GEOMETRY_WARNING", "severity": "warning", "message": w}
                 for w in ir.warnings]
+    warnings += conditions.warnings()
     if ceiling is None:
         warnings.append({"code": "NO_CEILING", "severity": "warning",
                          "message": "the ceiling was never seen; ceiling heights are population "
@@ -203,6 +209,7 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
         "scope": scope_items,
         "quality": {
             "warnings": warnings,
+            "scene_conditions": conditions.as_dict(),
             "interval_widening_factor": widen,
         },
     }
