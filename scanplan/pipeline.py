@@ -82,8 +82,17 @@ def _room_document(room: rooms_mod.Room, storey: tuple[float, float] | None,
 
 
 def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
-        damage: bool = True) -> dict:
-    """Measure a capture and return a document that satisfies schema/output.schema.json."""
+        damage: bool = True, door_max_m: float | None = None,
+        min_seed_area_m2: float | None = None) -> dict:
+    """Measure a capture and return a document that satisfies schema/output.schema.json.
+
+    The two room-split tunables are explicit parameters rather than module constants read at
+    call time. Patching the constants does not work: Python binds a default argument once, at
+    definition, so `rooms_mod.DOOR_MAX_M = 0.70` silently changes nothing while
+    `MIN_SEED_AREA_M2`, read inside the function body, does change. An ablation built on that
+    mixture reported a 'before' that was half the fix, which is how a fix loop ends up
+    confidently measuring the wrong thing.
+    """
     started = time.perf_counter()
     source = Path(path)
     tier = tier or detect_tier(source)
@@ -123,7 +132,12 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
     coverage = walls.floor_coverage(ir.points, floor.height_m, grid)
     free = (coverage & ~cv2.dilate(wall_mask, np.ones((3, 3), np.uint8)).astype(bool)).astype(np.uint8)
 
-    labels = rooms_mod.split_rooms(free, grid)
+    split_kw = {}
+    if door_max_m is not None:
+        split_kw["door_max_m"] = door_max_m
+    if min_seed_area_m2 is not None:
+        split_kw["min_seed_area_m2"] = min_seed_area_m2
+    labels = rooms_mod.split_rooms(free, grid, **split_kw)
     found = rooms_mod.polygons(labels, grid)
     for r in found:
         r.polygon_xz = regularize.rectify(r.polygon_xz)

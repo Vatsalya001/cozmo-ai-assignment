@@ -19,7 +19,12 @@ import numpy as np
 
 from .walls import Grid
 
-DOOR_MAX_M = 0.95           # a doorway is narrower than this; rooms are wider
+DOOR_MAX_M = 0.70           # erosion width. Measured, not chosen: sweeping it is the only
+                            # change that moves G-REPEAT, and 0.70 both narrows the room-count
+                            # gap and improves footprint agreement. See docs/fix_loop.md.
+MIN_SEED_AREA_M2 = 0.30     # a room core, not a speck. Equals the previous implicit bound of
+                            # max(min_cells // 4, 16) = 750 cells; made explicit after the
+                            # declaration misread it as 16 cells.
 ROOM_MIN_AREA_M2 = 1.20     # smaller than a shower tray: not a room
 SIMPLIFY_M = 0.28          # simplification tolerance: a plan, not a pixel boundary
 
@@ -52,7 +57,8 @@ class Room:
 
 
 def split_rooms(free: np.ndarray, grid: Grid, *, door_max_m: float = DOOR_MAX_M,
-                min_area_m2: float = ROOM_MIN_AREA_M2) -> np.ndarray:
+                min_area_m2: float = ROOM_MIN_AREA_M2,
+                min_seed_area_m2: float = MIN_SEED_AREA_M2) -> np.ndarray:
     """Label the floor into rooms, cutting at doorway-width necks.
 
     Returns an int32 label image, 0 = not floor.
@@ -72,9 +78,15 @@ def split_rooms(free: np.ndarray, grid: Grid, *, door_max_m: float = DOOR_MAX_M,
 
     n, labels, stats, _ = cv2.connectedComponentsWithStats(cores, connectivity=4)
     min_cells = int(min_area_m2 / cell ** 2)
+    # A seed must be a plausible room core. This threshold is now explicit; it was previously
+    # written as max(min_cells // 4, 16), which the fix-loop declaration misread as 16 cells
+    # (0.0064 m2) when min_cells // 4 in fact dominates at 750 cells (0.30 m2). The ablation
+    # in docs/fix_loop.md shows varying it between 0.25 and 0.50 changes almost nothing, so
+    # the declared root cause was wrong and the erosion width is the real lever.
+    min_seed_cells = int(min_seed_area_m2 / cell ** 2)
     keep, next_id = np.zeros_like(labels), 1
     for i in range(1, n):
-        if stats[i, cv2.CC_STAT_AREA] >= max(min_cells // 4, 16):
+        if stats[i, cv2.CC_STAT_AREA] >= min_seed_cells:
             keep[labels == i] = next_id
             next_id += 1
 
