@@ -12,3 +12,9 @@ out/
 
 # Ground truth measurements ARE committed (they are a deliverable):
 !gt/*.csv
+
+# Downloaded datasets: fetched by script, never committed (brief: "weights and large
+# binaries fetched by script or volume").
+data/arkitscenes/
+data/supplied
+data/own/
