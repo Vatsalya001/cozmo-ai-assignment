@@ -34,7 +34,7 @@ The brief requires you to name the app **and its version**. Two ways:
 2. Tap the **menu** (three lines or a gear icon, usually top-left or bottom-right).
 3. Tap **Settings**, then scroll to the bottom and look for **About** or **Version**.
 
-☐ **Write the version here:** `magicplan version ____________________`
+☐ **Write the version here:** `magicplan version 2026.38.0`
 
 Do the same for any other app you use, and write it down. If you cannot find a version
 number, screenshot the App Store page — that is acceptable evidence.
@@ -48,24 +48,22 @@ number, screenshot the App Store page — that is acceptable evidence.
 ☐ On the same screen, if you see a toggle called **HDR Video**, turn it **OFF**.
 ☐ Go back to **Camera** → make sure **Grid** is **ON**. It helps you hold the phone level.
 
-## A4. Print the water stain
+## A4. Damage — NOT NEEDED, we have real damage
 
-☐ On your computer, search Google Images for `water stain on wall`.
-☐ Pick a realistic one. Download it.
-☐ Take it to a print shop and ask for: **"A3 print, and make the stain exactly 40 cm wide
-   and 30 cm tall."** Cost is about ₹30–50.
-☐ If a print shop is inconvenient: print on A4 at whatever size it comes out, then
-   **measure the printed stain with your tape** and write down its actual size. The exact
-   number matters; the exact size does not.
+**Skip printing anything.** The flat already has a large area of genuine wall damage:
+blistered and peeling paint with visible cracking and moisture staining down to the
+skirting. That is stronger evidence than a printed picture, because it proves the detector
+works on a real defect rather than on a photograph of one.
 
-☐ **Write the printed stain size here:** width `______ cm` × height `______ cm`
+It is used as **damage class 1: `peeling_paint`**, and it is measured in B3 below.
+
+One staged item is still added as class 2, so that the brief's word "staged" is satisfied
+and at least one region has exactly known dimensions. That is the electrical tape.
 
 ## A5. Collect your kit
 
 ☐ Steel measuring tape
-☐ Black electrical tape (insulation tape)
-☐ The printed water stain
-☐ Masking tape or Blu Tack (to stick the print up without damaging paint)
+☐ Black electrical tape (insulation tape) — for the staged crack
 ☐ A **chair or stool** — you will stand on it for ceiling measurements
 ☐ Pen and several sheets of paper
 ☐ This printed guide
@@ -113,33 +111,49 @@ R1 (living room): W1 = wall with the TV, W2 = wall with the window,
 ## B3. Stage the damage
 
 You need **two different kinds** of damage in **one furnished room**, on **two different walls**.
+One is real and already there. One you add.
 
-**Damage 1 — the water stain:**
-☐ Stick the printed stain to a wall with masking tape, roughly at chest height.
-☐ Measure and write down:
-  - the stain's **width** and **height** (you already have these from A4)
-  - the distance from the stain's **bottom-left corner** to the **floor**
-  - the distance from the stain's **bottom-left corner** to the **nearest side wall**
-☐ Photograph it with the tape measure lying next to it in the picture.
+### Damage 1 — the real peeling paint (already exists)
 
-**Damage 2 — the crack:**
-☐ On a **different wall** of the same room, use the black electrical tape to make a
-  **jagged vertical line**, like a crack. Make it about **90 cm long** and one tape-width wide
-  (about 2 cm). Don't make it straight — real cracks zigzag.
-☐ Measure and write down:
-  - its total **length** (top to bottom) and **width**
-  - the distance from its **bottom end** to the **floor**
-  - the distance from its **bottom end** to the **nearest side wall**
-☐ Photograph it with the tape measure in the picture.
+This is the blistered, flaking wall area with the crack through it and the staining down at
+the skirting. **Do not touch it or clean it.** Just measure it.
+
+Its edges are fuzzy, so use this rule and use it consistently: **the bounding box of the
+visibly blistered, flaking or discoloured area** — the smallest rectangle that contains all
+of the damage.
+
+☐ Hold the tape horizontally. Measure from the **leftmost** point of the damage to the
+  **rightmost** point. That is the **width**.
+☐ Hold the tape vertically. Measure from the **lowest** point to the **highest** point.
+  That is the **height**.
+☐ Measure from the **bottom edge of the damage** straight down to the **floor**.
+☐ Measure from the **left edge of the damage** across to the **nearest side wall or door frame**.
+☐ Take **3 photos** with the tape measure held against the damage so the numbers are readable:
+  one showing the width, one the height, one the height above the floor.
+
+### Damage 2 — the staged crack (you add this)
+
+☐ On a **different wall of the same room**, use the black electrical tape to make a
+  **jagged vertical line**, like a crack. About **90 cm long**, one tape-width wide (~2 cm).
+  Don't make it straight — real cracks zigzag.
+☐ Measure and write down: total **length**, **width**, height of its **bottom end above the
+  floor**, and distance from its bottom end to the **nearest side wall**.
+☐ Photograph it with the tape measure in shot.
+☐ **Peel it off** when you have finished all the recording.
 
 ☐ **Write it down:**
 ```
-Stain: in room R__ , on wall R__.W__ , size ____ x ____ cm,
-       bottom-left is ____ cm above floor and ____ cm from wall R__.W__
+Peeling paint (real):  room R__ , wall R__.W__ , size ____ x ____ cm,
+                       bottom edge ____ cm above floor, left edge ____ cm from wall R__.W__
 
-Crack: in room R__ , on wall R__.W__ , size ____ x ____ cm,
-       bottom end is ____ cm above floor and ____ cm from wall R__.W__
+Crack (staged, tape):  room R__ , wall R__.W__ , size ____ x ____ cm,
+                       bottom end ____ cm above floor, ____ cm from wall R__.W__
 ```
+
+**Why one real and one staged:** the real defect is far better evidence that the detector
+works on an actual defect rather than on a printout, and the staged one gives at least one
+region whose true size is known exactly rather than judged by eye. The report states plainly
+which is which.
 
 ---
 
