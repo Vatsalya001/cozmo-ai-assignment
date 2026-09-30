@@ -21,7 +21,7 @@ from .walls import Grid
 
 DOOR_MAX_M = 0.95           # a doorway is narrower than this; rooms are wider
 ROOM_MIN_AREA_M2 = 1.20     # smaller than a shower tray: not a room
-SIMPLIFY_M = 0.15          # polygon simplification tolerance: below a wall thickness
+SIMPLIFY_M = 0.28          # simplification tolerance: a plan, not a pixel boundary
 
 
 @dataclass

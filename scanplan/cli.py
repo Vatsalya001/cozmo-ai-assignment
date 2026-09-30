@@ -18,7 +18,6 @@ from pathlib import Path
 
 from . import __version__
 from .detect import CaptureError, detect_tier
-from .measure import unobserved
 from .validate import validate, validate_file
 
 
@@ -62,13 +61,8 @@ def cmd_run(args) -> int:
     started = time.perf_counter()
     tier = detect_tier(source)
 
-    # --- pipeline stages land here, all of them writing into one CaptureIR ---
-    # ir       = ingest(source, tier)
-    # ir       = drift.correct(ir)          unless args.no_drift
-    # layout   = core.layout(ir)
-    # damage   = damage.detect(ir, layout)  unless args.no_damage
-    # result   = export.document(ir, layout, damage)
-    result = _stub_result(source.stem or source.name, tier, source, time.perf_counter() - started)
+    from . import pipeline
+    result = pipeline.run(source, tier=tier, drift=not args.no_drift, damage=not args.no_damage)
 
     problems = validate(result)
     if problems:
@@ -80,11 +74,16 @@ def cmd_run(args) -> int:
     out = Path(args.out) if args.out else Path("out") / (source.stem or source.name)
     out.mkdir(parents=True, exist_ok=True)
     (out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    from .export import render
+    written = ["result.json"] + render.write_all(result, out)
+
+    fp = result["plan"]["footprint_m2"]
     print(f"{source}: {tier} tier, {len(result['rooms'])} rooms, "
+          f"footprint {fp['value']:.2f} m2 [{fp['ci_low']:.2f}, {fp['ci_high']:.2f}], "
           f"{result['capture']['runtime_s']} s")
     for w in result["quality"]["warnings"]:
-        print(f"  warning: {w['message']}")
-    print(f"wrote {out}/: result.json")
+        print(f"  {w['severity']}: {w['message']}")
+    print(f"wrote {out}/: {', '.join(written)}")
     return 0
 
 
