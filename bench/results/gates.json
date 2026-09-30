@@ -1,0 +1,142 @@
+{
+  "rows": [
+    {
+      "gate": "A-RUNTIME",
+      "tier": "lidar",
+      "target": "<= 60 s",
+      "result": "worst 35.7 s",
+      "status": "MET",
+      "detail": "c00a170fe1 5.9s, 1a8384c3f6 21.8s, c7d28f72c6 35.7s"
+    },
+    {
+      "gate": "A-DET",
+      "tier": "lidar",
+      "target": "same input, same output",
+      "result": "identical",
+      "status": "MET",
+      "detail": "c00a170fe1"
+    },
+    {
+      "gate": "A-SCHEMA",
+      "tier": "all",
+      "target": "100% validate, ci_low <= value <= ci_high",
+      "result": "3/3 valid",
+      "status": "MET",
+      "detail": ""
+    },
+    {
+      "gate": "G-DRIFT",
+      "tier": "lidar",
+      "target": "method stated + footprint ablation on/off",
+      "result": "ablation run on all captures",
+      "status": "MET",
+      "detail": "c00a170fe1: 14.65 -> 15.40 m2, 5 loops; 1a8384c3f6: 48.06 -> 47.85 m2, 25 loops; c7d28f72c6: 48.43 -> 48.78 m2, 124 loops"
+    },
+    {
+      "gate": "G-CEIL-SPREAD",
+      "tier": "lidar",
+      "target": "<= 1 cm across captures",
+      "result": "NOT MEASURED",
+      "status": "NOT MEASURED",
+      "detail": "only 1 capture(s) saw a ceiling"
+    },
+    {
+      "gate": "G-CEIL",
+      "tier": "lidar",
+      "target": "<= 1.5 cm per room vs truth",
+      "result": "NOT MEASURED",
+      "status": "NOT MEASURED",
+      "detail": "no laser or tape truth for the supplied captures; bench/arkitscenes_laser.py found no admissible scan"
+    },
+    {
+      "gate": "G-REPEAT-FOOTPRINT",
+      "tier": "lidar",
+      "target": "two walks of one flat agree",
+      "result": "1.9% apart",
+      "status": "MET",
+      "detail": "1a8384c3f6 47.85 m2 vs c7d28f72c6 48.78 m2"
+    },
+    {
+      "gate": "G-REPEAT-ROOMS",
+      "tier": "lidar",
+      "target": "same room count from both walks",
+      "result": "3 vs 6",
+      "status": "NOT MET",
+      "detail": ""
+    },
+    {
+      "gate": "G-REPEAT",
+      "tier": "lidar",
+      "target": "every wall within max(1 cm, 0.5%)",
+      "result": "NOT MEASURED",
+      "status": "NOT MEASURED",
+      "detail": "needs per-wall correspondence between the two walks"
+    },
+    {
+      "gate": "G-OPEN",
+      "tier": "lidar",
+      "target": "<= 2 cm on >= 85% of openings",
+      "result": "NOT MEASURED",
+      "status": "NOT MEASURED",
+      "detail": "no tape truth for the supplied captures"
+    },
+    {
+      "gate": "A-WALL-LIDAR",
+      "tier": "lidar",
+      "target": "<= max(2 cm, 1%)",
+      "result": "NOT MEASURED",
+      "status": "NOT MEASURED",
+      "detail": "no tape truth; synthetic room gives -40 mm and -70 mm on 4.00 and 3.00 m"
+    },
+    {
+      "gate": "G-WALL-VIDEO",
+      "tier": "video",
+      "target": "see docs/gates.md",
+      "result": "TIER NOT BUILT",
+      "status": "NOT MEASURED",
+      "detail": "the video and photo tiers are not implemented"
+    },
+    {
+      "gate": "G-WALL-PHOTO",
+      "tier": "photo",
+      "target": "see docs/gates.md",
+      "result": "TIER NOT BUILT",
+      "status": "NOT MEASURED",
+      "detail": "the video and photo tiers are not implemented"
+    },
+    {
+      "gate": "G-PHOTO-STITCH",
+      "tier": "photo",
+      "target": "see docs/gates.md",
+      "result": "TIER NOT BUILT",
+      "status": "NOT MEASURED",
+      "detail": "the video and photo tiers are not implemented"
+    },
+    {
+      "gate": "G-H2H",
+      "tier": "lidar",
+      "target": "beat or tie on >= 70% of shared dimensions",
+      "result": "PENDING",
+      "status": "NOT MEASURED",
+      "detail": "magicplan captured; tape measurements outstanding"
+    },
+    {
+      "gate": "A-DMG-DETECT",
+      "tier": "all",
+      "target": "staged damage found with right class",
+      "result": "NOT BUILT",
+      "status": "NOT MEASURED",
+      "detail": "damage detection not implemented"
+    }
+  ],
+  "footprints": {
+    "c00a170fe1": 15.3992,
+    "1a8384c3f6": 47.852,
+    "c7d28f72c6": 48.78
+  },
+  "rooms": {
+    "c00a170fe1": 1,
+    "1a8384c3f6": 3,
+    "c7d28f72c6": 6
+  }
+}
