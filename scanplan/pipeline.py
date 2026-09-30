@@ -102,12 +102,15 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
     if tier == "lidar":
         from .ingest import stray
         ir: CaptureIR = stray.load(source, stride=stride)
+    elif tier == "video":
+        from .ingest import video
+        ir = video.load(source)
     else:
         raise CaptureError(f"the {tier} tier is not implemented yet")
 
     drift_report = drift_mod.correct(ir, apply=drift)
 
-    fusion.fuse(ir)
+    fusion.fuse(ir, min_confidence=0 if tier == 'video' else 1)
     floor, ceiling = planes.floor_and_ceiling(ir.points, ir.trajectory[:, 1])
     if floor is None:
         raise CaptureError(f"{source}: no floor found; the capture must show the floor")
@@ -156,7 +159,11 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
     conditions = quality.assess(ir, found, coverage=coverage, grid=grid,
                                 video_path=rgb if rgb.is_file() else None)
 
-    widen = {"lidar": 1.0, "video": 4.5, "photo": 5.1}[tier]
+    # Measured, not inherited. bench/video_vs_lidar.py put the video tier 69% and 26% away
+    # from the LiDAR result on the same captures, and x4.5 left the reference outside the
+    # interval on both. x11 is the factor that would have contained them. An interval that
+    # excludes the reference is worse than no interval: it claims a precision never present.
+    widen = {"lidar": 1.0, "video": 11.0, "photo": 11.0}[tier]
     room_docs = [_room_document(r, storey, openings, widen) for r in found]
     footprint = sum(r.area_m2 for r in found)
 
