@@ -19,10 +19,32 @@ Your flat exists in this benchmark for the two things the supplied captures cann
 
 Plus the head-to-head against magicplan, which needs two rooms you can measure.
 
-A 1 RK gives us a main room, a kitchen and a bathroom: **three spaces and two or three
-doorways**. That is enough to test room separation, doorway detection and stitching. The
-compliance matrix will state plainly that the large multi-room requirement is met by the
-supplied captures and not by ours.
+## Your flat: two spaces, and that is enough
+
+The kitchen is open to the main room with no door, so it is **not a separate room** — it is
+part of one L-shaped or open-plan space. So you have:
+
+```
+R1 = the main room, including the open kitchen area   (one space, no dividing door)
+R2 = the bathroom                                     (has a door)
+```
+
+**Two rooms is the minimum that works, and you have two.** Here is what each requirement
+needs and where it comes from:
+
+| Requirement | Needs | Covered by |
+|---|---|---|
+| 3+ rooms plus a connector | a large property | **the supplied captures** (7–9 rooms each) |
+| One furnished room with damage, two classes | **one room** | R1 — the brief literally says one room |
+| One room captured twice, same tier | **one room** | R1, walked twice |
+| Tape ground truth | any rooms you can measure | R1 and R2 |
+| Head-to-head vs magicplan | **two rooms** | R1 and R2 |
+
+Only the head-to-head needs two, and the bathroom satisfies it.
+
+**The open-plan kitchen is an advantage, not a problem.** It is a genuine test of whether the
+system wrongly splits one open space into two rooms — a real and common failure mode. Note in
+your sketch that R1 is open-plan, and we report whether the pipeline kept it as one room.
 
 ---
 
@@ -90,22 +112,23 @@ and at least one region has exactly known dimensions. That is the electrical tap
 
 ---
 
-# PART B — Set up the flat (25 minutes)
+# PART B — Set up the flat (20 minutes)
 
-Your 1 RK. Treat **every enclosed space as a room**, however small — main room, kitchen,
-bathroom, and any entry passage.
+Two spaces: **R1** the main room with its open kitchen area, and **R2** the bathroom.
 
-## B1. Prepare every space
+## B1. Prepare both spaces
 
 ☐ Turn on **every light**, including the kitchen and bathroom lights.
 ☐ Open all curtains and blinds.
-☐ Open **every internal door fully**, pushed flat against the wall. Bathroom and kitchen
-   doors included — a closed door hides a whole room.
+☐ Open the **bathroom door fully**, pushed flat against the wall.
 ☐ **Do not move or tidy furniture.** The assignment asks for a furnished room; clutter is
    part of the test, not a problem.
 ☐ Dry any wet or shiny floor, or write a note that it was shiny.
 ☐ **Clear a walking lane** around the edges if anything blocks it completely — you need to
    be able to point the camera at every wall.
+☐ If there is a **mirror** in the bathroom, note where it is. Mirrors break depth estimation
+   and the brief specifically asks us to handle them, so we want it in the capture and
+   flagged, not avoided.
 
 ## B2. Draw and label your sketch — DO NOT SKIP THIS
 
@@ -114,30 +137,29 @@ to which wall, and the whole benchmark becomes unusable.
 
 ☐ On paper, draw a rough top-down plan. **Accuracy does not matter at all** — this is a
   naming diagram, not a drawing.
-☐ Number each space. For a 1 RK that is typically:
-
-```
-R1 = main room
-R2 = kitchen
-R3 = bathroom
-R4 = entry passage, if you have one
-```
-
-☐ In each space, start at its **doorway** and go **clockwise**. Label each wall:
-  `R1.W1`, `R1.W2`, `R1.W3`, `R1.W4`.
-☐ Label every doorway and opening: `R1.O1` = flat's main entrance, `R1.O2` = opening to the
-  kitchen, and so on. **A doorway between two rooms gets one label**, written on both rooms.
+☐ You have **two spaces**: `R1` main room (including the open kitchen area) and `R2` bathroom.
+☐ Starting at the **main entrance door** and going **clockwise**, label **every wall of R1**.
+  An open-plan room usually has more than four — if the kitchen forms an L, you will have
+  five or six. **Label all of them**: `R1.W1`, `R1.W2`, `R1.W3`, `R1.W4`, `R1.W5`, …
+☐ Do the same for the bathroom from its doorway: `R2.W1` … `R2.W4`.
+☐ Label the openings: `R1.O1` = main entrance, `R1.O2` = bathroom doorway. **The bathroom
+  doorway gets one label**, written on both rooms.
+☐ Mark the **damaged wall** clearly on the sketch.
+☐ Write **"open plan — no door between room and kitchen"** on the sketch.
 ☐ Draw an **arrow marking where you will start and finish your walk**.
 
 Example, written out:
 
 ```
-R1 (main room): W1 = wall with the bed, W2 = wall with the window,
-                W3 = the damaged wall, W4 = wall with the entrance
-                O1 = main entrance door, O2 = doorway to kitchen,
-                O3 = doorway to bathroom
-R2 (kitchen):   W1..W4 clockwise from O2
-R3 (bathroom):  W1..W4 clockwise from O3
+R1 (main room, open plan):
+    W1 = wall with the entrance door
+    W2 = wall with the bed
+    W3 = the damaged wall
+    W4 = window wall
+    W5 = kitchen counter wall     <- the L, if you have one
+    W6 = kitchen side wall
+    O1 = main entrance, O2 = bathroom doorway
+R2 (bathroom): W1..W4 clockwise from O2
 ```
 
 ☐ **Photograph the sketch** with your phone. Keep the paper too.
@@ -210,20 +232,25 @@ step in and out and shift left and right — any sideways movement is better tha
 ☐ Press the **red record button**.
 ☐ **Stand completely still and count to 3.** Do not move yet.
 
-**In the main room (R1):**
-☐ Walk **slowly** around the room, about one step per second, staying as far from the wall
-  you are filming as the furniture allows. **Half a metre is fine** if that is all you have.
+**In the main room (R1), including the kitchen area:**
+☐ Walk **slowly** around the full perimeter, about one step per second, staying as far from
+  the wall you are filming as the furniture allows. **Half a metre is fine** if that is all
+  you have.
 ☐ Keep the camera pointed at the wall, and keep **sliding sideways** as you go.
+☐ **Do not skip the kitchen corner.** It is part of the same room and its walls must be
+  filmed like any other. Walk into the L and cover those walls properly.
 ☐ Do one slow sweep: tilt down until you see the **floor** (count to 3), then up until you
   see the **ceiling** (count to 3), then back to level. **This is how ceiling height gets
-  measured.**
-☐ When you reach the damaged wall, **slow right down** and give it a few extra seconds from
-  two or three different standing positions.
+  measured.** Do it once in the main part and once in the kitchen area.
+☐ When you reach the damaged wall, **slow right down** and film it from two or three
+  different standing positions.
 
-**In the kitchen (R2) and bathroom (R3):**
+**In the bathroom (R2):**
 ☐ **Pause 2 seconds in the doorway**, facing straight through it.
 ☐ Step inside. Even in a tiny space, **shuffle from one side to the other** while filming
   each wall. Two or three sideways steps is enough.
+☐ If there is a **mirror**, film it from an **angle**, never straight on. Get it in the
+  capture — we want it detected and flagged — but a head-on shot poisons the depth.
 ☐ Do the floor-and-ceiling sweep here too.
 ☐ Step back out through the doorway, again facing straight through it.
 
@@ -247,21 +274,20 @@ twice**. Without it you lose that entire scoring row. It is not optional.
 
 The brief allows **2 to 8 stills per room**. Do each space separately.
 
-**Main room (R1) — 7 or 8 photos:**
-☐ Stand in the **doorway**. Take **3 photos**: facing left, straight ahead, and right. Each
-  should overlap the next by about a third.
-☐ Move to one **corner**. Take **2 photos** covering the two opposite walls.
-☐ Move to the **opposite corner**. Take **2 photos** covering the remaining walls.
+**Main room R1, including the kitchen area — exactly 8 photos:**
+☐ Stand at the **main entrance**. Take **3 photos**: facing left, straight ahead, right.
+  Each should overlap the next by about a third.
+☐ Move to one **far corner**. Take **2 photos** covering the opposite walls.
+☐ Move into the **kitchen area**. Take **2 photos** covering its walls.
 ☐ Take **1 photo squarely facing the damaged wall.**
 
-**Kitchen (R2) — 4 to 6 photos:**
-☐ From the **doorway**: 2 photos, left half and right half.
-☐ Step inside and take 2 to 4 more covering every wall, moving sideways between shots.
+That is 8 — the maximum the brief allows. Do not take a ninth.
 
-**Bathroom (R3) — 3 or 4 photos:**
-☐ From the **doorway**: 2 photos.
+**Bathroom R2 — 3 or 4 photos:**
+☐ From the **doorway**: 2 photos, left half and right half.
 ☐ Step in and take 1 or 2 more. If it is too small to step back in, shoot from the doorway
   at different heights and angles.
+☐ Shoot any **mirror from an angle**, never head-on.
 
 **For all of them:**
 ☐ Keep the phone **upright and level** — use the grid. **Never zoom.**
@@ -307,14 +333,34 @@ For **every wall in every room**:
 *Tip: if you're alone and the tape keeps falling, press the hooked end into the corner with
 your foot.*
 
-## D3. Room diagonals — both of them, in every room
+## D3. Diagonals — the check that catches a skewed plan
 
+**Why this matters:** if the system reports a room as a slightly squashed parallelogram
+instead of a rectangle, **all the wall lengths can still be correct**. Only a corner-to-corner
+measurement reveals it. This is the single most valuable measurement you will take.
+
+**Bathroom R2 (rectangular):**
 ☐ Stretch the tape across the floor from one corner to the **opposite** corner. Write it down.
-☐ Do the **other** diagonal too (the other pair of opposite corners). Write it down.
+☐ Do the **other** diagonal. Write it down.
 
-**Why this matters:** if your system reports a room as a slightly squashed parallelogram
-instead of a rectangle, all four wall lengths can still be correct. Only the diagonals
-reveal it. Measure both in every room.
+**Main room R1 (open plan, probably L-shaped):**
+An L-shaped room has no simple "opposite corners", so instead take **three long
+cross-measurements** between corners you can name from your sketch:
+
+☐ From the corner where `R1.W1` meets `R1.W2`, to the **furthest reachable corner**.
+☐ From the corner where `R1.W2` meets `R1.W3`, to another far corner.
+☐ One measurement **across the kitchen L**, corner to corner.
+
+☐ For each one, **write down which two corners you measured between**, like this:
+
+```
+R1.X1 | cross | 5.412 | 5.414 | from W1/W2 corner to W4/W5 corner
+R1.X2 | cross | 4.108 | 4.110 | from W2/W3 corner to W5/W6 corner
+R1.X3 | cross | 2.340 | 2.341 | across the kitchen, W5/W6 to W6/W1 corner
+```
+
+Naming the corners is what makes the measurement usable. A number without its endpoints
+cannot be compared to anything.
 
 ## D4. Ceiling heights — two per room
 
@@ -353,17 +399,18 @@ single thing the reference submission scored zero on — purely because they lef
 
 ## E1. Choose your rooms
 
-The brief asks for **2 rooms**. In a 1 RK that is almost certainly:
+The brief asks for **2 rooms**, and you have exactly two:
 
-☐ **R1, the main room** — your largest and most rectangular space.
-☐ **R2, the kitchen** — or the bathroom, whichever is more rectangular and less cluttered.
+☐ **R1** — the main room with its open kitchen area
+☐ **R2** — the bathroom
 
-☐ **Write down which two you chose:** `______` and `______`
+**This is the only part of the whole exercise that needs two rooms.** Everything else works
+with one. So do not skip the bathroom, however small it is.
 
-*If magicplan refuses to scan a space as small as your bathroom, use the kitchen. If it
-struggles with both, scan the main room only and record plainly that the app could not
-handle the second space — that is a real finding about the incumbent, and it belongs in the
-head-to-head table rather than being quietly dropped.*
+*If magicplan refuses to scan a space as small as your bathroom: scan R1 only, and write
+down plainly that the app could not handle the second space. That is a genuine finding about
+the incumbent and it belongs in the head-to-head table — an app that cannot scan a bathroom
+is a real limitation, and reporting it scores better than a blank row.*
 
 ## E2. Scan them with magicplan
 
@@ -415,9 +462,8 @@ data/own/
     video_a.mov                     first walk
     video_b.mov                     second walk
     photos/
-        main room/                  one folder per space, named as on your sketch
-        kitchen/
-        bathroom/
+        main room/                  R1, including the kitchen area -- 8 photos
+        bathroom/                   R2 -- 3 or 4 photos
     magicplan/
         <the PDF and anything else magicplan exported>
     sketch.jpg                      photo of your labelled paper sketch
@@ -442,16 +488,17 @@ Tick these off before you consider yourself finished:
 
 ☑ magicplan version written down — `2026.38.0`
 ☐ Camera set to Most Compatible, 1080p/30, HDR off, grid on
-☐ Labelled sketch drawn and photographed (R1 main room, R2 kitchen, R3 bathroom)
+☐ Labelled sketch drawn and photographed (R1 main room + kitchen, R2 bathroom)
+☐ Sketch says "open plan -- no door between room and kitchen"
 ☐ Real peeling-paint damage measured and photographed with the tape in shot
 ☐ Staged tape crack added on a different wall, measured, photographed
 ☐ Video walk A recorded, 60–90 s, returned to exact start
 ☐ Video walk B recorded, same route
-☐ Photos taken per space, **never more than 8 in one room**
+☐ 8 photos of R1, 3-4 of the bathroom -- **never more than 8 in one room**
 ☐ Every wall measured twice
-☐ **Both diagonals** measured in every space
-☐ **Two ceiling heights** per space, each written as its two separate parts
+☐ Both diagonals in the bathroom, **three named cross-measurements** in R1
+☐ **Two ceiling heights** per space (R1: one in the main part, one in the kitchen area)
 ☐ Every doorway width and height measured twice
-☐ magicplan scanned two rooms, numbers written down, export saved
+☐ magicplan scanned R1 and R2, numbers written down, export saved
 ☐ Tape crack peeled off
 ☐ Everything copied into `data/own/`
