@@ -1,9 +1,28 @@
 # Field guide — what to do, step by step
 
 Print this. Take it with you. Tick each box as you finish it.
-Device: **iPhone 16 (base)**. Measuring tool: **steel tape**.
+Device: **iPhone 16 (base)**. Measuring tool: **steel tape**. Property: **your 1 RK**.
 
-Total time: about **4 hours**.
+Total time: about **2 hours 15 minutes**.
+
+## What your flat is for, and what it is not for
+
+The brief asks for a multi-room capture of three or more rooms plus a connector. **Your 1 RK
+does not have to provide that** — the three captures Cozmo supplied already do, at 7 to 9
+rooms each with a hallway.
+
+Your flat exists in this benchmark for the two things the supplied captures cannot give:
+
+1. **Real tape ground truth.** Nobody can measure a flat they have never stood in. Every
+   accuracy number we report for the video and photo tiers comes from your rooms.
+2. **A furnished room with damage of two classes**, measured.
+
+Plus the head-to-head against magicplan, which needs two rooms you can measure.
+
+A 1 RK gives us a main room, a kitchen and a bathroom: **three spaces and two or three
+doorways**. That is enough to test room separation, doorway detection and stitching. The
+compliance matrix will state plainly that the large multi-room requirement is met by the
+supplied captures and not by ours.
 
 ---
 
@@ -71,39 +90,54 @@ and at least one region has exactly known dimensions. That is the electrical tap
 
 ---
 
-# PART B — Set up the flat (40 minutes)
+# PART B — Set up the flat (25 minutes)
 
-Use any flat with **three or more rooms plus a hallway** connecting them. Your own is fine.
+Your 1 RK. Treat **every enclosed space as a room**, however small — main room, kitchen,
+bathroom, and any entry passage.
 
-## B1. Prepare every room
+## B1. Prepare every space
 
-☐ Turn on **every light**, including bathroom and kitchen lights.
+☐ Turn on **every light**, including the kitchen and bathroom lights.
 ☐ Open all curtains and blinds.
-☐ Open **every internal door fully**, pushed flat against the wall.
-☐ **Do not move furniture.** The assignment asks for a furnished room — clutter is part of
-   the test, not a problem.
-☐ If a floor is wet or very shiny, dry it, or write a note that it was shiny.
+☐ Open **every internal door fully**, pushed flat against the wall. Bathroom and kitchen
+   doors included — a closed door hides a whole room.
+☐ **Do not move or tidy furniture.** The assignment asks for a furnished room; clutter is
+   part of the test, not a problem.
+☐ Dry any wet or shiny floor, or write a note that it was shiny.
+☐ **Clear a walking lane** around the edges if anything blocks it completely — you need to
+   be able to point the camera at every wall.
 
 ## B2. Draw and label your sketch — DO NOT SKIP THIS
 
 Everything later depends on this. Without labels you cannot tell which measurement belongs
 to which wall, and the whole benchmark becomes unusable.
 
-☐ On paper, draw a rough top-down plan of the flat. **Accuracy does not matter at all** —
-  this is a naming diagram, not a drawing.
-☐ Number each room: write **R1** in the first room, **R2** in the next, and so on. Include
-  the hallway as its own room (e.g. **R5**).
-☐ In each room, start at the **main door** and go **clockwise**. Label each wall:
-  `R1.W1`, `R1.W2`, `R1.W3`, `R1.W4`.
-☐ Label each doorway or opening: `R1.O1`, `R1.O2`.
-☐ Draw an **arrow marking where you will start and finish your walk**.
-
-Example of what your sketch should look like in words:
+☐ On paper, draw a rough top-down plan. **Accuracy does not matter at all** — this is a
+  naming diagram, not a drawing.
+☐ Number each space. For a 1 RK that is typically:
 
 ```
-R1 (living room): W1 = wall with the TV, W2 = wall with the window,
-                  W3 = wall with the sofa, W4 = wall with the main door
-                  O1 = main door, O2 = opening to hallway
+R1 = main room
+R2 = kitchen
+R3 = bathroom
+R4 = entry passage, if you have one
+```
+
+☐ In each space, start at its **doorway** and go **clockwise**. Label each wall:
+  `R1.W1`, `R1.W2`, `R1.W3`, `R1.W4`.
+☐ Label every doorway and opening: `R1.O1` = flat's main entrance, `R1.O2` = opening to the
+  kitchen, and so on. **A doorway between two rooms gets one label**, written on both rooms.
+☐ Draw an **arrow marking where you will start and finish your walk**.
+
+Example, written out:
+
+```
+R1 (main room): W1 = wall with the bed, W2 = wall with the window,
+                W3 = the damaged wall, W4 = wall with the entrance
+                O1 = main entrance door, O2 = doorway to kitchen,
+                O3 = doorway to bathroom
+R2 (kitchen):   W1..W4 clockwise from O2
+R3 (bathroom):  W1..W4 clockwise from O3
 ```
 
 ☐ **Photograph the sketch** with your phone. Keep the paper too.
@@ -157,28 +191,46 @@ which is which.
 
 ---
 
-# PART C — Record the walks (35 minutes)
+# PART C — Record the walks (25 minutes)
+
+## The one rule that matters in a small flat
+
+Your phone works out 3D shape by seeing the same wall from **two different positions**.
+Standing in the middle and spinning gives it almost nothing to work with.
+
+So in every space: **keep moving sideways**, even if it is only a step or two. Slide along
+each wall rather than pivoting on the spot. In a bathroom where you genuinely cannot walk,
+step in and out and shift left and right — any sideways movement is better than none.
 
 ## C1. Video walk number 1
 
 ☐ Open the **Camera** app, swipe to **VIDEO** mode.
-☐ Stand at your chosen start point (the arrow on your sketch).
-☐ Hold the phone **upright** (portrait), at **chest height**, with the camera pointing at
-  the **wall**, not at the floor.
+☐ Stand at your start point (the arrow on your sketch), just inside the main entrance.
+☐ Hold the phone **upright** (portrait), at **chest height**, camera pointing at the **wall**.
 ☐ Press the **red record button**.
-☐ **Stand completely still and count to 3.** Do not move yet. This lets the phone settle.
-☐ Now walk **slowly** — much slower than normal walking, about one step per second.
-☐ Stay about **one arm's length plus a bit** from the wall (roughly 1 metre).
-☐ Follow the walls all the way around each room, keeping the camera pointed at the wall.
-☐ **In every room, do one slow sweep:** tilt the phone down until you see the floor
-  (count to 3), then tilt it up until you see the ceiling (count to 3), then back to level.
-  **This is how ceiling height gets measured. Do it in every single room.**
-☐ When you go through a doorway, **face straight forward through it** and **pause for 2
-  seconds** while standing in the opening.
-☐ **Never whip the phone around a corner.** Turn your whole body slowly instead.
-☐ When you have covered every room, **walk back to your exact starting point**.
-☐ **Stand still and count to 3.** Then press stop.
-☐ The whole walk must be **under 2 minutes**.
+☐ **Stand completely still and count to 3.** Do not move yet.
+
+**In the main room (R1):**
+☐ Walk **slowly** around the room, about one step per second, staying as far from the wall
+  you are filming as the furniture allows. **Half a metre is fine** if that is all you have.
+☐ Keep the camera pointed at the wall, and keep **sliding sideways** as you go.
+☐ Do one slow sweep: tilt down until you see the **floor** (count to 3), then up until you
+  see the **ceiling** (count to 3), then back to level. **This is how ceiling height gets
+  measured.**
+☐ When you reach the damaged wall, **slow right down** and give it a few extra seconds from
+  two or three different standing positions.
+
+**In the kitchen (R2) and bathroom (R3):**
+☐ **Pause 2 seconds in the doorway**, facing straight through it.
+☐ Step inside. Even in a tiny space, **shuffle from one side to the other** while filming
+  each wall. Two or three sideways steps is enough.
+☐ Do the floor-and-ceiling sweep here too.
+☐ Step back out through the doorway, again facing straight through it.
+
+**Finishing:**
+☐ **Never whip the phone around a corner.** Turn your whole body slowly.
+☐ Return to your **exact starting point**, stand still, count to 3, press stop.
+☐ The whole walk should be **60 to 90 seconds**. Under 2 minutes regardless.
 
 ☐ **Rename it later as:** `video_a.mov`
 
@@ -193,25 +245,41 @@ twice**. Without it you lose that entire scoring row. It is not optional.
 
 ## C3. Photographs
 
-For **each room**, one at a time:
+The brief allows **2 to 8 stills per room**. Do each space separately.
 
-☐ Stand in the **doorway**. Take **3 photos**: one facing left, one facing straight ahead,
-  one facing right. Each photo should overlap the next by about a third.
-☐ Walk to one **corner**. Take **2 photos** covering the opposite walls.
-☐ Walk to the **opposite corner**. Take **2 to 3 photos** covering the remaining walls.
-☐ Take **one extra photo facing squarely at each doorway** in that room.
-☐ Keep the phone **upright and level** (use the grid). **Never zoom.**
-☐ That is about **6 to 8 photos per room**. Do not take more than 8.
+**Main room (R1) — 7 or 8 photos:**
+☐ Stand in the **doorway**. Take **3 photos**: facing left, straight ahead, and right. Each
+  should overlap the next by about a third.
+☐ Move to one **corner**. Take **2 photos** covering the two opposite walls.
+☐ Move to the **opposite corner**. Take **2 photos** covering the remaining walls.
+☐ Take **1 photo squarely facing the damaged wall.**
 
-☐ As you finish each room, **note on your sketch** how many photos you took, so you can sort
-  them into folders later.
+**Kitchen (R2) — 4 to 6 photos:**
+☐ From the **doorway**: 2 photos, left half and right half.
+☐ Step inside and take 2 to 4 more covering every wall, moving sideways between shots.
+
+**Bathroom (R3) — 3 or 4 photos:**
+☐ From the **doorway**: 2 photos.
+☐ Step in and take 1 or 2 more. If it is too small to step back in, shoot from the doorway
+  at different heights and angles.
+
+**For all of them:**
+☐ Keep the phone **upright and level** — use the grid. **Never zoom.**
+☐ **Never exceed 8 photos in one room.** The brief caps it.
+☐ Photograph each space's shots **together, in a run**, so you can tell later which photo
+  belongs to which room.
+
+☐ On your sketch, **write how many photos you took in each space.**
 
 ---
 
-# PART D — Measure everything (90 minutes)
+# PART D — Measure everything (45 minutes)
 
-This is the most valuable part of the whole exercise. It is also the most boring. Do it
-carefully — these numbers are what prove your system is accurate.
+This is the most valuable part of the whole exercise, and the most boring. Do it carefully:
+these numbers are the only real ground truth in the entire submission, and they are the one
+thing the supplied captures cannot provide.
+
+A 1 RK is roughly **12 to 16 walls** in total, so this is quicker than it looks.
 
 ## D1. How to record
 
@@ -285,8 +353,17 @@ single thing the reference submission scored zero on — purely because they lef
 
 ## E1. Choose your rooms
 
-☐ Pick the **two most rectangular, least cluttered rooms**. Write down which ones
-  (e.g. R2 and R4).
+The brief asks for **2 rooms**. In a 1 RK that is almost certainly:
+
+☐ **R1, the main room** — your largest and most rectangular space.
+☐ **R2, the kitchen** — or the bathroom, whichever is more rectangular and less cluttered.
+
+☐ **Write down which two you chose:** `______` and `______`
+
+*If magicplan refuses to scan a space as small as your bathroom, use the kitchen. If it
+struggles with both, scan the main room only and record plainly that the app could not
+handle the second space — that is a real finding about the incumbent, and it belongs in the
+head-to-head table rather than being quietly dropped.*
 
 ## E2. Scan them with magicplan
 
@@ -338,17 +415,17 @@ data/own/
     video_a.mov                     first walk
     video_b.mov                     second walk
     photos/
-        living room/                one folder per room, named as on your sketch
-        bedroom 1/
+        main room/                  one folder per space, named as on your sketch
         kitchen/
-        hallway/
+        bathroom/
     magicplan/
         <the PDF and anything else magicplan exported>
     sketch.jpg                      photo of your labelled paper sketch
     damage/
-        stain.jpg
-        crack.jpg
-        <any photos of tape readings>
+        peeling_paint.jpg           the real damage, with the tape in shot
+        peeling_paint_width.jpg
+        peeling_paint_height.jpg
+        crack.jpg                   the staged tape crack
     measurements.csv                your numbers, typed up
 ```
 
@@ -363,15 +440,18 @@ data/own/
 
 Tick these off before you consider yourself finished:
 
-☐ magicplan version number written down
-☐ Labelled sketch drawn and photographed
-☐ Two damage items staged, measured and photographed
-☐ Video walk A recorded, under 2 minutes, returned to start
+☑ magicplan version written down — `2026.38.0`
+☐ Camera set to Most Compatible, 1080p/30, HDR off, grid on
+☐ Labelled sketch drawn and photographed (R1 main room, R2 kitchen, R3 bathroom)
+☐ Real peeling-paint damage measured and photographed with the tape in shot
+☐ Staged tape crack added on a different wall, measured, photographed
+☐ Video walk A recorded, 60–90 s, returned to exact start
 ☐ Video walk B recorded, same route
-☐ 6–8 photos per room, one folder per room
+☐ Photos taken per space, **never more than 8 in one room**
 ☐ Every wall measured twice
-☐ **Both diagonals** measured in every room
-☐ **Two ceiling heights** per room, recorded as two separate parts each
+☐ **Both diagonals** measured in every space
+☐ **Two ceiling heights** per space, each written as its two separate parts
 ☐ Every doorway width and height measured twice
-☐ magicplan scanned both rooms, numbers written down, export saved
+☐ magicplan scanned two rooms, numbers written down, export saved
+☐ Tape crack peeled off
 ☐ Everything copied into `data/own/`

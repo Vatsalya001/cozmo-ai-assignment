@@ -3,14 +3,14 @@
   "mode": "design_review_only",
   "confidence": 0.7,
   "source": "classifier-rules.json",
-  "timestamp": "2026-09-30T13:01:42Z",
-  "classification_id": "cls_1790773302_1884693f",
-  "active_task_id": "cls_1790773302_1884693f",
-  "prompt_hash": "1884693f",
-  "task_origin_prompt_hash": "1884693f",
-  "last_prompt_hash": "1884693f",
+  "timestamp": "2026-09-30T13:07:26Z",
+  "classification_id": "cls_1790773646_eb02a733",
+  "active_task_id": "cls_1790773646_eb02a733",
+  "prompt_hash": "eb02a733",
+  "task_origin_prompt_hash": "eb02a733",
+  "last_prompt_hash": "eb02a733",
   "last_prompt_event": "task",
-  "last_prompt_ts": "2026-09-30T13:01:42Z",
+  "last_prompt_ts": "2026-09-30T13:07:26Z",
   "reasoning": [
     "no mode keyword matched — defaulted to design_review_only per workflow rule"
   ]
