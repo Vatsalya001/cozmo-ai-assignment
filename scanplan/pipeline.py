@@ -18,6 +18,7 @@ from . import __version__
 from .detect import CaptureError, detect_tier
 from .geometry import fusion, planes, regularize, rooms as rooms_mod, walls
 from .ir import CaptureIR
+from .damage import detect as damage_detect, rules as damage_rules
 from .slam import drift as drift_mod
 from .measure import Measurement, from_sigma, log_scale, unobserved
 
@@ -143,6 +144,13 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
         r.polygon_xz = regularize.rectify(r.polygon_xz)
     openings = rooms_mod.openings(labels, grid, free)
 
+    regions, flags, scope_items = [], [], []
+    if damage:
+        regions = damage_detect.detect(ir, found, floor.height_m)
+        flags = damage_rules.evaluate(regions, found, openings,
+                                      storey[0] if storey else None)
+        scope_items = damage_rules.scope(regions, flags)
+
     widen = {"lidar": 1.0, "video": 4.5, "photo": 5.1}[tier]
     room_docs = [_room_document(r, storey, openings, widen) for r in found]
     footprint = sum(r.area_m2 for r in found)
@@ -160,6 +168,13 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
     if not damage:
         warnings.append({"code": "DAMAGE_OFF", "severity": "info",
                          "message": "damage detection switched off (--no-damage)"})
+    elif regions:
+        warnings.append({"code": "DAMAGE_CLASS_FROM_SHAPE", "severity": "warning",
+                         "message": f"{len(regions)} damage region(s) located geometrically, as "
+                                    f"departures from the wall plane. Extents are measured; the "
+                                    f"CLASS is inferred from shape alone and is reported with low "
+                                    f"confidence. Naming a defect needs appearance, not shape -- a "
+                                    f"stain that has not lifted the plaster is perfectly flat"})
 
     return {
         "schema_version": "0.1.0",
@@ -183,9 +198,9 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
             "overlap_m2": 0.0,
             "drift": drift_report.as_dict(),
         },
-        "damage": [],
-        "concealed_flags": [],
-        "scope": [],
+        "damage": [r.as_dict() for r in regions],
+        "concealed_flags": [f.as_dict() for f in flags],
+        "scope": scope_items,
         "quality": {
             "warnings": warnings,
             "interval_widening_factor": widen,
