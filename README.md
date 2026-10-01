@@ -183,6 +183,7 @@ Full list with reasons: [`docs/technical_report.md`](docs/technical_report.md) Â
 | [`technical_report.md`](docs/technical_report.md) | architecture, error budget, fix loop, failure modes |
 | [`fix_loop_declaration.md`](docs/fix_loop_declaration.md) | committed **before** the fix |
 | [`fix_loop.md`](docs/fix_loop.md) | outcome and post-mortem â€” the prediction was wrong |
+| [`declined_changes.md`](docs/declined_changes.md) | **four measured improvements that were rejected, and why** |
 | [`gates.md`](docs/gates.md) | every target, marked brief-derived or our decision |
 | [`capture_protocol.md`](docs/capture_protocol.md) | one page, followable by a non-engineer |
 | [`device_matrix.md`](docs/device_matrix.md) | which tier runs on which hardware |

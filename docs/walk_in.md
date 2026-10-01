@@ -223,6 +223,15 @@ across both generators, and the convention is matched — their source specifies
 ours does), and the **measured depth bias**, which they carry as a 13 mm uncertainty rather
 than correcting.
 
+**"Did you reject anything that would have improved a number?"** Yes, four things, and they
+are written up in `docs/declined_changes.md` with their measured outcomes. The one worth naming:
+adaptive keyframe selection improved runtime 52.7 → 40.8 s and fixed a real aliasing failure,
+but its threshold of 2.9° turned out to be the *only* value in the swept space that clears three
+gates at once — the value its own stated derivation gives leaves G-REPEAT-ROOMS not met. That is
+a constant chosen by its effect on the score, so it did not ship. Also declined: a wall-plane
+change that reached 11/11 MET only by letting the device choose which surfaces the laser then
+measured, which relaxes what the gate penalises.
+
 **"What would you do with another week?"** Find a single-storey ARKitScenes venue with its
 laser cloud and close G-CEIL; replace the global `door_max_m` with a split that adapts to local
 room scale; get tape truth into the head-to-head. In that order — the first turns an unmeasured
