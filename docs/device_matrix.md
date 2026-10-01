@@ -18,14 +18,16 @@ of our own. This is stated wherever it affects a result rather than left to be i
 
 | Tier | State | Runtime | Measured accuracy |
 |---|---|---|---|
-| **LiDAR** | complete | 6–43 s per capture, CPU only | Synthetic room of exactly known size: ceiling height **−3 mm**, floor area **+0.05%**, wall dimensions **−40 mm on 4.00 m** and **−70 mm on 3.00 m**. Repeatability on two real walks of one flat: footprint **0.8% apart**, room count **4 vs 5** |
-| **Video** | not built | — | — |
-| **Photo** | not built | — | — |
+| **LiDAR** | complete | 6–53 s per capture, CPU only | Synthetic room of exactly known size: ceiling height **−3 mm**, floor area **+0.05%**, wall dimensions **−40 mm on 4.00 m** and **−70 mm on 3.00 m**. Repeatability on two real walks of one flat: footprint **0.7% apart**, room count **4 vs 5** |
+| **Video** | built, gate not met | ~95 s per capture | Footprint **62% and 26%** from the LiDAR reference on the same captures; produced a plan on 2 of 3, failed outright on the third. Interval widening **×11, measured** from that error — it contains the reference 2/2 |
+| **Photo** | built, stitch fails by construction | ~10 s | Room boxes from unposed stills, laid out side by side and joined to nothing. No reference exists for these folders, so no accuracy number is claimed |
 
-Both missing tiers require a monocular depth and pose model, because a plain camera measures
+Both lower tiers infer depth with a metric monocular model, because a plain camera measures
 no distance and scale is mathematically unobservable from monocular images. That is inference
-filling in for a sensor, and it is why their intervals are designed to widen — the factors
-(×4.5 video, ×5.1 photo) are wired but unexercised, since neither tier runs yet.
+filling in for a sensor, and it is why their intervals widen to **×11** — a factor measured
+from the error against the LiDAR reference, not chosen. The video tier also takes its poses
+from the capture app's ARKit track, which an iPhone 15 non-Pro produces without any depth
+sensor; the photo tier has no poses at all, which is why it cannot stitch.
 
 ## Processing hardware
 

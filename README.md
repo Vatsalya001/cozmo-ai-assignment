@@ -1,6 +1,7 @@
 # scanplan
 
-Turn an iPhone LiDAR scan into a measured, dimensioned floor plan — with damage regions,
+Turn an iPhone capture — LiDAR scan, video walkthrough, or a folder of photos — into a
+measured, dimensioned floor plan — with damage regions,
 concealed-damage flags naming the rule that fired, a repair scope keyed to surfaces, and a
 **90% interval on every number**.
 
@@ -12,13 +13,13 @@ Built for the Cozmo AI Applied AI case study. Start with
 
 | Tier | Input | State |
 |---|---|---|
-| **LiDAR** | Stray Scanner export folder | **Complete.** 6–43 s per capture, CPU only, no model, deterministic |
-| **Video** | `.mov` from the Camera app | **Not built.** Detected, then a stated error |
-| **Photo** | one folder per room, 2–8 stills | **Not built.** Detected, then a stated error |
+| **LiDAR** | Stray Scanner export folder | **Complete.** 6–53 s per capture, CPU only, no model, deterministic |
+| **Video** | `.mov` + the capture app's pose track | **Built, gate not met.** ~95 s. 62% and 26% from the LiDAR reference; failed on 1 of 3 captures |
+| **Photo** | one folder per room, 2–8 stills | **Built.** ~10 s. Room boxes from unposed stills; does not stitch, by construction |
 
 Measured accuracy, against a synthetic room of exactly known size:
 **ceiling height −3 mm, floor area +0.05%**, wall dimensions −40 mm on 4.00 m and −70 mm on
-3.00 m. Repeatability on two real walks of one flat: footprint **0.8% apart**, room count
+3.00 m. Repeatability on two real walks of one flat: footprint **0.7% apart**, room count
 **4 vs 5** (this gate is not met — see [`docs/fix_loop.md`](docs/fix_loop.md)).
 
 The device available for this work is an **iPhone 16 base, which has no LiDAR**, so the LiDAR
@@ -30,10 +31,10 @@ tier runs on the three captures Cozmo supplied and on ARKitScenes. Stated in ful
 Needs Python 3.10–3.12. **No model weights and no network are required for the LiDAR tier.**
 
 ```bash
-git clone <this repo> && cd scanplan
+git clone https://github.com/Vatsalya001/cozmo-ai-assignment.git && cd cozmo-ai-assignment
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
-pytest -q                                  # expect: 38 passed
+pytest -q                                  # expect: 68 passed
 ```
 
 On a CPU-only Linux machine, install PyTorch from the CPU index **first** if you plan to add
@@ -90,20 +91,25 @@ silently corrupted three PNGs while the archives themselves verified fine.
 | Script | Produces |
 |---|---|
 | `bench/gates.py` | every gate current data can answer → `results/gates.md` |
+| `bench/video_vs_lidar.py` | the video tier against the LiDAR reference, and the interval calibration |
+| `bench/photo_tier.py` | photo-tier room boxes and stitch grouping |
+| `bench/head_to_head.py` | magicplan comparison, dimension by dimension |
 | `bench/fix_loop_diagnosis.py` | the evidence behind the fix-loop declaration |
 | `bench/arkitscenes_laser.py` | depth-bias calibration against FARO laser truth |
 | `scripts/capture_manifest.py` | checksum the captures, and check them later |
 
 ## Honest limits
 
-- **Two of three mandatory tiers are not built.** This is the largest gap.
+- **The video and photo tiers miss their accuracy gates by a wide margin**, and the video tier failed outright on one of three captures. Their intervals are widened ×11 from measured error so they do not overclaim.
 - **No tape or laser truth exists for the captures the pipeline runs on**, so most gates read
   *not measured*. Absolute accuracy comes from synthetic geometry or from repeatability.
 - **The device depth bias is an assumption**, 12 mm, labelled as such. The calibration
   benchmark currently returns NOT MEASURED rather than a number it cannot defend.
 - **Room splitting is not repeatable** — 4 vs 5 rooms on two walks of one flat.
 - **Damage class is shape-derived**, confidence ≤ 0.5. Naming a defect needs appearance.
-- **Mirrors, glass and low light are not handled.**
+- **Mirrors and glass are not detected.** Two geometric tests were built and neither separates
+  a reflection from ordinary geometry, so the flag is disabled and every run says so rather
+  than shipping a detector that fires on every capture. Wet floors and low light *are* detected.
 
 Full list with reasons: [`docs/technical_report.md`](docs/technical_report.md) §7.
 

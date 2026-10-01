@@ -29,7 +29,7 @@ the benchmarks are written once.
 
 **The LiDAR tier uses no neural model at all.** The phone measures distance directly; the rest
 is plane fitting, rasterisation, morphology, connected components and least squares. It runs in
-6–43 s on a CPU-only laptop, is byte-for-byte deterministic, and needs no weights — so it
+6–53 s on a CPU-only laptop, is byte-for-byte deterministic, and needs no weights — so it
 cannot fail at a live demo because a 3 GB checkpoint did not cache.
 
 ## 2. Geometry pipeline
@@ -95,7 +95,7 @@ interval, and the validator enforces `ci_low ≤ value ≤ ci_high` before anyth
 | Depth noise at the surface | 2.5 cm sigma on a wall length |
 | Plane-fit residual | RMS / √n |
 | **Unmeasured device depth bias** | **12 mm, added in quadrature, labelled an assumption** |
-| Tier thinness | ×1.0 LiDAR, ×4.5 video, ×5.1 photo (latter two wired, unexercised) |
+| Tier thinness | ×1.0 LiDAR, **×11 video and photo — measured**, not chosen: ×4.5 left the reference outside the interval on both captures |
 
 The bias allowance exists because of a caught mistake. The first ceiling-height sigma came out
 at **0.1 mm** — the standard error of 250,000 points. Arithmetically correct, and confident
@@ -144,7 +144,7 @@ Full account: [`fix_loop.md`](fix_loop.md).
 
 ## 6. Validation
 
-38 tests. The ones that matter assert **accuracy against geometry we constructed and therefore
+68 tests. The ones that matter assert **accuracy against geometry we constructed and therefore
 cannot be wrong about** — the fixture writes a real Stray Scanner export, so the actual loader
 is exercised, not a mock.
 
