@@ -1,0 +1,111 @@
+{
+  "part": "Part 3 \u2014 head-to-head",
+  "opponent": "magicplan 2026.38.0, Manual-Scan Corner Mode, iPhone 16 base (no LiDAR)",
+  "declared_deviation": "The brief specifies the LiDAR tier for this comparison. The device available has no depth sensor, so our side runs at the video tier. This is harder on us, not easier: the video tier measures 26-69% from the LiDAR reference, while magicplan's Corner Mode is a published 5-15 cm per wall.",
+  "rows": [
+    {
+      "room": "R1",
+      "dimension": "left wall",
+      "magicplan_m": 3.62,
+      "truth_m": null,
+      "ours_m": null
+    },
+    {
+      "room": "R1",
+      "dimension": "right wall",
+      "magicplan_m": 4.1,
+      "truth_m": null,
+      "ours_m": null
+    },
+    {
+      "room": "R1",
+      "dimension": "bottom wall",
+      "magicplan_m": 3.44,
+      "truth_m": null,
+      "ours_m": null
+    },
+    {
+      "room": "R1",
+      "dimension": "top-left segment",
+      "magicplan_m": 1.78,
+      "truth_m": null,
+      "ours_m": null
+    },
+    {
+      "room": "R1",
+      "dimension": "notch depth",
+      "magicplan_m": 0.49,
+      "truth_m": null,
+      "ours_m": null
+    },
+    {
+      "room": "R1",
+      "dimension": "top-right segment",
+      "magicplan_m": 1.66,
+      "truth_m": null,
+      "ours_m": null
+    },
+    {
+      "room": "R1",
+      "dimension": "bottom door width",
+      "magicplan_m": 0.77,
+      "truth_m": null,
+      "ours_m": null
+    },
+    {
+      "room": "R1",
+      "dimension": "upper-right door width",
+      "magicplan_m": 0.9,
+      "truth_m": null,
+      "ours_m": null
+    },
+    {
+      "room": "R1",
+      "dimension": "ceiling height",
+      "magicplan_m": 2.83,
+      "truth_m": null,
+      "ours_m": null
+    },
+    {
+      "room": "R1",
+      "dimension": "floor area",
+      "magicplan_m": 13.25,
+      "truth_m": null,
+      "ours_m": null
+    },
+    {
+      "room": "R1",
+      "dimension": "perimeter",
+      "magicplan_m": 13.41,
+      "truth_m": null,
+      "ours_m": null
+    },
+    {
+      "room": "R2",
+      "dimension": "ceiling height",
+      "magicplan_m": 2.79,
+      "truth_m": null,
+      "ours_m": null
+    },
+    {
+      "room": "R2",
+      "dimension": "floor area",
+      "magicplan_m": 2.79,
+      "truth_m": null,
+      "ours_m": null
+    },
+    {
+      "room": "R2",
+      "dimension": "perimeter",
+      "magicplan_m": 5.91,
+      "truth_m": null,
+      "ours_m": null
+    }
+  ],
+  "dimensions_total": 14,
+  "dimensions_scored": 0,
+  "missing_inputs": [
+    "tape ground truth (data/own/measurements.csv) \u2014 the reference both sides are scored against",
+    "our own output for these rooms (no capture of data/own has been processed into out/)"
+  ]
+}

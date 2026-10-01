@@ -114,3 +114,49 @@ git diff 01cee6f <fix commit> -- scanplan/      # the change
 ```
 
 Committed results: `bench/results/fix_loop_before_gates.json` and `fix_loop_after_gates.json`.
+
+---
+
+## 9. After the fix loop: a second attempt at the same gate, reverted
+
+The post-mortem above named hierarchical splitting as the next thing to try — erode
+progressively and claim each component at the first width that separates it, so every room
+gets its own scale instead of one for the building. It was built and measured.
+
+**An experiment over 36 configurations found one that met both repeatability gates:**
+widths 1.00 → 0.55 in steps of 0.15, seed 0.30 m², minimum room 1.80 m² — 7 rooms against 7,
+footprint 1.4% apart. Against the shipped 4-against-5 at 1.6%, that looked like a clear win,
+and it brought the room count closer to the reference of 9.
+
+**Shipped through the real pipeline it was a regression:**
+
+| | Rooms | Footprint gap | |
+|---|---|---|---|
+| Shipped single erosion | 4 vs 5 | **0.7%** | footprint MET |
+| Hierarchical, as predicted by the experiment | 7 vs 7 | 1.4% | both MET |
+| Hierarchical, **actually measured** | 6 vs 7 | **6.2%** | both NOT MET |
+
+Reverted.
+
+### Why the experiment was wrong, and why that is the real finding
+
+**The experiment harness did not match the shipped pipeline.** It rebuilt the geometry by hand
+and omitted drift correction, which the pipeline applies before fusion.
+
+That is the *same error* as §6.1 — the one this post-mortem had already identified, written up,
+and recommended against. Knowing the failure mode did not prevent repeating it, because the
+convenient way to sweep 36 configurations is to bypass the pipeline, and the convenient way is
+the wrong way.
+
+The rule that follows is narrower and more useful than "be careful": **a configuration sweep
+must call the same entry point the product calls.** `pipeline.run()` already takes
+`door_max_m` and `min_seed_area_m2` as explicit parameters precisely so a sweep can go through
+it; the hierarchical experiment did not use them because the new parameters were not wired
+that way yet, and so it measured something else.
+
+### What this costs, stated plainly
+
+G-REPEAT-ROOMS remains **NOT MET at 4 against 5**. Two attempts have now failed to move it:
+the declared fix narrowed the gap from 3 to 1 without closing it, and this one made both gates
+worse. The honest conclusion is that room splitting on this data is not a parameter problem,
+and a third attempt would need a different method rather than a different constant.
