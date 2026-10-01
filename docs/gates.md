@@ -56,6 +56,14 @@ failing number had nothing to check it against.
 | G-REPEAT-ROOMS | G-REPEAT | Both walks report the **same room count** | The companion to the above. Area repeating while its division into rooms does not is a specific, diagnosable failure, and separating the two is what made it visible |
 | A-CALIB-VIDEO | A-CALIB | The nominal 90% interval **contains the LiDAR reference** on every capture where the video tier produced a plan | A-CALIB asks for 85–95% coverage of *truth*. There is no truth for these captures, and with 2 usable captures a coverage percentage would be meaningless anyway. Containing the reference is weaker and is honestly weaker: it says the interval is wide enough for the error we can see, not that it is correctly sized |
 | A-DMG-DETECT | A-DMG | Staged damage found with the right class | Reported as **NOT BUILT**: B.2 was never captured, because the only damaged room available is in a property with no LiDAR-capable device. The row exists so the absence is visible in the gate table rather than only in the compliance matrix |
+| G-H2H-ENGINEER | G-H2H | Beat or tie **an independent implementation** on ≥ 70% of shared dimensions, against **exact** synthetic truth | G-H2H needs tape truth for the rooms magicplan measured, and that does not exist, so it stays PENDING. An opponent that reads the same public capture format can be handed the *identical* input instead, and a synthetic room is 4.00 × 3.00 m because an equation put it there — truth is exact rather than ±5 mm. **This does not satisfy Part 3**, which asks for a consumer scanning app; it is supplementary evidence and is reported as its own row so it can never be mistaken for G-H2H |
+
+**G-H2H-ENGINEER runs on two captures that disagree about the sensor**, and that is the design,
+not a detail. A synthetic capture encodes an assumption about whether the device reads short,
+and the two pipelines take opposite positions on it: ours measured an 18 mm bias against FARO
+laser truth and corrects it, the opponent carries 13 mm as an uncertainty and corrects nothing.
+Running only the capture that suits our correction would be choosing the input. Both are run,
+both are reported, and the result splits exactly where that disagreement predicts.
 
 **2% for G-REPEAT-FOOTPRINT is our decision.** It is roughly twice the 1%/A-WALL-LIDAR linear
 target, on the standing assumption that area error runs about twice linear error — the same

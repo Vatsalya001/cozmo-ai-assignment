@@ -23,6 +23,7 @@ reported rather than omitted, because an absent row reads as a pass.
 | G-WALL-PHOTO | photo | within +-8% of reference | 2 room box(es), footprint 4.12 m2 | **NOT MEASURED** |
 | G-PHOTO-STITCH | photo | one stitched plan, correct adjacency | 2 disconnected group(s) | **NOT MET** |
 | G-H2H | lidar | beat or tie on >= 70% of shared dimensions | PENDING | **NOT MEASURED** |
+| G-H2H-ENGINEER | lidar | beat or tie an independent implementation on >= 70% | 9/10 = 90.0% | **MET** |
 | A-DMG-DETECT | all | staged damage found with right class | NOT BUILT | **NOT MEASURED** |
 
 ## Detail
@@ -41,4 +42,5 @@ reported rather than omitted, because an absent row reads as a pass.
 - **G-WALL-PHOTO** — no reference exists for the derived photo folders; the tier reports boxes, not measured walls
 - **G-PHOTO-STITCH** — fails by construction: stills carry no poses, so nothing in the input says how the rooms relate. Reported as an error in every photo-tier run
 - **G-H2H** — magicplan captured; tape measurements outstanding
+- **G-H2H-ENGINEER** — cozmo-scan @ a31d297 on identical synthetic captures with exact truth; supplementary to Part 3, not a substitute
 - **A-DMG-DETECT** — damage detection not implemented

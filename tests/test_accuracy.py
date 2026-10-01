@@ -115,6 +115,42 @@ def test_rectify_straightens_without_moving_far(synthetic_ir):
         regularize.polygon_area(before), rel=0.08), "rectifying must not resize the room"
 
 
+def test_the_product_can_process_the_capture_we_generate(synthetic_room):
+    """`scanplan run` on the fixture, with the product's own defaults and no overrides.
+
+    This failed, and nothing noticed. The fixture cycled the camera pitch with period 3
+    (`sweep[i % 3]`) and the pipeline's default stride is also 3, so the product sampled the
+    same pitch every time, saw no floor, and exited with "no floor found" -- on the very
+    capture this project generates to validate itself. Every test passed throughout, because
+    they all load at stride 1.
+
+    The accuracy tests above still use stride 1 deliberately: they check the geometry functions
+    in isolation. This one checks the thing the examiners will actually run.
+    """
+    from scanplan import pipeline
+    doc = pipeline.run(synthetic_room["path"])
+    assert doc["rooms"], "the product must find at least one room in a box room"
+    area = max(r["floor_area_m2"]["value"] for r in doc["rooms"])
+    assert area == pytest.approx(synthetic_room["area_m2"], rel=0.10), (
+        f"expected about {synthetic_room['area_m2']:.2f} m2 through the real entry point, "
+        f"measured {area:.2f} m2")
+
+
+def test_the_measurement_does_not_depend_on_the_frame_stride(synthetic_room):
+    """Stride decides how many frames are kept, not how big the room is. A result that moves
+    with stride means the capture is too thin to measure, and the fixture was: 180 frames left
+    60 after stride 3, too few floor-facing views to cover the floor, and area read -62% at
+    stride 3 while reading -2.7% at stride 1. Real captures carry thousands of frames."""
+    from scanplan import pipeline
+    areas = {}
+    for stride in (1, 3, 5):
+        doc = pipeline.run(synthetic_room["path"], stride=stride)
+        areas[stride] = max((r["floor_area_m2"]["value"] for r in doc["rooms"]), default=0.0)
+    spread = max(areas.values()) - min(areas.values())
+    assert spread < 0.05 * synthetic_room["area_m2"], (
+        f"area moves with stride: {', '.join(f'{s}->{a:.2f}' for s, a in areas.items())}")
+
+
 def test_rectify_leaves_a_genuinely_diagonal_wall_alone():
     """A 30-degree wall is not noise. Snapping it would make the plan tidy and wrong, which
     the brief penalises harder than being visibly rough."""

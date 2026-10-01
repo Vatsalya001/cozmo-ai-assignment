@@ -18,7 +18,7 @@
 #
 # So each result file is now classified. REGENERATED means the clone recomputed it from the
 # captures and the committed copy matched. SKIPPED means it was not recomputed, and the reason
-# is printed every run. Three of them can never be recomputed from this commit:
+# is printed every run. Two of them can never be recomputed from this commit:
 #
 #   fix_loop_before_gates.json  a snapshot of the code BEFORE the fix. Regenerating it from
 #                               HEAD would produce the after-state and silently destroy the
@@ -49,6 +49,7 @@ PLAN=(
   "arkitscenes_laser.json|arkitscenes_laser|arkitscenes|"
   "fix_loop_diagnosis.json|fix_loop_diagnosis|supplied|"
   "head_to_head.json|head_to_head|own|"
+  "head_to_head_engineer.json|head_to_head_engineer|-|"   # "-" = needs no linked dataset
   "video_vs_lidar.json|video_vs_lidar|supplied|needs the models extra (torch + weights); pass --with-models"
   "photo_tier.json|photo_tier|supplied|needs the models extra (torch + weights); pass --with-models"
   "fix_loop_before_gates.json|-|-|snapshot of the code BEFORE the fix; not derivable from HEAD"
@@ -115,7 +116,7 @@ for row in "${PLAN[@]}"; do
     printf '  %-12s %-28s %s\n' "SKIPPED" "$name" "$why"
     skipped=$((skipped+1)); continue
   fi
-  if [ ! -e "data/$needs" ]; then
+  if [ "$needs" != "-" ] && [ ! -e "data/$needs" ]; then
     printf '  %-12s %-28s %s\n' "SKIPPED" "$name" "data/$needs is not present on this machine"
     skipped=$((skipped+1)); continue
   fi

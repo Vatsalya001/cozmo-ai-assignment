@@ -182,7 +182,26 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
     fusion.fuse(ir, min_confidence=0 if tier == 'video' else 1)
     floor, ceiling = planes.floor_and_ceiling(ir.points, ir.trajectory[:, 1])
     if floor is None:
-        raise CaptureError(f"{source}: no floor found; the capture must show the floor")
+        # Distinguish two very different causes that used to give the same message.
+        #
+        # If nothing at all is below the camera, the frames we KEPT never looked down -- which
+        # does not mean the capture never looked down. A capture whose sweep is periodic can
+        # alias with a fixed stride: one real export cycles its pitch every 3 frames, and
+        # stride 3 then samples the same upward pitch forever. Telling the operator "the
+        # capture must show the floor" when it plainly does, and offering no way to change the
+        # sampling, is the worst of both.
+        below = (ir.points[:, 1] < float(np.median(ir.trajectory[:, 1]))).sum()
+        if below == 0 and stride > 1:
+            raise CaptureError(
+                f"{source}: no floor found, and none of the {len(ir.frames)} sampled frames "
+                f"looked below the camera at all. That is the signature of a periodic capture "
+                f"sweep aliasing with the frame stride rather than of a capture that never saw "
+                f"the floor. Re-run with --stride 1 (slower, keeps every frame); if that also "
+                f"finds no floor, the capture genuinely never showed it")
+        raise CaptureError(
+            f"{source}: no floor found; the capture must show the floor. "
+            f"{below} of {len(ir.points)} points are below the camera, which is too few to fit "
+            f"a floor plane -- ask for a re-walk with the floor sweep in the capture protocol")
     storey = planes.ceiling_height(floor, ceiling)
 
     # Yaw-align before rasterising: the cloud is gravity-aligned but sits at whatever heading

@@ -1,0 +1,27 @@
+{
+  "opponent": {
+    "name": "cozmo-scan",
+    "author": "Ashu Pal",
+    "repo": "https://github.com/ashupal22/cozmo-scan",
+    "commit": "a31d297",
+    "note": "an independent submission to the same brief; NOT a consumer scanning app, so this supplements Part 3 rather than satisfying it"
+  },
+  "captures": {
+    "biased": {
+      "floor area": 15.53,
+      "ceiling height": 2.489,
+      "long dimension": 4.478,
+      "short dimension": 3.4800000000000004,
+      "perimeter": 15.89,
+      "_rooms": 1
+    },
+    "ideal": {
+      "floor area": 15.93,
+      "ceiling height": 2.519,
+      "long dimension": 4.527,
+      "short dimension": 3.528,
+      "perimeter": 16.09,
+      "_rooms": 1
+    }
+  }
+}

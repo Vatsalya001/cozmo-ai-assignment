@@ -1,0 +1,132 @@
+{
+  "gate": "G-H2H-ENGINEER: beat or tie an independent implementation on >= 70% of shared dimensions, against exact synthetic truth",
+  "opponent": {
+    "name": "cozmo-scan",
+    "author": "Ashu Pal",
+    "repo": "https://github.com/ashupal22/cozmo-scan",
+    "commit": "a31d297",
+    "note": "an independent submission to the same brief; NOT a consumer scanning app, so this supplements Part 3 rather than satisfying it"
+  },
+  "relationship_to_part_3": "Part 3 asks for a consumer scanning app and is bench/head_to_head.py (magicplan, PENDING for want of tape truth). This is supplementary: an independent engineer's implementation, which unlike an app can be handed the identical input, so the comparison carries exact truth instead of a tape reading",
+  "method": "both pipelines read the public Stray Scanner format, so both measure the SAME synthetic capture of a room that is 4.00 x 3.00 m with a 2.50 m ceiling by construction. Room dimensions are the polygon bounding box, not named walls: two independent implementations share no wall identities, and matching each of theirs to whichever of ours is closest would flatter whoever reports more walls",
+  "why_two_captures": "a synthetic capture encodes an assumption about the sensor, and these two pipelines take opposite positions on it. scanplan measured an 18 mm bias against FARO laser truth and corrects it; cozmo-scan carries 13 mm as an uncertainty and corrects nothing. Running only the capture that suits us would be choosing the input. Both are run and both are reported",
+  "caveat": "synthetic geometry flatters both: no furniture, no occlusion, no reflective surfaces, noiseless depth. This bounds what each implementation does to clean input and says nothing about robustness on real rooms",
+  "rows": [
+    {
+      "capture": "biased",
+      "models": "the device as MEASURED: reads 18 mm short of laser truth",
+      "dimension": "floor area",
+      "truth": 12.0,
+      "scanplan": 11.994,
+      "cozmo_scan": 15.53,
+      "scanplan_error_m": 0.006,
+      "cozmo_scan_error_m": 3.53,
+      "we_beat_or_tie": true
+    },
+    {
+      "capture": "biased",
+      "models": "the device as MEASURED: reads 18 mm short of laser truth",
+      "dimension": "ceiling height",
+      "truth": 2.5,
+      "scanplan": 2.4969,
+      "cozmo_scan": 2.489,
+      "scanplan_error_m": 0.0031,
+      "cozmo_scan_error_m": 0.011,
+      "we_beat_or_tie": true
+    },
+    {
+      "capture": "biased",
+      "models": "the device as MEASURED: reads 18 mm short of laser truth",
+      "dimension": "long dimension",
+      "truth": 4.0,
+      "scanplan": 3.95,
+      "cozmo_scan": 4.478,
+      "scanplan_error_m": 0.05,
+      "cozmo_scan_error_m": 0.478,
+      "we_beat_or_tie": true
+    },
+    {
+      "capture": "biased",
+      "models": "the device as MEASURED: reads 18 mm short of laser truth",
+      "dimension": "short dimension",
+      "truth": 3.0,
+      "scanplan": 2.92,
+      "cozmo_scan": 3.48,
+      "scanplan_error_m": 0.08,
+      "cozmo_scan_error_m": 0.48,
+      "we_beat_or_tie": true
+    },
+    {
+      "capture": "biased",
+      "models": "the device as MEASURED: reads 18 mm short of laser truth",
+      "dimension": "perimeter",
+      "truth": 14.0,
+      "scanplan": 13.74,
+      "cozmo_scan": 15.89,
+      "scanplan_error_m": 0.26,
+      "cozmo_scan_error_m": 1.89,
+      "we_beat_or_tie": true
+    },
+    {
+      "capture": "ideal",
+      "models": "an ideal sensor with no bias",
+      "dimension": "floor area",
+      "truth": 12.0,
+      "scanplan": 12.2196,
+      "cozmo_scan": 15.93,
+      "scanplan_error_m": 0.2196,
+      "cozmo_scan_error_m": 3.93,
+      "we_beat_or_tie": true
+    },
+    {
+      "capture": "ideal",
+      "models": "an ideal sensor with no bias",
+      "dimension": "ceiling height",
+      "truth": 2.5,
+      "scanplan": 2.5277,
+      "cozmo_scan": 2.519,
+      "scanplan_error_m": 0.0277,
+      "cozmo_scan_error_m": 0.019,
+      "we_beat_or_tie": false
+    },
+    {
+      "capture": "ideal",
+      "models": "an ideal sensor with no bias",
+      "dimension": "long dimension",
+      "truth": 4.0,
+      "scanplan": 3.99,
+      "cozmo_scan": 4.527,
+      "scanplan_error_m": 0.01,
+      "cozmo_scan_error_m": 0.527,
+      "we_beat_or_tie": true
+    },
+    {
+      "capture": "ideal",
+      "models": "an ideal sensor with no bias",
+      "dimension": "short dimension",
+      "truth": 3.0,
+      "scanplan": 2.96,
+      "cozmo_scan": 3.528,
+      "scanplan_error_m": 0.04,
+      "cozmo_scan_error_m": 0.528,
+      "we_beat_or_tie": true
+    },
+    {
+      "capture": "ideal",
+      "models": "an ideal sensor with no bias",
+      "dimension": "perimeter",
+      "truth": 14.0,
+      "scanplan": 13.9,
+      "cozmo_scan": 16.09,
+      "scanplan_error_m": 0.1,
+      "cozmo_scan_error_m": 2.09,
+      "we_beat_or_tie": true
+    }
+  ],
+  "dimensions_total": 10,
+  "dimensions_scored": 10,
+  "notes": [],
+  "beat_or_tie": 9,
+  "beat_or_tie_pct": 90.0,
+  "gate_met": true
+}

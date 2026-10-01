@@ -11,7 +11,7 @@ Everything below is current as of the latest commit. If a number here disagrees 
 
 ```bash
 cd cozmo-ai-assignment && source .venv/bin/activate
-pytest -q                 # 86 passed
+pytest -q                 # 98 passed
 scanplan --version        # scanplan 0.1.0
 ```
 
@@ -102,13 +102,12 @@ Also state: an L-shaped room returns as a rectangle. The tier reports room boxes
   −27 mm, so the **4.1 mm standard deviation** is what the single correction leaves unexplained
   and that is carried on every surface height.
 - **Ceiling height** is the tightest quantity: on synthetic geometry whose true height is
-  2.500 m by construction, it reads **2.4967 m — 3.3 mm low, σ 5.7 mm**, and the floor lands
-  within 1.8 mm of zero.
-- **Floor area reads short by design — about −3%.** Area is the floor actually measured, not
-  what a flood fill could reach, so it under-reports rather than inventing; an early version
-  that filled was 3× too large. If asked why it is not better: it used to read +0.05%, which
-  was a 12 mm over-correction cancelling this −3%. Fixing the sensor model made the number look
-  worse and made it true.
+  2.500 m by construction, it reads **2.497 m — 3.1 mm low, σ 5.7 mm**, and the floor lands
+  within 1.5 mm of zero. Measured through `scanplan run` with the shipped defaults, not a
+  configuration only the tests use.
+- **Floor area is measured, not filled** — it is the floor actually covered, so it can only
+  under-report, never invent. On the synthetic room it reads **−0.05%**. An early version that
+  flood-filled came out 3× too large, which is the failure this design removes.
 - **Room count may not match what a human would say.** It under-splits. A merged pair still
   reports a correct combined area; an invented room does not.
 - **Runtime is not in `gates.json`** on purpose — wall-clock is a property of the machine. It
@@ -125,6 +124,7 @@ from `gates.json`.
 | ✅ | A-RUNTIME, A-DET, A-SCHEMA, G-DRIFT | met |
 | ✅ | G-REPEAT-ROOMS | met — 5 rooms vs 5 from two walks of one flat |
 | ✅ | A-CALIB-VIDEO | met — reference inside the widened interval, 2/2 |
+| ✅ | G-H2H-ENGINEER | met — **9/10 (90%)** vs an independent implementation on exact truth |
 | ❌ | G-REPEAT-FOOTPRINT | **not met** — 3.2% apart |
 | ❌ | G-WALL-VIDEO | **not met** — 60% worst |
 | ❌ | G-PHOTO-STITCH | **not met**, by construction |
@@ -142,7 +142,8 @@ properties. `docs/fix_loop.md` §10 has it in full.
 
 | Symptom | Do this |
 |---|---|
-| `error: ... no floor found` | The capture never showed the floor. Ask for a re-walk with the floor sweep in `capture_protocol.md` §Tier 1 step 4 |
+| `error: ... no floor found` **and "none of the sampled frames looked below the camera"** | Not a bad capture — a periodic sweep aliasing with the frame stride. Re-run with `--stride 1`. This is a real failure mode: one capture in hand cycles its pitch every 3 frames and the default stride is 3 |
+| `error: ... no floor found` (points *are* below the camera) | The capture genuinely never showed enough floor. Ask for a re-walk with the floor sweep in `capture_protocol.md` §Tier 1 step 4 |
 | `error: ... incomplete Stray Scanner export, missing ...` | Wrong folder level — point at the one containing `odometry.csv` |
 | `error: the video and photo tiers need the model extra` | `pip install -e ".[dev,models]"`. The LiDAR tier still works; offer it |
 | `error: ... the video tier needs a pose track` | A bare video carries no poses. Not recoverable on the day |
@@ -181,6 +182,16 @@ install, regenerate, diff. With `--with-models`, **eight of eleven come back byt
 and the other three are named along with why they cannot: two are historical snapshots of code
 states that no longer exist, one is wall-clock. It has caught five real defects, including that
 `fix_loop_diagnosis.py` was itself measuring a pipeline we do not ship.
+
+**"Has anyone else's implementation been compared against yours?"** Yes, and it is a committed
+gate. [cozmo-scan](https://github.com/ashupal22/cozmo-scan), an independent submission to this
+same brief, reads the same public capture format, so both pipelines were handed the **identical**
+synthetic capture of a room that is 4.00 × 3.00 m by construction. **Beat or tie on 9 of 10
+dimensions, 90%** — G-H2H-ENGINEER. The one loss is ceiling height on a capture modelling an
+*unbiased* sensor, where our 18 mm correction is unwarranted. Two captures are run on purpose,
+one modelling the device as measured and one modelling an ideal sensor, because running only the
+one that suits our correction would be choosing the input. This does **not** satisfy Part 3,
+which asks for a consumer scanning app; that is magicplan, and it is still PENDING.
 
 **"What would you do with another week?"** Find a single-storey ARKitScenes venue with its
 laser cloud and close G-CEIL; replace the global `door_max_m` with a split that adapts to local

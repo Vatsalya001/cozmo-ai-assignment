@@ -188,31 +188,48 @@ attempt, §10 for both of the above.
 
 ## 6. Validation
 
-86 tests. The ones that matter assert **accuracy against geometry we constructed and therefore
+98 tests. The ones that matter assert **accuracy against geometry we constructed and therefore
 cannot be wrong about** — the fixture writes a real Stray Scanner export, so the actual loader
 is exercised, not a mock. It also writes depth **18 mm short, exactly as the device does**, so
 the correction is exercised rather than bypassed.
 
+Measured **through `pipeline.run` with the product's own defaults**, not through a
+configuration only the tests use:
+
 | Quantity | Truth | Measured | Error |
 |---|---|---|---|
-| Ceiling height | 2.500 m | 2.497 m | **−3.3 mm** |
-| Floor height | 0.000 m | +0.002 m | **+1.8 mm** |
-| Floor area | 12.000 m² | 11.636 m² | **−3.03%** |
-| Long dimension | 4.000 m | 3.940 m | −60 mm |
-| Short dimension | 3.000 m | 2.880 m | −120 mm |
-| Polygon | rectangle | 4 walls | — |
+| Ceiling height | 2.500 m | 2.497 m | **−3.1 mm** |
+| Floor height | 0.000 m | +0.0015 m | **+1.5 mm** |
+| Floor area | 12.000 m² | 11.994 m² | **−0.05%** |
+| Long dimension | 4.000 m | 3.950 m | −50 mm |
+| Short dimension | 3.000 m | 2.920 m | −80 mm |
+| Perimeter | 14.000 m | 13.740 m | −260 mm |
+| Polygon | rectangle | 4 corners | — |
 
-**The area figure got worse when the pipeline got better, and that is the point.** It previously
-read **+0.05%**, which looked near-perfect and was two errors cancelling: a 12 mm *over*-
-correction inflated every room by roughly the amount the coverage-based area under-reports.
-Measured directly — same fixture, correction set to the old over-corrected value — the area
-comes back **+1.17%** instead of −3.03%. So the true behaviour of the area estimator was always
-about −3%, and the old headline number was hiding it behind a sensor error.
+Area and the bounding extent disagree by about 4%, and that is by construction rather than by
+error: `floor_area_m2` is the floor actually covered by measurement, while the polygon is the
+regularised outline. The outline is the shape; the area is the measurement.
 
-A number that is accurate because two mistakes offset is worth less than a number that is
-honestly off by 3%, because the first stops being right the moment either mistake is fixed.
-The −3.03% is the coverage under-report showing through with nothing left to cancel it, and it
-is consistent with the design: area is floor that was *seen*, so it can only run short.
+**The depth-bias correction is optimal on both quantities, and the ablation shows it.** Same
+fixture, same entry point, only the correction changed:
+
+| depth correction | floor area | ceiling height |
+|---|---|---|
+| **0.018 m — measured, shipped** | **−0.05%** | **−3.1 mm** |
+| 0.030 m — over by 12 mm | +0.69% | +17.3 mm |
+| 0.000 m — none | −1.44% | −33.3 mm |
+
+Correcting by the measured value is better than both over-correcting and not correcting, on
+area and on ceiling height. That is the result a correct sensor model should produce, and it is
+worth stating because an earlier version of this document claimed something different.
+
+**A correction to an earlier claim in this report.** It said the area figure had been flattered
+by two errors cancelling, and gave the honest value as about −3%. That −3% was itself a
+measurement artifact: the fixture under-sampled the floor, because its camera pitch cycled with
+period 3 and the pipeline's default stride is also 3. Fixing the fixture moved area to −0.05%
+and left the cancelling-errors explanation with nothing to explain. It is withdrawn rather than
+rewritten — the simpler reading, that the measured correction is simply right, is what the
+ablation above actually supports.
 
 Damage detection is tested in both directions: a 40 × 30 cm patch lifted 25 mm is found with
 extent correct to 12 cm; a wardrobe 40 cm off the wall, and 4 mm of noise, are not reported.

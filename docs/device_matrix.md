@@ -18,7 +18,7 @@ of our own. This is stated wherever it affects a result rather than left to be i
 
 | Tier | State | Runtime | Measured accuracy |
 |---|---|---|---|
-| **LiDAR** | complete | roughly 10–50 s per capture, CPU only | Synthetic room of exactly known size: ceiling height **−3.3 mm**, floor height **+1.8 mm**, floor area **−3.03%**, wall dimensions **−60 mm on 4.00 m** and **−120 mm on 3.00 m**. Repeatability on two real walks of one flat: room count **5 vs 5 (met)**, footprint **3.2% apart (not met)** |
+| **LiDAR** | complete | roughly 10–50 s per capture, CPU only | Synthetic room of exactly known size, measured through `scanplan run` with shipped defaults: ceiling height **−3.1 mm**, floor height **+1.5 mm**, floor area **−0.05%**, wall dimensions **−50 mm on 4.00 m** and **−80 mm on 3.00 m**. Repeatability on two real walks of one flat: room count **5 vs 5 (met)**, footprint **3.2% apart (not met)** |
 | **Video** | built, gate not met | ~110 s per capture | Footprint **+59.7% and −26.7%** from the LiDAR reference on the same captures; produced a plan on 2 of 3, failed outright on the third with a stated `no floor found`. Interval widening **×11, measured** from that error — it contains the reference 2/2 |
 | **Photo** | built, stitch fails by construction | ~13 s | Room boxes from unposed stills, laid out side by side and joined to nothing. No reference exists for these folders, so no accuracy number is claimed |
 

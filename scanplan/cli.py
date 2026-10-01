@@ -62,7 +62,8 @@ def cmd_run(args) -> int:
     tier = detect_tier(source)
 
     from . import pipeline
-    result = pipeline.run(source, tier=tier, drift=not args.no_drift, damage=not args.no_damage)
+    result = pipeline.run(source, tier=tier, drift=not args.no_drift, damage=not args.no_damage,
+                          stride=args.stride)
 
     problems = validate(result)
     if problems:
@@ -111,6 +112,13 @@ def main(argv=None) -> int:
     p.add_argument("--out", help="output folder (default: out/<capture name>)")
     p.add_argument("--no-drift", action="store_true", help="skip drift correction (the G-DRIFT ablation)")
     p.add_argument("--no-damage", action="store_true", help="skip damage detection")
+    # There was no way to change this from the command line, and one capture in hand needed it:
+    # a synthetic export whose camera pitch cycled with period 3 aliased exactly with the
+    # default stride of 3, so every sampled frame looked the same way and the floor was never
+    # seen. The operator could do nothing about it. Now they can.
+    p.add_argument("--stride", type=int, default=3, metavar="N",
+                   help="keep every Nth frame (default 3). Lower it if a capture reports no "
+                        "floor: a periodic sweep can alias with the sampling")
     p.set_defaults(func=cmd_run)
 
     p = sub.add_parser("validate", help="check a result file against the schema")

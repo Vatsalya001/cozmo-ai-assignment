@@ -184,6 +184,24 @@ def gate_rows(runs: dict) -> list[dict]:
         add("G-PHOTO-STITCH", "photo", "one stitched plan", "NOT RUN", "NOT MEASURED", "")
     add("G-H2H", "lidar", "beat or tie on >= 70% of shared dimensions",
         "PENDING", "NOT MEASURED", "magicplan captured; tape measurements outstanding")
+
+    # The same question against an opponent that CAN be handed our exact input. Reported as a
+    # separate gate, never folded into G-H2H: the brief asks Part 3 for a consumer scanning
+    # app, and another engineer's submission is not one.
+    he = ROOT / "bench" / "results" / "head_to_head_engineer.json"
+    if he.is_file():
+        h = json.loads(he.read_text())
+        if h.get("dimensions_scored"):
+            add("G-H2H-ENGINEER", "lidar",
+                "beat or tie an independent implementation on >= 70%",
+                f"{h['beat_or_tie']}/{h['dimensions_scored']} = {h['beat_or_tie_pct']}%",
+                "MET" if h["gate_met"] else "NOT MET",
+                f"{h['opponent']['name']} @ {h['opponent']['commit']} on identical synthetic "
+                f"captures with exact truth; supplementary to Part 3, not a substitute")
+        else:
+            add("G-H2H-ENGINEER", "lidar",
+                "beat or tie an independent implementation on >= 70%",
+                "NOT MEASURED", "NOT MEASURED", "; ".join(h.get("notes", [])) or "no scored rows")
     add("A-DMG-DETECT", "all", "staged damage found with right class", "NOT BUILT",
         "NOT MEASURED", "damage detection not implemented")
 

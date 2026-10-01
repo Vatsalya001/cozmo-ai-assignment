@@ -129,6 +129,14 @@
       "detail": "magicplan captured; tape measurements outstanding"
     },
     {
+      "gate": "G-H2H-ENGINEER",
+      "tier": "lidar",
+      "target": "beat or tie an independent implementation on >= 70%",
+      "result": "9/10 = 90.0%",
+      "status": "MET",
+      "detail": "cozmo-scan @ a31d297 on identical synthetic captures with exact truth; supplementary to Part 3, not a substitute"
+    },
+    {
       "gate": "A-DMG-DETECT",
       "tier": "all",
       "target": "staged damage found with right class",

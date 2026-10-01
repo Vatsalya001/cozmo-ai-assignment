@@ -17,15 +17,19 @@ Built for the Cozmo AI Applied AI case study. Start with
 | **Video** | `rgb.mp4` + the capture app's pose track | **Built, gate not met.** ~110 s. **+59.7%** and **−26.7%** from the LiDAR reference; failed on 1 of 3 captures |
 | **Photo** | one folder per room, 2–8 stills | **Built, gate not met.** ~13 s. Room boxes from unposed stills; **does not stitch, by construction** |
 
-Measured accuracy, against a synthetic room of exactly known size:
-**ceiling height −3.3 mm**, floor height **+1.8 mm**, floor area **−3.03%**, wall dimensions
-−60 mm on 4.00 m and −120 mm on 3.00 m. Repeatability on two real walks of one flat: room count
-**5 vs 5 (met)**, footprint **3.2% apart (not met)** — and the measured depth-bias correction
-is what flipped which of those two passes, see [`docs/fix_loop.md`](docs/fix_loop.md) §10.
+Measured accuracy against a synthetic room of exactly known size, **through the same command a
+reviewer runs**: ceiling height **−3.1 mm**, floor height **+1.5 mm**, floor area **−0.05%**,
+wall dimensions −50 mm on 4.00 m and −80 mm on 3.00 m. Repeatability on two real walks of one
+flat: room count **5 vs 5 (met)**, footprint **3.2% apart (not met)** — the measured depth-bias
+correction is what flipped which of those two passes, see
+[`docs/fix_loop.md`](docs/fix_loop.md) §10.
 
-The area figure reads worse than it used to and is more trustworthy for it: **+0.05%** was two
-errors cancelling, a 12 mm over-correction offsetting the amount coverage-based area
-under-reports. Fixing the sensor model made the headline number look worse and made it true.
+**Head to head against an independent implementation of the same brief**
+([cozmo-scan](https://github.com/ashupal22/cozmo-scan)), both pipelines handed the identical
+capture with exact truth: **beat or tie on 9 of 10 dimensions, 90%**. The one loss is ceiling
+height on a capture that models an *unbiased* sensor, where our 18 mm correction is unwarranted
+— which is the whole reason that bias was measured against a laser instead of assumed. Details
+and the deliberate two-capture design: [`bench/head_to_head_engineer.py`](bench/head_to_head_engineer.py).
 
 The device available for this work is an **iPhone 16 base, which has no LiDAR**, so the LiDAR
 tier runs on the three captures Cozmo supplied and on ARKitScenes. Stated in full in
@@ -39,7 +43,7 @@ Needs Python 3.10–3.12. **No model weights and no network are required for the
 git clone https://github.com/Vatsalya001/cozmo-ai-assignment.git && cd cozmo-ai-assignment
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
-pytest -q                                  # expect: 86 passed
+pytest -q                                  # expect: 98 passed
 ```
 
 On a CPU-only Linux machine, install PyTorch from the CPU index **first** if you plan to add
@@ -102,7 +106,8 @@ silently corrupted three PNGs while the archives themselves verified fine.
 | `bench/depth_bias.py` | **the depth-bias calibration: −18.0 mm per-pixel against FARO laser truth**, 4.79 M pixels over 8 scans |
 | `bench/video_vs_lidar.py` | the video tier against the LiDAR reference, and the interval calibration |
 | `bench/photo_tier.py` | photo-tier room boxes and stitch grouping (builds its own input) |
-| `bench/head_to_head.py` | magicplan comparison, dimension by dimension |
+| `bench/head_to_head.py` | magicplan comparison, dimension by dimension (Part 3; PENDING for want of tape truth) |
+| `bench/head_to_head_engineer.py` | **vs an independent implementation on exact synthetic truth — 9/10, 90%** |
 | `bench/fix_loop_diagnosis.py` | the evidence behind the fix-loop declaration, through `pipeline.run` |
 | `bench/arkitscenes_laser.py` | storey-height calibration — reports **NOT MEASURED**, and the header says why |
 | `bench/ceiling_vs_laser.py` | the second attempt at G-CEIL — also **NOT MEASURED**, all three approaches documented |
