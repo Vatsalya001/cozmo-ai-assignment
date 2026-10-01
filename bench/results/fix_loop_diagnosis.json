@@ -1,12 +1,12 @@
 {
   "coverage": {
     "1a8384c3f6": {
-      "floor_coverage_m2": 53.7,
-      "after_wall_cut_m2": 49.156400000000005
+      "floor_coverage_m2": 54.648,
+      "after_wall_cut_m2": 49.8708
     },
     "c7d28f72c6": {
-      "floor_coverage_m2": 55.988,
-      "after_wall_cut_m2": 51.062000000000005
+      "floor_coverage_m2": 56.674800000000005,
+      "after_wall_cut_m2": 51.698800000000006
     }
   },
   "sweep": {
@@ -15,15 +15,15 @@
       "c7d28f72c6": 5
     },
     "0.80": {
-      "1a8384c3f6": 5,
+      "1a8384c3f6": 4,
       "c7d28f72c6": 5
     },
     "0.95": {
-      "1a8384c3f6": 3,
+      "1a8384c3f6": 4,
       "c7d28f72c6": 5
     },
     "1.10": {
-      "1a8384c3f6": 4,
+      "1a8384c3f6": 5,
       "c7d28f72c6": 5
     },
     "1.30": {
@@ -37,35 +37,31 @@
   },
   "seed_cores": {
     "1a8384c3f6": {
-      "count": 12,
+      "count": 7,
       "areas_m2": [
-        5.574,
-        1.3864,
-        0.976,
-        0.2848,
-        0.1752,
-        0.03,
-        0.0156,
-        0.0156,
-        0.0136,
-        0.0048,
-        0.0004,
-        0.0004
+        12.3248,
+        1.572,
+        1.3912,
+        0.524,
+        0.3796,
+        0.2488,
+        0.114
       ]
     },
     "c7d28f72c6": {
-      "count": 9,
+      "count": 6,
       "areas_m2": [
-        8.7004,
-        2.0932,
-        0.7848,
-        0.7124,
-        0.4024,
-        0.0996,
-        0.0184,
-        0.0136,
-        0.0004
+        15.744,
+        1.39,
+        1.3432,
+        1.3088,
+        0.4004,
+        0.382
       ]
     }
-  }
+  },
+  "sweep_method": "scanplan.pipeline.run, the product's own entry point, once per door_max_m; see the module docstring for why this is not optional",
+  "shipped_door_max_m": 0.7,
+  "harness_matches_product": true,
+  "harness_mismatch": []
 }

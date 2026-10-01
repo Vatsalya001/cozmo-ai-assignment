@@ -160,3 +160,82 @@ G-REPEAT-ROOMS remains **NOT MET at 4 against 5**. Two attempts have now failed 
 the declared fix narrowed the gap from 3 to 1 without closing it, and this one made both gates
 worse. The honest conclusion is that room splitting on this data is not a parameter problem,
 and a third attempt would need a different method rather than a different constant.
+
+> **Superseded by §10.** That paragraph was true when written. The measured depth-bias
+> correction has since moved the gate without anyone touching the room-splitting code, and
+> §10 records both the new state and why the change is not a third attempt.
+
+---
+
+## 10. The gate moved, and not because of anything in §6 to §9
+
+A sensor correction landed after the fix loop closed: device depth was measured at **18 mm
+short** of FARO laser truth and is now corrected at ingest (`bench/depth_bias.py`,
+4.79 million pixels across 8 scans). Nothing in the room-splitting code changed. The gates
+moved anyway:
+
+| | §9 state | After the bias correction |
+|---|---|---|
+| Rooms, 1a8384c3f6 vs c7d28f72c6 | 4 vs 5 | **5 vs 5** |
+| G-REPEAT-ROOMS | NOT MET | **MET** |
+| Footprint gap | 0.7%, MET | **3.2%, NOT MET** |
+| G-REPEAT-FOOTPRINT | MET | **NOT MET** |
+
+**Exactly one of the two still passes, and the correction flipped which.** That is reported
+rather than absorbed, because it is the most informative thing either gate has produced: the
+two are not independent, and 18 mm of depth is enough to swap them. A pair of gates that trade
+places under a sensor correction was never measuring two separate properties.
+
+The correction stays either way. It is a measured property of the device, and reverting a
+correct correction to recover a gate is tuning to the benchmark — the failure this post-mortem
+already documents twice.
+
+**This is not a third attempt at G-REPEAT-ROOMS.** The gate passing here is a side effect, not
+a fix, and claiming it as one would be the §6 error in a new costume: naming the right outcome
+and the wrong mechanism. The §9 conclusion stands unchanged — room splitting on this data is
+not a parameter problem.
+
+### The §9 rule was still being broken, in this very directory
+
+§9 ended by stating a rule: **a configuration sweep must call the same entry point the product
+calls.** `bench/fix_loop_diagnosis.py` — the script that produced the evidence behind the
+declaration — was itself breaking it. It rebuilt the geometry by hand and omitted drift
+correction, the same omission as §6.1 and §9.
+
+The clean-clone check found it (`bench/clean_clone_check.sh`), which is what that check is for:
+the committed `fix_loop_diagnosis.json` did not match a fresh run, and chasing the difference
+turned up more than stale numbers. At the shipped `door_max_m` the harness reported **4 rooms
+from each capture while `scanplan run` reported 5 from each.** Both "agree", so the conclusion
+§6 drew from this evidence survives — but it survived by luck, on a pipeline nobody ships.
+
+Fixed two ways, because writing the rule down had already failed to enforce it once:
+
+1. The sweep calls `pipeline.run` — six configurations × two captures, the product's own entry
+   point. Slower, and the correct trade for the measurement the shipped `DOOR_MAX_M` rests on.
+2. `check_harness_matches_product()` asserts the harness and `scanplan run` return the same
+   room count at the shipped configuration, and the script **exits non-zero** if they diverge.
+   The rule is now a failing build rather than a paragraph.
+
+The re-measured sweep, through the real pipeline:
+
+| `door_max_m` | 1a8384c3f6 | c7d28f72c6 | |
+|---|---|---|---|
+| **0.70** | **5** | **5** | **agree — shipped** |
+| 0.80 | 4 | 5 | |
+| 0.95 | 4 | 5 | the pre-fix-loop value |
+| 1.10 | 5 | 5 | agree |
+| 1.30 | 4 | 3 | |
+| 1.50 | 2 | 3 | |
+
+Two widths now agree, and the shipped 0.70 is the narrower of them — the conservative choice,
+consistent with the pipeline's stated preference for under-splitting. That the pre-fix-loop
+0.95 still disagrees is the one claim in §6 that this re-measurement independently confirms.
+
+### What this episode says about the rest of the benchmarks
+
+Three harnesses have now been caught measuring a pipeline that was not shipped — §6.1, §9, and
+this one — and all three failed the same way. The pattern is not carelessness; it is that
+bypassing `pipeline.run` is always the convenient way to sweep a parameter. The only defence
+that has actually worked is a mechanical one: an assertion inside the harness that compares it
+to the product and fails. `bench/gates.py` calls `pipeline.run` directly and so cannot drift;
+`fix_loop_diagnosis.py` now checks itself; any future sweep should do one or the other.

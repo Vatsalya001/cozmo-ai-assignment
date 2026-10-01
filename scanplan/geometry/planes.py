@@ -25,6 +25,10 @@ MIN_SUPPORT_FRACTION = 0.005    # a real floor or ceiling holds at least 0.5% of
 #
 # What remains here is the residual: per-scan medians ranged -14 to -27 mm with a standard
 # deviation of 4 mm, so correcting by the pooled median leaves about that much unexplained.
+# Both summaries are published as `range_across_scans_mm` (13.0) and `std_across_scans_mm`
+# (4.10) in bench/results/depth_bias.json, so this constant can be checked against the
+# measurement rather than taken on trust. Only the range used to be published, which made a
+# reader checking "4 mm" find 13 and reasonably conclude the number was invented.
 # It is carried on every surface height because the standard error of 250,000 points is
 # 0.1 mm, and reporting that would be confident garbage of exactly the kind the brief
 # penalises -- averaging removes noise, not a systematic offset.

@@ -84,7 +84,8 @@
   ],
   "pooled_median_mm": -18.000006675720215,
   "pooled_mean_mm": -19.213609397411346,
-  "spread_across_scans_mm": 13.000071048736572,
+  "range_across_scans_mm": 13.000071048736572,
+  "std_across_scans_mm": 4.103596411920794,
   "total_pixels": 4793178,
   "sign_convention": "positive means the device reads LONGER than the laser"
 }

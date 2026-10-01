@@ -121,7 +121,14 @@ def main() -> int:
         "scans": rows,
         "pooled_median_mm": float(np.median(everything) * 1000),
         "pooled_mean_mm": float(everything.mean() * 1000),
-        "spread_across_scans_mm": float(per_scan.max() - per_scan.min()) if len(per_scan) > 1 else 0.0,
+        # Two different summaries of the same eight numbers, published separately because
+        # they are used for different things and a single "spread" field invited confusion.
+        # The range is the honest headline: per-scan medians run from -14 to -27 mm, so no
+        # single correction fits every scan. The standard deviation is what survives the
+        # correction, and it is the number RESIDUAL_DEPTH_BIAS_M in scanplan/geometry/planes.py
+        # is set from -- that constant was previously unverifiable from this file.
+        "range_across_scans_mm": float(per_scan.max() - per_scan.min()) if len(per_scan) > 1 else 0.0,
+        "std_across_scans_mm": float(per_scan.std(ddof=1)) if len(per_scan) > 1 else 0.0,
         "total_pixels": int(len(everything)),
         "sign_convention": "positive means the device reads LONGER than the laser",
     }
@@ -131,7 +138,10 @@ def main() -> int:
     print(f"\n  POOLED over {len(rows)} scans, {len(everything):,} pixels:")
     print(f"    median bias {result['pooled_median_mm']:+.1f} mm   "
           f"(positive = device reads longer than laser)")
-    print(f"    spread across scans {result['spread_across_scans_mm']:.1f} mm")
+    print(f"    per-scan medians range {result['range_across_scans_mm']:.1f} mm, "
+          f"standard deviation {result['std_across_scans_mm']:.2f} mm")
+    print(f"    -> correcting by the pooled median leaves about "
+          f"{result['std_across_scans_mm']:.0f} mm unexplained; that is RESIDUAL_DEPTH_BIAS_M")
     print(f"\nwrote {OUT.relative_to(ROOT)}")
     return 0
 
