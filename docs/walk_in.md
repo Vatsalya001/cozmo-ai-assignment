@@ -193,6 +193,28 @@ one modelling the device as measured and one modelling an ideal sensor, because 
 one that suits our correction would be choosing the input. This does **not** satisfy Part 3,
 which asks for a consumer scanning app; that is magicplan, and it is still PENDING.
 
+**"Where does their implementation beat yours?"** Answer this one straight, because the
+benchmark already does and being caught hedging would be worse than the losses themselves.
+Three places, all measured:
+
+1. **Room splitting.** They report 3, 8 and 9 rooms on the three supplied captures where we
+   report 2, 5 and 5. We under-split, it is a documented failure mode, and it is the gate our
+   fix loop declared, predicted wrong, attempted twice and reverted. An independent
+   implementation does it better.
+2. **Ceiling height per room.** They fit one per room — nine distinct values from 2.29 to
+   3.10 m on `c7d28f72c6` — where we fit a single storey height, 3.087 m for every room. No
+   truth exists, so neither is provably right, but a uniform 3.09 m across a flat is on the
+   high side and their model describes a real property more closely.
+3. **Frame selection.** They pick keyframes adaptively by pose change; we use a fixed stride.
+   That is exactly why `scanplan run` failed on a capture whose sweep aliased with our stride
+   and theirs did not. We shipped a `--stride` escape hatch and a diagnostic, which is a
+   mitigation, not a fix.
+
+What stays ours: **dimensional accuracy against exact truth** (the gap is large, consistent
+across both generators, and the convention is matched — their source specifies inside faces as
+ours does), and the **measured depth bias**, which they carry as a 13 mm uncertainty rather
+than correcting.
+
 **"What would you do with another week?"** Find a single-storey ARKitScenes venue with its
 laser cloud and close G-CEIL; replace the global `door_max_m` with a split that adapts to local
 room scale; get tape truth into the head-to-head. In that order — the first turns an unmeasured

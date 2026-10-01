@@ -49,7 +49,7 @@ PLAN=(
   "arkitscenes_laser.json|arkitscenes_laser|arkitscenes|"
   "fix_loop_diagnosis.json|fix_loop_diagnosis|supplied|"
   "head_to_head.json|head_to_head|own|"
-  "head_to_head_engineer.json|head_to_head_engineer|-|"   # "-" = needs no linked dataset
+  "head_to_head_engineer.json|head_to_head_engineer|supplied|"
   "video_vs_lidar.json|video_vs_lidar|supplied|needs the models extra (torch + weights); pass --with-models"
   "photo_tier.json|photo_tier|supplied|needs the models extra (torch + weights); pass --with-models"
   "fix_loop_before_gates.json|-|-|snapshot of the code BEFORE the fix; not derivable from HEAD"

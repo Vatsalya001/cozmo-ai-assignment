@@ -125,6 +125,77 @@
   ],
   "dimensions_total": 10,
   "dimensions_scored": 10,
+  "real_captures_note": "the three supplied captures carry NO ground truth, so none of this is scored and neither pipeline is right by default. It is reported because stopping at the synthetic comparison would mean reporting only the input where we can prove we are correct",
+  "real_captures": [
+    {
+      "capture": "c00a170fe1",
+      "scanplan": {
+        "rooms": 2,
+        "footprint_m2": 15.108,
+        "ceilings_m": [
+          2.55
+        ]
+      },
+      "cozmo_scan": {
+        "rooms": 3,
+        "footprint_m2": 24.62,
+        "ceilings_m": [
+          2.5
+        ]
+      },
+      "footprint_difference_pct": 63.0
+    },
+    {
+      "capture": "1a8384c3f6",
+      "scanplan": {
+        "rooms": 5,
+        "footprint_m2": 48.043,
+        "ceilings_m": [
+          2.55
+        ]
+      },
+      "cozmo_scan": {
+        "rooms": 8,
+        "footprint_m2": 56.98,
+        "ceilings_m": [
+          2.5
+        ]
+      },
+      "footprint_difference_pct": 18.6
+    },
+    {
+      "capture": "c7d28f72c6",
+      "scanplan": {
+        "rooms": 5,
+        "footprint_m2": 49.645,
+        "ceilings_m": [
+          3.087
+        ]
+      },
+      "cozmo_scan": {
+        "rooms": 9,
+        "footprint_m2": 56.07,
+        "ceilings_m": [
+          2.289,
+          2.365,
+          2.435,
+          2.449,
+          2.973,
+          2.982,
+          3.083,
+          3.097,
+          3.104
+        ]
+      },
+      "footprint_difference_pct": 12.9
+    }
+  ],
+  "where_the_opponent_does_better": [
+    "c00a170fe1: cozmo-scan reports 3 rooms, we report 2. We are documented as under-splitting and this is that, measured against an independent implementation rather than asserted",
+    "1a8384c3f6: cozmo-scan reports 8 rooms, we report 5. We are documented as under-splitting and this is that, measured against an independent implementation rather than asserted",
+    "c7d28f72c6: cozmo-scan reports 9 rooms, we report 5. We are documented as under-splitting and this is that, measured against an independent implementation rather than asserted",
+    "c7d28f72c6: cozmo-scan reports 9 distinct ceiling heights ([2.289, 2.365, 2.435, 2.449, 2.973, 2.982, 3.083, 3.097, 3.104]) where we report [3.087] for every room. We fit one storey height per capture; they fit per room, which models a real property more closely"
+  ],
   "notes": [],
   "beat_or_tie": 9,
   "beat_or_tie_pct": 90.0,

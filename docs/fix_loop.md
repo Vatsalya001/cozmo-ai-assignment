@@ -126,7 +126,7 @@ gets its own scale instead of one for the building. It was built and measured.
 **An experiment over 36 configurations found one that met both repeatability gates:**
 widths 1.00 → 0.55 in steps of 0.15, seed 0.30 m², minimum room 1.80 m² — 7 rooms against 7,
 footprint 1.4% apart. Against the shipped 4-against-5 at 1.6%, that looked like a clear win,
-and it brought the room count closer to the reference of 9.
+and it brought the room count closer to the reference of 9 — a figure taken from the declaration, where it is asserted without a source. See technical_report.md §7.5.
 
 **Shipped through the real pipeline it was a regression:**
 

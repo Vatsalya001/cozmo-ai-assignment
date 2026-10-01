@@ -78,6 +78,17 @@ CAPTURES = {
 # Lower is better for all of these; each is an absolute error in metres against exact truth.
 DIMENSIONS = ("floor area", "ceiling height", "long dimension", "short dimension", "perimeter")
 
+# The real captures carry no truth, so nothing here is scored. They are run and reported anyway
+# because the synthetic comparison alone would be a convenient place to stop: it is the one
+# input where we can prove we are right. Where the two pipelines disagree on real rooms is the
+# more useful question, and on one of these the opponent is closer to the room count this
+# project's own declaration cites than we are.
+REAL = {
+    "c00a170fe1": "data/supplied/single_room/c00a170fe1",
+    "1a8384c3f6": "data/supplied/single_scan_floor_only/1a8384c3f6",
+    "c7d28f72c6": "data/supplied/single_scan_with_ceiling/c7d28f72c6",
+}
+
 
 def dimensions_from(doc: dict) -> dict[str, float]:
     """The five comparable quantities, from either pipeline's result document.
@@ -100,6 +111,17 @@ def dimensions_from(doc: dict) -> dict[str, float]:
         "short dimension": float(span[1]),
         "perimeter": float(room["perimeter_m"]["value"]),
         "_rooms": len(doc["rooms"]),
+    }
+
+
+def summarise(doc: dict) -> dict:
+    """Room count, footprint and ceilings -- what can be compared without any truth."""
+    fp = doc.get("plan", {}).get("footprint_m2") or doc.get("plan", {}).get("footprint_area_m2")
+    return {
+        "rooms": len(doc.get("rooms", [])),
+        "footprint_m2": round(float(fp["value"] if isinstance(fp, dict) else fp), 3),
+        "ceilings_m": sorted({round(r["ceiling_height_m"]["value"], 3)
+                              for r in doc.get("rooms", [])}),
     }
 
 
@@ -156,6 +178,15 @@ def refresh(repo: Path) -> dict:
         record["captures"][name] = (doc if "failed" in doc else dimensions_from(doc))
         print(f"  opponent on {name}: "
               f"{record['captures'][name].get('failed') or record['captures'][name]}")
+    record["real_captures"] = {}
+    for name, rel in REAL.items():
+        cap = ROOT / rel
+        if not cap.exists():
+            continue
+        doc = run_opponent(repo, cap, work / f"out_real_{name}")
+        record["real_captures"][name] = doc if "failed" in doc else summarise(doc)
+        print(f"  opponent on real {name}: {record['real_captures'][name]}")
+
     OPPONENT_FILE.parent.mkdir(parents=True, exist_ok=True)
     OPPONENT_FILE.write_text(json.dumps(record, indent=2) + "\n")
     print(f"wrote {OPPONENT_FILE.relative_to(ROOT)}")
@@ -212,6 +243,33 @@ def main() -> int:
                     "one or both pipelines produced no value for this capture")
             rows.append(row)
 
+    # --- real captures: no truth, so agreement only, never scored ---------------------
+    real_rows, opponent_better = [], []
+    for name, rel in REAL.items():
+        cap = ROOT / rel
+        theirs = (record.get("real_captures") or {}).get(name)
+        if not cap.exists() or not theirs or "failed" in theirs:
+            continue
+        try:
+            mine = summarise(pipeline.run(cap))
+        except Exception as e:                                 # noqa: BLE001
+            notes.append(f"scanplan failed on real capture {name}: {type(e).__name__}: {e}")
+            continue
+        real_rows.append({"capture": name, "scanplan": mine, "cozmo_scan": theirs,
+                          "footprint_difference_pct": round(
+                              (theirs["footprint_m2"] / mine["footprint_m2"] - 1) * 100, 1)})
+        if theirs["rooms"] > mine["rooms"]:
+            opponent_better.append(
+                f"{name}: cozmo-scan reports {theirs['rooms']} rooms, we report "
+                f"{mine['rooms']}. We are documented as under-splitting and this is that, "
+                f"measured against an independent implementation rather than asserted")
+        if len(theirs["ceilings_m"]) > len(mine["ceilings_m"]):
+            opponent_better.append(
+                f"{name}: cozmo-scan reports {len(theirs['ceilings_m'])} distinct ceiling "
+                f"heights ({theirs['ceilings_m']}) where we report "
+                f"{mine['ceilings_m']} for every room. We fit one storey height per capture; "
+                f"they fit per room, which models a real property more closely")
+
     scored = [r for r in rows if "we_beat_or_tie" in r]
     won = sum(r["we_beat_or_tie"] for r in scored)
     result = {
@@ -242,6 +300,13 @@ def main() -> int:
         "rows": rows,
         "dimensions_total": len(rows),
         "dimensions_scored": len(scored),
+        "real_captures_note":
+            "the three supplied captures carry NO ground truth, so none of this is scored and "
+            "neither pipeline is right by default. It is reported because stopping at the "
+            "synthetic comparison would mean reporting only the input where we can prove we "
+            "are correct",
+        "real_captures": real_rows,
+        "where_the_opponent_does_better": opponent_better,
         "notes": notes,
     }
     if scored:
@@ -264,6 +329,16 @@ def main() -> int:
         print(f"{r['capture']:8} {r['dimension']:16} {r['truth']:8.3f} {o:>18} {p:>18}  {w}")
     for n in notes:
         print(f"  note: {n}")
+    if real_rows:
+        print(f"\nreal captures (NO truth -- agreement only, nothing scored):")
+        print(f"{'capture':12} {'scanplan':>24} {'cozmo-scan':>24}")
+        for r in real_rows:
+            m, o = r["scanplan"], r["cozmo_scan"]
+            mine = "{} rooms {:.2f} m2".format(m["rooms"], m["footprint_m2"])
+            them = "{} rooms {:.2f} m2".format(o["rooms"], o["footprint_m2"])
+            print(f"{r['capture']:12} {mine:>24} {them:>24}")
+        for w in opponent_better:
+            print(f"  OPPONENT BETTER: {w}")
     if scored:
         print(f"\n  beat or tie on {won}/{len(scored)} = {result['beat_or_tie_pct']}%   "
               f"gate {'MET' if result['gate_met'] else 'NOT MET'} (target 70%)")

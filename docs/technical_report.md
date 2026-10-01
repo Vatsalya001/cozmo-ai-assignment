@@ -249,6 +249,56 @@ which is a pass that cannot fail. It has caught three real defects — a bare `M
 on the default install, wall-clock seconds embedded in a gate *result*, and the fix-loop harness
 measuring an unshipped pipeline.
 
+## 6b. Head to head against an independent implementation
+
+An app cannot be handed our input. Another engineer's pipeline reading the same public capture
+format can — so [cozmo-scan](https://github.com/ashupal22/cozmo-scan), an independent submission
+to this brief, measures the **identical** synthetic capture of a room that is 4.00 × 3.00 m with
+a 2.50 m ceiling by construction. Truth is exact, not a tape reading.
+
+**G-H2H-ENGINEER: beat or tie on 9 of 10 dimensions, 90%, MET.** Floor area −0.05% against
++29.4%; the one loss is ceiling height on a capture modelling an *unbiased* sensor, where our
+18 mm correction is unwarranted. Two captures are run on purpose — one modelling the device as
+measured, one an ideal sensor — because running only the one that suits our correction would be
+choosing the input without a single number changing.
+
+This is **not** Part 3, which asks for a consumer scanning app. That is magicplan, and it is
+still PENDING for want of tape truth.
+
+### Where the opponent is better, measured
+
+Reporting only the synthetic result would be advertising, so the same benchmark runs both
+pipelines on the three supplied captures. Those carry no truth, so **nothing below is scored**
+and neither pipeline is right by default — but the divergence is the more useful question.
+
+| Capture | scanplan | cozmo-scan |
+|---|---|---|
+| c00a170fe1 | 2 rooms, 15.11 m² | **3 rooms**, 24.62 m² |
+| 1a8384c3f6 | 5 rooms, 48.04 m² | **8 rooms**, 56.98 m² |
+| c7d28f72c6 | 5 rooms, 49.65 m² | **9 rooms**, 56.07 m² |
+
+**They split more rooms than we do on every capture.** That is the gate this project declared a
+fix for, predicted wrong, attempted a second time and reverted — and an independent
+implementation does it better. §7.5 states the under-splitting as a known failure; this is the
+measurement behind it, against another pipeline on the same data rather than against a
+reference number nobody can source.
+
+**They also fit ceiling height per room where we fit one storey height per capture.** On
+c7d28f72c6 they report nine distinct heights from 2.29 to 3.10 m; we report 3.087 m for every
+room. Without truth neither is provably right, but a single 3.09 m across a whole flat is on
+the high side and a per-room model describes a real property more closely than ours does.
+
+**And their frame selection is more robust than ours.** They choose keyframes adaptively by
+pose change; we use a fixed stride. That is precisely why `scanplan run` failed outright on a
+capture whose sweep aliased with our stride (§6) and their pipeline did not. We added a
+`--stride` escape hatch and a diagnostic rather than changing frame selection a day before the
+deadline, which is a mitigation and not a fix.
+
+Two things stay in our favour and are worth stating plainly: **dimensional accuracy against
+exact truth**, where the gap is large and consistent across both generators and the convention
+is matched (their source specifies inside faces, as ours does); and the **measured depth bias**,
+which they carry as a 13 mm uncertainty rather than correcting.
+
 ## 7. Known failure modes
 
 1. **No ground truth for the captures the pipeline runs on.** This is now the largest gap.
@@ -268,8 +318,16 @@ measuring an unshipped pipeline.
    than laying out a plausible arrangement.
 4. **Footprint repeatability is 3.2%, not met** — and its sibling gate passes. See §5's
    postscript: the pair is not two independent properties.
-5. **Rooms under-split against reference** — 5 found where the reference says 9. The safer
-   failure: a merged pair still reports a correct combined area; an invented room does not.
+5. **Rooms under-split** — 5 found on a capture where this project's own fix-loop declaration
+   put the reference at 9. **That 9 has no source recorded anywhere in this repository.** It
+   first appears in `fix_loop_declaration.md`, which is committed-before-the-fix and therefore
+   never edited, and it has been repeated since without anyone establishing where it came from.
+   It is cited here because it is used *against* us, but an unsourced number is weak evidence
+   in either direction and should not be relied on. What *is* measured: an independent
+   implementation reports 9, 8 and 3 rooms on the three supplied captures where we report 5, 5
+   and 2 (`bench/results/head_to_head_engineer.json`). We under-split; that much is not in
+   doubt. The safer failure: a merged pair still reports a correct combined area; an invented
+   room does not.
 6. **Damage class is shape-derived.** A stain that has not lifted the plaster is geometrically
    invisible. Every region says `class_source: "shape"` with confidence ≤ 0.5, and detection has
    no verified true-positive rate because no real damaged capture was obtainable.

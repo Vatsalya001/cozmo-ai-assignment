@@ -23,5 +23,36 @@
       "perimeter": 16.09,
       "_rooms": 1
     }
+  },
+  "real_captures": {
+    "c00a170fe1": {
+      "rooms": 3,
+      "footprint_m2": 24.62,
+      "ceilings_m": [
+        2.5
+      ]
+    },
+    "1a8384c3f6": {
+      "rooms": 8,
+      "footprint_m2": 56.98,
+      "ceilings_m": [
+        2.5
+      ]
+    },
+    "c7d28f72c6": {
+      "rooms": 9,
+      "footprint_m2": 56.07,
+      "ceilings_m": [
+        2.289,
+        2.365,
+        2.435,
+        2.449,
+        2.973,
+        2.982,
+        3.083,
+        3.097,
+        3.104
+      ]
+    }
   }
 }

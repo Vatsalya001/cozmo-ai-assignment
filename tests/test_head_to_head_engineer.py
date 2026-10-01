@@ -118,6 +118,43 @@ def test_the_committed_comparison_reports_a_loss_rather_than_a_clean_sweep():
         "the loss should be on the ideal capture, where our bias correction is unwarranted")
 
 
+def test_the_real_captures_are_reported_and_explicitly_not_scored():
+    """The synthetic comparison is the one input where we can prove we are right, so stopping
+    there would be the convenient choice. The real captures are run too — and because they
+    carry no truth, nothing about them may be scored."""
+    res = json.loads(RESULT.read_text())
+    assert res["real_captures"], "the three supplied captures must be reported"
+    assert "NO ground truth" in res["real_captures_note"]
+    for row in res["real_captures"]:
+        assert "we_beat_or_tie" not in row, (
+            f"{row['capture']}: nothing may be scored without truth")
+        for side in ("scanplan", "cozmo_scan"):
+            assert row[side]["rooms"] >= 1 and row[side]["footprint_m2"] > 0
+
+
+def test_the_result_names_where_the_opponent_beats_us():
+    """A head-to-head that only records our wins is advertising. Room splitting is the gate
+    this project declared a fix for, predicted wrong, attempted again and reverted — and the
+    opponent splits more on every real capture. If that stops being reported, this fails."""
+    res = json.loads(RESULT.read_text())
+    better = res["where_the_opponent_does_better"]
+    assert better, (
+        "the opponent reports more rooms than we do on every supplied capture; a comparison "
+        "that does not say so is not a comparison")
+    assert any("rooms" in w for w in better)
+
+
+def test_we_under_split_on_every_real_capture():
+    """Stated as a known failure mode in the technical report. This is the measurement behind
+    it: not an assertion about a reference nobody can source, but a count against an
+    independent implementation run on the same data."""
+    res = json.loads(RESULT.read_text())
+    for row in res["real_captures"]:
+        assert row["scanplan"]["rooms"] <= row["cozmo_scan"]["rooms"], (
+            f"{row['capture']}: we report MORE rooms than the opponent, which contradicts the "
+            f"under-splitting this project documents. If that has changed, the docs must too")
+
+
 def test_the_result_does_not_claim_to_satisfy_part_3():
     """Part 3 asks for a consumer scanning app. Another engineer's submission is not one, and
     quietly letting this fill that slot would be the most tempting dishonesty available here."""
