@@ -17,7 +17,7 @@ reported rather than omitted, because an absent row reads as a pass.
 | G-REPEAT-ROOMS | lidar | same room count from both walks | 5 vs 5 (counts only -- decompositions disagree by up to 76%, see same_flat.json) | **MET** |
 | G-REPEAT | lidar | every wall within max(1 cm, 0.5%) | NOT MEASURABLE | **NOT MEASURED** |
 | G-OPEN | lidar | <= 2 cm on >= 85% of openings | 0/12 within 2 cm (0%) | **NOT MET** |
-| A-WALL-LIDAR | lidar | <= max(2 cm, 1%) | NOT MEASURED | **NOT MEASURED** |
+| A-WALL-LIDAR | lidar | <= max(2 cm, 1%) | 6/12 wall-to-wall distances within gate (median |error| 24.6 mm) | **NOT MET** |
 | G-WALL-VIDEO | video | within +-3% of reference | footprint 60% worst over 2 capture(s) | **NOT MET** |
 | A-CALIB-VIDEO | video | nominal 90% interval contains the reference | 2/2 at the calibrated x11.0 | **MET** |
 | G-WALL-PHOTO | photo | within +-8% of reference | 2 room box(es), footprint 4.12 m2 | **NOT MEASURED** |
@@ -37,7 +37,7 @@ reported rather than omitted, because an absent row reads as a pass.
 - **G-REPEAT-ROOMS** — the gate asks for the count and the count matches; the rooms themselves do not correspond, which bench/same_flat.py measures
 - **G-REPEAT** — no common frame: each walk is yaw-aligned from its own wall lines and starts at its own origin, so the two plans are in different coordinate systems; no common decomposition: a wall bounding a room in one walk can run through the middle of a room in the other, so there is no counterpart to match. This is the fatal one, and `room_correspondence` above is the evidence
 - **G-OPEN** — two walks of one flat, {'1a8384c3f6': 12, 'c7d28f72c6': 12}; widths rank-paired. paired by rank among sorted widths, because openings carry no identity across two independent walks. Rank pairing is the
-- **A-WALL-LIDAR** — no tape truth for the supplied captures; the synthetic room of exactly known size is measured by tests/test_accuracy.py and tabulated in docs/technical_report.md section 6
+- **A-WALL-LIDAR** — device vs FARO-derived laser depth on the same frames and poses. Where both clouds select the SAME pair of walls (9 of 12), 6 pass with median |error| 7.5 mm; the rest are our plane-pair selection disagreeing, not the sensor. Measures sensor and fusion through our fitting, NOT the layout's own wall segments
 - **G-WALL-VIDEO** — video produced a plan on 2/3 captures; 1 failed outright. Reference is the LiDAR result, not truth
 - **A-CALIB-VIDEO** — widening factor measured from observed error, not inherited
 - **G-WALL-PHOTO** — no reference exists for the derived photo folders; the tier reports boxes, not measured walls

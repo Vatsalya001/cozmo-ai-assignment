@@ -50,6 +50,7 @@ PLAN=(
   "fix_loop_diagnosis.json|fix_loop_diagnosis|supplied|"
   "same_flat.json|same_flat|supplied|"
   "ceiling_walks.json|ceiling_walks|arkitscenes_walks|"
+  "wall_distance_walks.json|wall_distance_walks|arkitscenes_walks|"
   "head_to_head.json|head_to_head|own|"
   "head_to_head_engineer.json|head_to_head_engineer|supplied|"
   "video_vs_lidar.json|video_vs_lidar|supplied|needs the models extra (torch + weights); pass --with-models"

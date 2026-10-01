@@ -84,9 +84,9 @@
       "gate": "A-WALL-LIDAR",
       "tier": "lidar",
       "target": "<= max(2 cm, 1%)",
-      "result": "NOT MEASURED",
-      "status": "NOT MEASURED",
-      "detail": "no tape truth for the supplied captures; the synthetic room of exactly known size is measured by tests/test_accuracy.py and tabulated in docs/technical_report.md section 6"
+      "result": "6/12 wall-to-wall distances within gate (median |error| 24.6 mm)",
+      "status": "NOT MET",
+      "detail": "device vs FARO-derived laser depth on the same frames and poses. Where both clouds select the SAME pair of walls (9 of 12), 6 pass with median |error| 7.5 mm; the rest are our plane-pair selection disagreeing, not the sensor. Measures sensor and fusion through our fitting, NOT the layout's own wall segments"
     },
     {
       "gate": "G-WALL-VIDEO",

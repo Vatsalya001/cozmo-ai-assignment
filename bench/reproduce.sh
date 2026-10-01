@@ -26,6 +26,7 @@ step "depth bias measured per-pixel against FARO laser truth" "$PY" bench/depth_
 step "G-CEIL: ceiling height vs FARO laser truth on full walks" "$PY" bench/ceiling_walks.py
 step "G-CEIL ablation: the same walks with depth as recorded" \
      "$PY" bench/ceiling_walks.py --no-bias-correction
+step "A-WALL-LIDAR: wall-to-wall distance vs laser truth" "$PY" bench/wall_distance_walks.py
 step "storey-height calibration (earlier attempt; reports NOT MEASURED)" "$PY" bench/arkitscenes_laser.py
 step "video tier against the LiDAR reference, and interval calibration" "$PY" bench/video_vs_lidar.py
 step "photo tier room boxes and stitch grouping" "$PY" bench/photo_tier.py

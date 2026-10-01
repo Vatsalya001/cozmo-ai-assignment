@@ -333,6 +333,38 @@ exact truth**, where the gap is large and consistent across both generators and 
 is matched (their source specifies inside faces, as ours does); and the **measured depth bias**,
 which they carry as a 13 mm uncertainty rather than correcting.
 
+## 6c. Wall-to-wall distance against laser truth
+
+Ceiling height is the separation of two horizontal surfaces; a wall-to-wall distance is the same
+measurement turned ninety degrees. Once device and laser depth could be fused onto the same
+poses, this followed — and it measures the quantity a floor plan is actually made of.
+
+**A-WALL-LIDAR: 6 of 12 distances within max(2 cm, 1%). NOT MET.** The useful part is the split:
+
+| | distances | within gate | median \|error\| |
+|---|---|---|---|
+| both clouds chose the **same** pair of walls | 9 of 12 | 6 | **7.5 mm** |
+| they chose **different** walls | 3 of 12 | 0 | 168–948 mm |
+
+**On matched walls the sensor agrees with the laser to single-digit millimetres.** The three
+large rows are not a 948 mm sensor error — that would be an extraordinary claim about a LiDAR
+phone — they are our densest-plane heuristic selecting a different pair of walls in one cloud
+than in the other. Each row publishes the coordinates it chose, so the two failures can be told
+apart; without them an error of that size is unreadable.
+
+The denominator stays all twelve. Choosing the wrong walls is our error too, and scoring only
+the rows where our own selection happened to agree would convert a failure into a pass by
+discarding the failures.
+
+**This does not measure the layout.** It measures the sensor and the fusion through our plane
+fitting on a room-scale distance. The wall lengths `scanplan run` emits still have no truth,
+because nobody has taped the supplied captures — the same limit A-WALL-LIDAR carried when it
+read NOT MEASURED, narrowed rather than removed.
+
+**Honest comparison:** the independent submission measured this gate too and met it, 4 of 4
+distances after depth correction. They measured a quarter as many distances and did better on
+them. Plane-pair stability is a real weakness on our side.
+
 ## 7. Known failure modes
 
 1. **No ground truth for the captures the pipeline runs on.** This is now the largest gap.

@@ -1,0 +1,262 @@
+{
+  "gate": "A-WALL-LIDAR: wall-to-wall distance within max(2 cm, 1%) -- our gate, not the brief's; the brief loosens walls to +-3% for video so LiDAR must be tighter",
+  "method": "two strongest opposing vertical planes along each horizontal axis after yaw-aligning on the walls, device cloud against laser cloud on the same frames and poses, both through our own fitting",
+  "bias_correction": "leave-one-venue-out",
+  "does_not_measure": "our layout's wall segments. This measures the sensor and the fusion through our plane fitting on a room-scale distance; the wall lengths `scanplan run` emits still have no truth to check against, because nobody has taped the supplied captures",
+  "rows": [
+    {
+      "video_id": "41069048",
+      "visit_id": 381644,
+      "axis": "x",
+      "applied_offset_mm": 14.0,
+      "device_m": 1.8399,
+      "laser_m": 1.8429,
+      "error_mm": -3.0,
+      "gate_m": 0.02,
+      "within_gate": true,
+      "device_at": [
+        -1.2277,
+        0.6122
+      ],
+      "laser_at": [
+        -1.2291,
+        0.6138
+      ],
+      "same_walls": true
+    },
+    {
+      "video_id": "41069048",
+      "visit_id": 381644,
+      "axis": "z",
+      "applied_offset_mm": 14.0,
+      "device_m": 1.8994,
+      "laser_m": 1.8954,
+      "error_mm": 4.0,
+      "gate_m": 0.02,
+      "within_gate": true,
+      "device_at": [
+        -0.9577,
+        0.9417
+      ],
+      "laser_at": [
+        -0.958,
+        0.9374
+      ],
+      "same_walls": true
+    },
+    {
+      "video_id": "41069050",
+      "visit_id": 381644,
+      "axis": "x",
+      "applied_offset_mm": 14.0,
+      "device_m": 1.8554,
+      "laser_m": 1.6873,
+      "error_mm": 168.1,
+      "gate_m": 0.02,
+      "within_gate": false,
+      "device_at": [
+        -1.5742,
+        0.2812
+      ],
+      "laser_at": [
+        -1.3887,
+        0.2986
+      ],
+      "same_walls": false
+    },
+    {
+      "video_id": "41069050",
+      "visit_id": 381644,
+      "axis": "z",
+      "applied_offset_mm": 14.0,
+      "device_m": 1.8395,
+      "laser_m": 1.8467,
+      "error_mm": -7.2,
+      "gate_m": 0.02,
+      "within_gate": true,
+      "device_at": [
+        -0.4761,
+        1.3635
+      ],
+      "laser_at": [
+        -0.4681,
+        1.3786
+      ],
+      "same_walls": true
+    },
+    {
+      "video_id": "41069051",
+      "visit_id": 381644,
+      "axis": "x",
+      "applied_offset_mm": 14.0,
+      "device_m": 1.8196,
+      "laser_m": 1.814,
+      "error_mm": 5.6,
+      "gate_m": 0.02,
+      "within_gate": true,
+      "device_at": [
+        -0.1822,
+        1.6373
+      ],
+      "laser_at": [
+        -0.1805,
+        1.6335
+      ],
+      "same_walls": true
+    },
+    {
+      "video_id": "41069051",
+      "visit_id": 381644,
+      "axis": "z",
+      "applied_offset_mm": 14.0,
+      "device_m": 1.6683,
+      "laser_m": 1.8666,
+      "error_mm": -198.3,
+      "gate_m": 0.02,
+      "within_gate": false,
+      "device_at": [
+        -0.3399,
+        1.3284
+      ],
+      "laser_at": [
+        -0.3347,
+        1.5319
+      ],
+      "same_walls": false
+    },
+    {
+      "video_id": "41069042",
+      "visit_id": 381649,
+      "axis": "x",
+      "applied_offset_mm": 14.0,
+      "device_m": 2.61,
+      "laser_m": 2.6585,
+      "error_mm": -48.5,
+      "gate_m": 0.0266,
+      "within_gate": false,
+      "device_at": [
+        -1.9612,
+        0.6488
+      ],
+      "laser_at": [
+        -1.9965,
+        0.662
+      ],
+      "same_walls": true
+    },
+    {
+      "video_id": "41069042",
+      "visit_id": 381649,
+      "axis": "z",
+      "applied_offset_mm": 14.0,
+      "device_m": 2.422,
+      "laser_m": 2.3811,
+      "error_mm": 40.9,
+      "gate_m": 0.0238,
+      "within_gate": false,
+      "device_at": [
+        -1.4451,
+        0.9769
+      ],
+      "laser_at": [
+        -1.4384,
+        0.9427
+      ],
+      "same_walls": true
+    },
+    {
+      "video_id": "41069043",
+      "visit_id": 381649,
+      "axis": "x",
+      "applied_offset_mm": 14.0,
+      "device_m": 2.5711,
+      "laser_m": 2.6627,
+      "error_mm": -91.6,
+      "gate_m": 0.0266,
+      "within_gate": false,
+      "device_at": [
+        -1.9904,
+        0.5806
+      ],
+      "laser_at": [
+        -2.0091,
+        0.6537
+      ],
+      "same_walls": true
+    },
+    {
+      "video_id": "41069043",
+      "visit_id": 381649,
+      "axis": "z",
+      "applied_offset_mm": 14.0,
+      "device_m": 3.5464,
+      "laser_m": 3.5539,
+      "error_mm": -7.5,
+      "gate_m": 0.0355,
+      "within_gate": true,
+      "device_at": [
+        -0.4671,
+        3.0793
+      ],
+      "laser_at": [
+        -0.4425,
+        3.1114
+      ],
+      "same_walls": true
+    },
+    {
+      "video_id": "41069046",
+      "visit_id": 381649,
+      "axis": "x",
+      "applied_offset_mm": 14.0,
+      "device_m": 3.6427,
+      "laser_m": 2.6951,
+      "error_mm": 947.6,
+      "gate_m": 0.027,
+      "within_gate": false,
+      "device_at": [
+        -0.873,
+        2.7697
+      ],
+      "laser_at": [
+        -0.898,
+        1.7971
+      ],
+      "same_walls": false
+    },
+    {
+      "video_id": "41069046",
+      "visit_id": 381649,
+      "axis": "z",
+      "applied_offset_mm": 14.0,
+      "device_m": 2.4631,
+      "laser_m": 2.4548,
+      "error_mm": 8.3,
+      "gate_m": 0.0245,
+      "within_gate": true,
+      "device_at": [
+        -0.1367,
+        2.3264
+      ],
+      "laser_at": [
+        -0.0975,
+        2.3572
+      ],
+      "same_walls": true
+    }
+  ],
+  "distances_scored": 12,
+  "rejected": 0,
+  "within_gate": 6,
+  "total": 12,
+  "median_abs_error_mm": 24.6,
+  "max_abs_error_mm": 947.6,
+  "gate_met": false,
+  "where_both_clouds_chose_the_same_walls": {
+    "distances": 9,
+    "within_gate": 6,
+    "median_abs_error_mm": 7.5,
+    "max_abs_error_mm": 91.6,
+    "note": "a sub-result, NOT the gate. Reported because it separates two very different failures: where both clouds select the same pair of walls the remaining difference is the sensor, and where they do not the difference is our plane-pair selection. The gate stays the full set, because choosing the wrong walls is our error too"
+  }
+}

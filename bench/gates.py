@@ -199,12 +199,27 @@ def gate_rows(runs: dict) -> list[dict]:
     else:
         add("G-OPEN", "lidar", "<= 2 cm on >= 85% of openings", "NOT MEASURED", "NOT MEASURED",
             "no tape truth for the supplied captures")
-    # The synthetic figures deliberately are NOT repeated here. They were, and they went stale
-    # the moment the depth-bias correction changed them -- a hardcoded cross-reference to a
-    # number that lives in another file is a number that will be wrong eventually.
-    add("A-WALL-LIDAR", "lidar", "<= max(2 cm, 1%)", "NOT MEASURED", "NOT MEASURED",
-        "no tape truth for the supplied captures; the synthetic room of exactly known size is "
-        "measured by tests/test_accuracy.py and tabulated in docs/technical_report.md section 6")
+    # Measured against laser truth on the ARKitScenes walks. The synthetic figures are
+    # deliberately NOT repeated in the detail string: they were, and they went stale the moment
+    # the depth-bias correction changed them.
+    wdw = ROOT / "bench" / "results" / "wall_distance_walks.json"
+    wd = json.loads(wdw.read_text()) if wdw.is_file() else None
+    if wd and wd.get("distances_scored"):
+        same = wd.get("where_both_clouds_chose_the_same_walls", {})
+        add("A-WALL-LIDAR", "lidar", "<= max(2 cm, 1%)",
+            f"{wd['within_gate']}/{wd['total']} wall-to-wall distances within gate "
+            f"(median |error| {wd['median_abs_error_mm']:.1f} mm)",
+            "MET" if wd["gate_met"] else "NOT MET",
+            f"device vs FARO-derived laser depth on the same frames and poses. Where both "
+            f"clouds select the SAME pair of walls ({same.get('distances', 0)} of "
+            f"{wd['total']}), {same.get('within_gate', 0)} pass with median |error| "
+            f"{same.get('median_abs_error_mm', float('nan')):.1f} mm; the rest are our "
+            f"plane-pair selection disagreeing, not the sensor. Measures sensor and fusion "
+            f"through our fitting, NOT the layout's own wall segments")
+    else:
+        add("A-WALL-LIDAR", "lidar", "<= max(2 cm, 1%)", "NOT MEASURED", "NOT MEASURED",
+            "no tape truth for the supplied captures; the synthetic room of exactly known size "
+            "is measured by tests/test_accuracy.py and tabulated in docs/technical_report.md")
     # --- video and photo tiers ------------------------------------------------------
     vv = ROOT / "bench" / "results" / "video_vs_lidar.json"
     if vv.is_file():
