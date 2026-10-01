@@ -7,7 +7,7 @@ reported rather than omitted, because an absent row reads as a pass.
 
 | Gate | Tier | Target | Result | Status |
 |---|---|---|---|---|
-| A-RUNTIME | lidar | <= 60 s | worst 43.4 s | **MET** |
+| A-RUNTIME | lidar | <= 60 s | within budget | **MET** |
 | A-DET | lidar | same input, same output | identical | **MET** |
 | A-SCHEMA | all | 100% validate, ci_low <= value <= ci_high | 3/3 valid | **MET** |
 | G-DRIFT | lidar | method stated + footprint ablation on/off | ablation run on all captures | **MET** |
@@ -27,7 +27,7 @@ reported rather than omitted, because an absent row reads as a pass.
 
 ## Detail
 
-- **A-RUNTIME** — c00a170fe1 9.8s, 1a8384c3f6 25.8s, c7d28f72c6 43.4s
+- **A-RUNTIME** — measured seconds vary with the machine and are reported in timing.json, not here
 - **A-DET** — c00a170fe1
 - **G-DRIFT** — c00a170fe1: 14.91 -> 15.11 m2, 5 loops; 1a8384c3f6: 47.50 -> 48.04 m2, 25 loops; c7d28f72c6: 47.87 -> 49.65 m2, 124 loops
 - **G-CEIL-SPREAD** — only 1 capture(s) saw a ceiling

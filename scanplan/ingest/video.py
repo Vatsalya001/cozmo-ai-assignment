@@ -48,10 +48,25 @@ _pipe = None
 
 
 def _depth_model():
+    """Load the metric depth model, or say plainly what is missing.
+
+    The default install is `pip install -e ".[dev]"`, which deliberately omits torch and
+    transformers so the LiDAR tier needs no weights and no network. A clean-clone check caught
+    the consequence: asking for the video or photo tier on that install raised a bare
+    ModuleNotFoundError. On walk-in day that is a traceback in front of the examiners, where a
+    stated failure naming the fix is worth far more.
+    """
     global _pipe
     if _pipe is None:
         os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
-        from transformers import pipeline as hf_pipeline
+        try:
+            from transformers import pipeline as hf_pipeline
+        except ImportError as e:
+            raise CaptureError(
+                "the video and photo tiers need the model extra, which the default install "
+                "omits so the LiDAR tier stays weight-free and offline. Install it with:\n"
+                '    pip install -e ".[dev,models]"\n'
+                "then re-run. The LiDAR tier works without it.") from e
         _pipe = hf_pipeline(task="depth-estimation", model=MODEL, device="cpu")
     return _pipe
 

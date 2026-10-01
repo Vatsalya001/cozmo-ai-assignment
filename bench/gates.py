@@ -62,9 +62,19 @@ def gate_rows(runs: dict) -> list[dict]:
     # --- A-RUNTIME ------------------------------------------------------------------
     times = {k: v["wall_s"] for k, v in runs.items()}
     worst = max(times.values()) if times else float("nan")
+    # The measured seconds go in `detail`, never in `result`. A wall-clock number inside the
+    # result string makes this file differ on every run, and a clean-clone check then cannot
+    # tell a real regression from a slightly busier machine.
     add("A-RUNTIME", "lidar", f"<= {RUNTIME_BUDGET_S:.0f} s",
-        f"worst {worst:.1f} s", "MET" if worst <= RUNTIME_BUDGET_S else "NOT MET",
-        ", ".join(f"{k} {v:.1f}s" for k, v in times.items()))
+        "within budget" if worst <= RUNTIME_BUDGET_S else "over budget",
+        "MET" if worst <= RUNTIME_BUDGET_S else "NOT MET",
+        "measured seconds vary with the machine and are reported in timing.json, not here")
+    (OUT / "timing.json").parent.mkdir(parents=True, exist_ok=True)
+    (OUT / "timing.json").write_text(json.dumps(
+        {"budget_s": RUNTIME_BUDGET_S, "worst_s": round(worst, 1),
+         "per_capture_s": {k: round(v, 1) for k, v in times.items()},
+         "note": "wall-clock, machine-dependent; excluded from gates.json so that file "
+                 "reproduces exactly"}, indent=2) + "\n")
 
     # --- A-DET: determinism ---------------------------------------------------------
     name = next(iter(runs), None)

@@ -1,0 +1,51 @@
+{
+  "gate": "G-CEIL: ceiling height within 1.5 cm of truth",
+  "method": "device depth and FARO-derived laser depth fused with the SAME poses, then both run through our own floor/ceiling fit; the difference is reported",
+  "caveat": "the laser side is run through our fitting, not Apple's annotations, so a fitting error on noiseless input would cancel on both sides; this measures our geometry against laser-grade depth, it does not revalidate the laser",
+  "rows": [
+    {
+      "scan": "42445445",
+      "rejected": "no floor and ceiling both visible"
+    },
+    {
+      "scan": "42445922",
+      "device_storey_m": 0.23834356228879577,
+      "laser_storey_m": 0.695344725294929,
+      "error_mm": -457.0011630061332,
+      "within_gate": false,
+      "device_points": 48421,
+      "laser_points": 71215
+    },
+    {
+      "scan": "42447221",
+      "rejected": "no floor and ceiling both visible"
+    },
+    {
+      "scan": "42897892",
+      "rejected": "no floor and ceiling both visible"
+    },
+    {
+      "scan": "42446535",
+      "rejected": "no floor and ceiling both visible"
+    },
+    {
+      "scan": "42897521",
+      "rejected": "no floor and ceiling both visible"
+    },
+    {
+      "scan": "42897549",
+      "rejected": "no floor and ceiling both visible"
+    },
+    {
+      "scan": "42897552",
+      "rejected": "no floor and ceiling both visible"
+    }
+  ],
+  "scans_scored": 1,
+  "scans_rejected": 7,
+  "within_gate": 0,
+  "total": 1,
+  "median_error_mm": -457.0011630061332,
+  "max_abs_error_mm": 457.0011630061332,
+  "gate_met": false
+}

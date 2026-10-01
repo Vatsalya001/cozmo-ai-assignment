@@ -47,14 +47,33 @@ def test_video_scale_provenance_is_the_model_not_the_room():
 
 
 def test_photo_folder_with_unreadable_images_fails_with_a_stated_error(tmp_path):
-    """All three tiers are implemented now, so the interesting failure is no longer 'not
-    implemented' -- it is a tier that runs and finds nothing usable, which must still be a
-    stated error rather than an empty plan presented as a result."""
+    """A tier that runs and finds nothing usable must still raise a stated error rather than
+    present an empty plan as a result -- and must do so whether or not the model extra is
+    installed. A clean-clone check found this raising a bare ModuleNotFoundError on the
+    README's default install, which on walk-in day is a traceback in front of the examiners."""
     home = tmp_path / "home" / "kitchen"
     home.mkdir(parents=True)
     (home / "a.jpg").write_bytes(b"not an image")
     with pytest.raises(CaptureError):
         pipeline.run(tmp_path / "home")
+
+
+def test_a_missing_model_extra_is_a_stated_error_not_a_traceback(monkeypatch):
+    """The default install omits torch and transformers on purpose, so the LiDAR tier needs no
+    weights and no network. Asking for a model-backed tier anyway must name the fix."""
+    import builtins
+    import scanplan.ingest.video as v
+    monkeypatch.setattr(v, "_pipe", None)
+    real = builtins.__import__
+
+    def no_transformers(name, *a, **k):
+        if name.startswith("transformers"):
+            raise ImportError("No module named 'transformers'")
+        return real(name, *a, **k)
+
+    monkeypatch.setattr(builtins, "__import__", no_transformers)
+    with pytest.raises(CaptureError, match=r"dev,models"):
+        v._depth_model()
 
 
 # ---- photo tier ------------------------------------------------------------------------

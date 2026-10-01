@@ -16,5 +16,6 @@ out/
 # Downloaded datasets: fetched by script, never committed (brief: "weights and large
 # binaries fetched by script or volume").
 data/arkitscenes/
+data/arkitscenes_up/
 data/supplied
 data/own/

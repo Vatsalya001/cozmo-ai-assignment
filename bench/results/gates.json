@@ -4,9 +4,9 @@
       "gate": "A-RUNTIME",
       "tier": "lidar",
       "target": "<= 60 s",
-      "result": "worst 43.4 s",
+      "result": "within budget",
       "status": "MET",
-      "detail": "c00a170fe1 9.8s, 1a8384c3f6 25.8s, c7d28f72c6 43.4s"
+      "detail": "measured seconds vary with the machine and are reported in timing.json, not here"
     },
     {
       "gate": "A-DET",
