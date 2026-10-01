@@ -22,7 +22,8 @@ step "input integrity (captures must not have changed)" \
 step "unit and accuracy tests" .venv/bin/pytest -q
 step "gates across every supplied capture" "$PY" bench/gates.py
 step "fix-loop diagnosis (evidence behind the declaration)" "$PY" bench/fix_loop_diagnosis.py
-step "depth-bias calibration against FARO laser truth" "$PY" bench/arkitscenes_laser.py
+step "depth bias measured per-pixel against FARO laser truth" "$PY" bench/depth_bias.py
+step "storey-height calibration (reports NOT MEASURED; see the script header)" "$PY" bench/arkitscenes_laser.py
 step "video tier against the LiDAR reference, and interval calibration" "$PY" bench/video_vs_lidar.py
 step "photo tier room boxes and stitch grouping" "$PY" bench/photo_tier.py
 step "head-to-head vs magicplan" "$PY" bench/head_to_head.py

@@ -35,6 +35,12 @@ RGB_SIZE = (1920, 1440)
 POSE_JUMP_M = 0.10          # a normal step at 60 fps is under 3 cm
 MIN_CONFIDENCE = 1          # 0 low, 1 medium, 2 high; low returns are dropped
 
+# Measured, not assumed: the device reads 18 mm SHORT of FARO laser truth, pooled over
+# 4.79 million pixels across 8 ARKitScenes scans where laser depth is registered to the same
+# frames (bench/depth_bias.py). Adding it back is the whole correction; the 4 mm that the
+# scan-to-scan spread leaves unexplained stays in the interval instead.
+DEPTH_BIAS_CORRECTION_M = 0.018
+
 
 class StrayCapture:
     """Lazy reader. Depth frames are only decoded when asked for, so a 9745-frame capture
@@ -80,7 +86,9 @@ class StrayCapture:
         return img
 
     def depth_m(self, i: int) -> np.ndarray:
-        return self._png("depth", i).astype(np.float32) / 1000.0
+        d = self._png("depth", i).astype(np.float32) / 1000.0
+        d[d > 0] += DEPTH_BIAS_CORRECTION_M      # see DEPTH_BIAS_CORRECTION_M
+        return d
 
     def confidence(self, i: int) -> np.ndarray:
         return self._png("confidence", i)

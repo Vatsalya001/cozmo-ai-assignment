@@ -18,12 +18,17 @@ BIN_M = 0.01
 REFINE_HALF_WIDTH_M = 0.03      # points within +-3 cm of the peak define the surface
 MIN_SUPPORT_FRACTION = 0.005    # a real floor or ceiling holds at least 0.5% of all points
 
-# Device depth carries a systematic offset that averaging cannot remove: published work on
-# iPad Pro LiDAR puts it near 12 mm against laser truth. Until we measure it ourselves on
-# ARKitScenes (bench/arkitscenes_planes.py) every surface height carries this as an
-# irreducible allowance. Without it the standard error of 250,000 points is 0.1 mm, which
-# would be confident garbage of exactly the kind the brief penalises.
-UNMEASURED_DEPTH_BIAS_M = 0.012
+# Device depth carries a systematic offset that averaging cannot remove. This was an
+# assumption of 12 mm; it is now MEASURED at 18 mm against FARO laser ground truth over
+# 4.79 million pixels across 8 ARKitScenes scans (bench/depth_bias.py). The device reads
+# SHORT, so the correction adds to depth -- see ingest.DEPTH_BIAS_CORRECTION_M.
+#
+# What remains here is the residual: per-scan medians ranged -14 to -27 mm with a standard
+# deviation of 4 mm, so correcting by the pooled median leaves about that much unexplained.
+# It is carried on every surface height because the standard error of 250,000 points is
+# 0.1 mm, and reporting that would be confident garbage of exactly the kind the brief
+# penalises -- averaging removes noise, not a systematic offset.
+RESIDUAL_DEPTH_BIAS_M = 0.004
 
 
 @dataclass
@@ -34,10 +39,10 @@ class Level:
 
     @property
     def sigma_m(self) -> float:
-        """One sigma on the surface height: the statistical error of the fit, plus the
-        systematic depth offset we have not yet calibrated out."""
+        """One sigma on the surface height: the statistical error of the fit, plus what the
+        measured depth-bias correction leaves unexplained."""
         statistical = self.rms_m / max(np.sqrt(self.support), 1.0)
-        return float(np.hypot(statistical, UNMEASURED_DEPTH_BIAS_M))
+        return float(np.hypot(statistical, RESIDUAL_DEPTH_BIAS_M))
 
 
 def _peak(heights: np.ndarray, candidates: np.ndarray) -> Level | None:

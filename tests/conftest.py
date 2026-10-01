@@ -25,6 +25,11 @@ CX, CY = 959.5, 719.5
 DEPTH_W, DEPTH_H = 256, 192
 CAMERA_HEIGHT_M = 1.50
 
+# The real device reads short of laser truth by this much (bench/depth_bias.py, 8 scans,
+# 4.79 million pixels). The fixture reproduces it so the loader's correction is exercised
+# rather than bypassed.
+DEVICE_BIAS_M = 0.018
+
 
 def depth_intrinsics():
     sx, sy = DEPTH_W / RGB_W, DEPTH_H / RGB_H
@@ -89,8 +94,13 @@ def write_stray_capture(out_dir, *, width_m=4.0, depth_m=3.0, ceiling_m=2.5, fra
         pos = np.array([xz[0], CAMERA_HEIGHT_M, xz[1]])
         R = _look(outward, sweep[i % 3])
 
+        # Simulate the device's measured bias so the pipeline's correction has something
+        # real to undo. Without this the fixture would hand the loader unbiased depth, the
+        # loader would add 18 mm anyway, and the synthetic test would report a room 18 mm too
+        # large while appearing to validate the correction.
+        biased = _exit_depth(R, pos, room) - DEVICE_BIAS_M
         cv2.imwrite(str(out_dir / "depth" / f"{i:06d}.png"),
-                    np.clip(_exit_depth(R, pos, room) * 1000.0, 0, 65535).astype(np.uint16))
+                    np.clip(biased * 1000.0, 0, 65535).astype(np.uint16))
         cv2.imwrite(str(out_dir / "confidence" / f"{i:06d}.png"),
                     np.full((DEPTH_H, DEPTH_W), 2, np.uint8))
         q = Rotation.from_matrix(R).as_quat()

@@ -4,9 +4,9 @@
       "gate": "A-RUNTIME",
       "tier": "lidar",
       "target": "<= 60 s",
-      "result": "worst 53.3 s",
+      "result": "worst 43.4 s",
       "status": "MET",
-      "detail": "c00a170fe1 12.1s, 1a8384c3f6 32.5s, c7d28f72c6 53.3s"
+      "detail": "c00a170fe1 9.8s, 1a8384c3f6 25.8s, c7d28f72c6 43.4s"
     },
     {
       "gate": "A-DET",
@@ -30,7 +30,7 @@
       "target": "method stated + footprint ablation on/off",
       "result": "ablation run on all captures",
       "status": "MET",
-      "detail": "c00a170fe1: 14.90 -> 14.86 m2, 5 loops; 1a8384c3f6: 47.58 -> 47.62 m2, 25 loops; c7d28f72c6: 48.35 -> 47.93 m2, 124 loops"
+      "detail": "c00a170fe1: 14.91 -> 15.11 m2, 5 loops; 1a8384c3f6: 47.50 -> 48.04 m2, 25 loops; c7d28f72c6: 47.87 -> 49.65 m2, 124 loops"
     },
     {
       "gate": "G-CEIL-SPREAD",
@@ -52,16 +52,16 @@
       "gate": "G-REPEAT-FOOTPRINT",
       "tier": "lidar",
       "target": "two walks of one flat agree",
-      "result": "0.7% apart",
-      "status": "MET",
-      "detail": "1a8384c3f6 47.62 m2 vs c7d28f72c6 47.93 m2"
+      "result": "3.2% apart",
+      "status": "NOT MET",
+      "detail": "1a8384c3f6 48.04 m2 vs c7d28f72c6 49.65 m2"
     },
     {
       "gate": "G-REPEAT-ROOMS",
       "tier": "lidar",
       "target": "same room count from both walks",
-      "result": "4 vs 5",
-      "status": "NOT MET",
+      "result": "5 vs 5",
+      "status": "MET",
       "detail": ""
     },
     {
@@ -138,13 +138,13 @@
     }
   ],
   "footprints": {
-    "c00a170fe1": 14.8584,
-    "1a8384c3f6": 47.6156,
-    "c7d28f72c6": 47.93
+    "c00a170fe1": 15.1084,
+    "1a8384c3f6": 48.0428,
+    "c7d28f72c6": 49.6452
   },
   "rooms": {
     "c00a170fe1": 2,
-    "1a8384c3f6": 4,
+    "1a8384c3f6": 5,
     "c7d28f72c6": 5
   }
 }

@@ -7,14 +7,14 @@ reported rather than omitted, because an absent row reads as a pass.
 
 | Gate | Tier | Target | Result | Status |
 |---|---|---|---|---|
-| A-RUNTIME | lidar | <= 60 s | worst 53.3 s | **MET** |
+| A-RUNTIME | lidar | <= 60 s | worst 43.4 s | **MET** |
 | A-DET | lidar | same input, same output | identical | **MET** |
 | A-SCHEMA | all | 100% validate, ci_low <= value <= ci_high | 3/3 valid | **MET** |
 | G-DRIFT | lidar | method stated + footprint ablation on/off | ablation run on all captures | **MET** |
 | G-CEIL-SPREAD | lidar | <= 1 cm across captures | NOT MEASURED | **NOT MEASURED** |
 | G-CEIL | lidar | <= 1.5 cm per room vs truth | NOT MEASURED | **NOT MEASURED** |
-| G-REPEAT-FOOTPRINT | lidar | two walks of one flat agree | 0.7% apart | **MET** |
-| G-REPEAT-ROOMS | lidar | same room count from both walks | 4 vs 5 | **NOT MET** |
+| G-REPEAT-FOOTPRINT | lidar | two walks of one flat agree | 3.2% apart | **NOT MET** |
+| G-REPEAT-ROOMS | lidar | same room count from both walks | 5 vs 5 | **MET** |
 | G-REPEAT | lidar | every wall within max(1 cm, 0.5%) | NOT MEASURED | **NOT MEASURED** |
 | G-OPEN | lidar | <= 2 cm on >= 85% of openings | NOT MEASURED | **NOT MEASURED** |
 | A-WALL-LIDAR | lidar | <= max(2 cm, 1%) | NOT MEASURED | **NOT MEASURED** |
@@ -27,12 +27,12 @@ reported rather than omitted, because an absent row reads as a pass.
 
 ## Detail
 
-- **A-RUNTIME** — c00a170fe1 12.1s, 1a8384c3f6 32.5s, c7d28f72c6 53.3s
+- **A-RUNTIME** — c00a170fe1 9.8s, 1a8384c3f6 25.8s, c7d28f72c6 43.4s
 - **A-DET** — c00a170fe1
-- **G-DRIFT** — c00a170fe1: 14.90 -> 14.86 m2, 5 loops; 1a8384c3f6: 47.58 -> 47.62 m2, 25 loops; c7d28f72c6: 48.35 -> 47.93 m2, 124 loops
+- **G-DRIFT** — c00a170fe1: 14.91 -> 15.11 m2, 5 loops; 1a8384c3f6: 47.50 -> 48.04 m2, 25 loops; c7d28f72c6: 47.87 -> 49.65 m2, 124 loops
 - **G-CEIL-SPREAD** — only 1 capture(s) saw a ceiling
 - **G-CEIL** — no laser or tape truth for the supplied captures; bench/arkitscenes_laser.py found no admissible scan
-- **G-REPEAT-FOOTPRINT** — 1a8384c3f6 47.62 m2 vs c7d28f72c6 47.93 m2
+- **G-REPEAT-FOOTPRINT** — 1a8384c3f6 48.04 m2 vs c7d28f72c6 49.65 m2
 - **G-REPEAT** — needs per-wall correspondence between the two walks
 - **G-OPEN** — no tape truth for the supplied captures
 - **A-WALL-LIDAR** — no tape truth; synthetic room gives -40 mm and -70 mm on 4.00 and 3.00 m

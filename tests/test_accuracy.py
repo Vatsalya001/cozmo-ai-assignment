@@ -29,13 +29,26 @@ def test_ceiling_height_within_two_centimetres(synthetic_room, synthetic_ir):
     assert height == pytest.approx(synthetic_room["ceiling_m"], abs=0.02)
 
 
-def test_ceiling_interval_carries_the_unmeasured_bias(synthetic_ir):
-    """The interval must not collapse just because there are many points. Averaging
-    250,000 samples gives a standard error near zero, which would be confident garbage."""
+def test_ceiling_interval_carries_the_residual_bias(synthetic_ir):
+    """The interval must not collapse just because there are many points. Averaging 250,000
+    samples gives a standard error near zero, which would be confident garbage. The floor is
+    now what the measured bias correction leaves unexplained, not a guessed allowance."""
     floor, ceiling = planes.floor_and_ceiling(synthetic_ir.points, synthetic_ir.trajectory[:, 1])
     _, sigma = planes.ceiling_height(floor, ceiling)
-    assert sigma >= planes.UNMEASURED_DEPTH_BIAS_M, "sigma must not fall below the known bias"
+    assert sigma >= planes.RESIDUAL_DEPTH_BIAS_M, "sigma must not fall below the residual bias"
     assert sigma < 0.05
+
+
+def test_the_depth_bias_correction_is_actually_applied(synthetic_room):
+    """The fixture writes depth 18 mm short, exactly as the real device does. If the loader
+    stopped correcting it, this is the test that notices."""
+    import numpy as np
+    from scanplan.ingest import stray
+    cap = stray.StrayCapture(synthetic_room["path"])
+    raw = cap._png("depth", 0).astype(float) / 1000.0
+    corrected = cap.depth_m(0)
+    delta = (corrected - raw)[raw > 0]
+    assert np.allclose(delta, stray.DEPTH_BIAS_CORRECTION_M, atol=1e-6)
 
 
 def _single_room(ir):

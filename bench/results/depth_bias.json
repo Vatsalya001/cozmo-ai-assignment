@@ -1,0 +1,90 @@
+{
+  "method": "per-pixel device depth minus laser-derived depth, same frames, high-confidence returns only, 0.4-5.0 m, disagreements over 300 mm discarded as registration error rather than bias",
+  "scans": [
+    {
+      "scan": "42445445",
+      "frames": 18,
+      "pixels": 739540,
+      "median_bias_mm": -13.999998569488525,
+      "mean_bias_mm": -13.637096621096134,
+      "p25_mm": -19.00005340576172,
+      "p75_mm": -9.000003337860107,
+      "rms_mm": 22.08702266216278
+    },
+    {
+      "scan": "42445922",
+      "frames": 10,
+      "pixels": 408108,
+      "median_bias_mm": -18.999993801116943,
+      "mean_bias_mm": -18.412526696920395,
+      "p25_mm": -25.000035762786865,
+      "p75_mm": -10.999977588653564,
+      "rms_mm": 25.825530290603638
+    },
+    {
+      "scan": "42447221",
+      "frames": 10,
+      "pixels": 421087,
+      "median_bias_mm": -16.99995994567871,
+      "mean_bias_mm": -17.289835959672928,
+      "p25_mm": -28.999924659729004,
+      "p75_mm": -6.999969482421875,
+      "rms_mm": 32.73460268974304
+    },
+    {
+      "scan": "42897892",
+      "frames": 38,
+      "pixels": 1651825,
+      "median_bias_mm": -21.99995517730713,
+      "mean_bias_mm": -22.202646359801292,
+      "p25_mm": -31.00001811981201,
+      "p75_mm": -14.0000581741333,
+      "rms_mm": 32.15547278523445
+    },
+    {
+      "scan": "42446535",
+      "frames": 11,
+      "pixels": 406459,
+      "median_bias_mm": -15.999913215637207,
+      "mean_bias_mm": -16.96263626217842,
+      "p25_mm": -24.99997615814209,
+      "p75_mm": -9.000003337860107,
+      "rms_mm": 24.59741197526455
+    },
+    {
+      "scan": "42897521",
+      "frames": 9,
+      "pixels": 337938,
+      "median_bias_mm": -16.99995994567871,
+      "mean_bias_mm": -17.84665696322918,
+      "p25_mm": -23.000001907348633,
+      "p75_mm": -11.999964714050293,
+      "rms_mm": 29.529858380556107
+    },
+    {
+      "scan": "42897549",
+      "frames": 12,
+      "pixels": 503431,
+      "median_bias_mm": -17.000019550323486,
+      "mean_bias_mm": -18.08209903538227,
+      "p25_mm": -23.000001907348633,
+      "p75_mm": -10.999917984008789,
+      "rms_mm": 25.518396869301796
+    },
+    {
+      "scan": "42897552",
+      "frames": 7,
+      "pixels": 324790,
+      "median_bias_mm": -27.000069618225098,
+      "mean_bias_mm": -26.20331570506096,
+      "p25_mm": -39.00003433227539,
+      "p75_mm": -16.000032424926758,
+      "rms_mm": 35.334330052137375
+    }
+  ],
+  "pooled_median_mm": -18.000006675720215,
+  "pooled_mean_mm": -19.213609397411346,
+  "spread_across_scans_mm": 13.000071048736572,
+  "total_pixels": 4793178,
+  "sign_convention": "positive means the device reads LONGER than the laser"
+}
