@@ -10,6 +10,11 @@ Two candidates came back clean on all four flags and shipped (commit `b40bd3f`).
 and this page is why — because a change that moves a gate and should not ship is more
 interesting than one that does.
 
+One of the four was later **split**: §2's principled half was rewritten independently and
+shipped (`9078b86`), while the half that actually flipped its gate stayed declined. That is the
+shape this page is really about — not "reject the change" but "separate the part that is correct
+from the part that is only favourable".
+
 Every number below was measured in a worktree. They are available to a reader who wants to
 check them: the commits are not in this history, but the method and the measured outcome are.
 
@@ -48,7 +53,7 @@ hatch and the diagnostic that names stride aliasing when it happens.
 
 ---
 
-## 2. Normals-based wall-plane selection — DECLINED, mixed verdict
+## 2. Normals-based wall-plane selection — HALF SHIPPED, the gate-flipping half declined
 
 **What it was.** A-WALL-LIDAR reads 7/12. Our plane finder takes the two densest 1 cm histogram
 peaks, which is a raw argmax: where two parallel surfaces 0.19–0.99 m apart have near-equal
