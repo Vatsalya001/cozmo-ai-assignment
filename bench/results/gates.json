@@ -92,7 +92,7 @@
       "gate": "G-WALL-VIDEO",
       "tier": "video",
       "target": "within +-3% of reference",
-      "result": "footprint 62% worst over 2 capture(s)",
+      "result": "footprint 60% worst over 2 capture(s)",
       "status": "NOT MET",
       "detail": "video produced a plan on 2/3 captures; 1 failed outright. Reference is the LiDAR result, not truth"
     },
@@ -108,7 +108,7 @@
       "gate": "G-WALL-PHOTO",
       "tier": "photo",
       "target": "within +-8% of reference",
-      "result": "2 room box(es), footprint 5.67 m2",
+      "result": "2 room box(es), footprint 4.12 m2",
       "status": "NOT MEASURED",
       "detail": "no reference exists for the derived photo folders; the tier reports boxes, not measured walls"
     },

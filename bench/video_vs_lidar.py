@@ -53,7 +53,11 @@ def main() -> int:
             vid = pipeline.run(path, tier="video")
         except Exception as e:                    # noqa: BLE001 -- a failed tier is a result
             wall = time.perf_counter() - t0
-            rows.append({"capture": name, "video_failed": f"{type(e).__name__}: {e}",
+            # The message carries the capture's absolute path, which differs on every machine
+            # and would make this file disagree with itself in the clean-clone check over
+            # something that is not the result. Replaced with the capture name it already has.
+            why = f"{type(e).__name__}: {e}".replace(str(path), name).replace(str(ROOT), ".")
+            rows.append({"capture": name, "video_failed": why,
                          "lidar_footprint_m2": lid["plan"]["footprint_m2"]["value"],
                          "lidar_rooms": len(lid["rooms"]),
                          "video_runtime_s": round(wall, 1)})

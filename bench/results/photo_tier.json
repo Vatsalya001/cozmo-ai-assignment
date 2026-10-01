@@ -1,22 +1,22 @@
 {
-  "source": "/tmp/photoset",
+  "source": "data/derived/photoset",
   "rooms": 2,
   "groups": 2,
-  "footprint_m2": 5.6652,
+  "footprint_m2": 4.1232,
   "ci": [
-    1.5647,
-    9.7657
+    1.1388,
+    7.1075
   ],
   "widening_factor": 11.0,
-  "runtime_s": 10.2,
+  "runtime_s": 13.8,
   "per_room": [
     {
-      "label": "bedroom",
-      "area_m2": 2.294
+      "label": "segment_a",
+      "area_m2": 1.9665
     },
     {
-      "label": "living_room",
-      "area_m2": 3.3713
+      "label": "segment_b",
+      "area_m2": 2.1566
     }
   ],
   "note": "no reference exists for these folders; stitch grouping is the measurable outcome"

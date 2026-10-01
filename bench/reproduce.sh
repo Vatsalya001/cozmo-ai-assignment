@@ -27,6 +27,8 @@ step "storey-height calibration (reports NOT MEASURED; see the script header)" "
 step "video tier against the LiDAR reference, and interval calibration" "$PY" bench/video_vs_lidar.py
 step "photo tier room boxes and stitch grouping" "$PY" bench/photo_tier.py
 step "head-to-head vs magicplan" "$PY" bench/head_to_head.py
+step "sync the compliance matrix gate table to the regenerated gates" \
+     "$PY" scripts/sync_compliance_matrix.py
 
 echo ""
 echo "results in bench/results/:"

@@ -3,12 +3,12 @@
   "rows": [
     {
       "capture": "c00a170fe1",
-      "lidar_footprint_m2": 14.8584,
+      "lidar_footprint_m2": 15.1084,
       "video_footprint_m2": 24.1344,
-      "footprint_error_pct": 62.42933290260056,
+      "footprint_error_pct": 59.74160069894893,
       "lidar_rooms": 2,
       "video_rooms": 2,
-      "video_runtime_s": 97.8,
+      "video_runtime_s": 113.4,
       "video_ci": [
         6.6659,
         41.6029
@@ -17,12 +17,12 @@
     },
     {
       "capture": "1a8384c3f6",
-      "lidar_footprint_m2": 47.6156,
+      "lidar_footprint_m2": 48.0428,
       "video_footprint_m2": 35.2024,
-      "footprint_error_pct": -26.069607439578636,
-      "lidar_rooms": 4,
+      "footprint_error_pct": -26.72700175676689,
+      "lidar_rooms": 5,
       "video_rooms": 1,
-      "video_runtime_s": 90.5,
+      "video_runtime_s": 112.3,
       "video_ci": [
         9.7229,
         60.6819
@@ -31,16 +31,16 @@
     },
     {
       "capture": "c7d28f72c6",
-      "video_failed": "CaptureError: /home/vatsalyaroy/Desktop/cozmo-case-study/data/supplied/single_scan_with_ceiling/c7d28f72c6: no floor found; the capture must show the floor",
-      "lidar_footprint_m2": 47.93,
+      "video_failed": "CaptureError: c7d28f72c6: no floor found; the capture must show the floor",
+      "lidar_footprint_m2": 49.6452,
       "lidar_rooms": 5,
-      "video_runtime_s": 83.2
+      "video_runtime_s": 102.2
     }
   ],
   "shipped_widening_factor": 11.0,
   "factor_needed_per_capture": [
-    9.49,
-    3.96
+    9.08,
+    4.06
   ],
   "recommended_widening_factor": 9.5,
   "intervals_holding_at_shipped_factor": 2,

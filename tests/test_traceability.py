@@ -14,6 +14,7 @@ must be updated deliberately rather than drifting apart in silence.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -79,3 +80,31 @@ def test_the_measurement_rests_on_enough_pixels_to_mean_anything(bias):
     assert bias["total_pixels"] >= 1_000_000
     assert len(bias["scans"]) >= 4
     assert sum(s["pixels"] for s in bias["scans"]) == pytest.approx(bias["total_pixels"], rel=0.02)
+
+
+def test_the_compliance_matrix_gate_table_matches_the_benchmark():
+    """The matrix already claimed once to be generated when it was not, and its A-RUNTIME row
+    drifted for exactly as long as nobody checked. A false claim of generation is worse than an
+    honest hand-written table: it tells the reader not to check the thing that is wrong."""
+    import subprocess
+    root = Path(__file__).resolve().parents[1]
+    done = subprocess.run([sys.executable, "scripts/sync_compliance_matrix.py", "--check"],
+                          cwd=root, capture_output=True, text=True)
+    assert done.returncode == 0, (
+        f"{done.stdout}{done.stderr}\n"
+        f"docs/compliance_matrix.md is out of date with bench/results/gates.json. "
+        f"Run: python scripts/sync_compliance_matrix.py")
+
+
+def test_no_committed_result_carries_an_absolute_path():
+    """A machine-specific path in a result makes that file disagree with itself on any other
+    machine, for a reason that has nothing to do with the measurement. Both offenders are
+    fixed -- photo_tier recorded /tmp/photoset as its source, and video_vs_lidar embedded the
+    full capture path inside a CaptureError message -- and this keeps them fixed."""
+    offenders = []
+    for path in sorted(RESULTS.glob("*.json")):
+        text = path.read_text()
+        for marker in ("/home/", "/Users/", "C:\\\\", "/tmp/"):
+            if marker in text:
+                offenders.append(f"{path.name} contains {marker!r}")
+    assert not offenders, "\n".join(offenders)

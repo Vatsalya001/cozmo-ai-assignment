@@ -18,9 +18,9 @@ reported rather than omitted, because an absent row reads as a pass.
 | G-REPEAT | lidar | every wall within max(1 cm, 0.5%) | NOT MEASURED | **NOT MEASURED** |
 | G-OPEN | lidar | <= 2 cm on >= 85% of openings | NOT MEASURED | **NOT MEASURED** |
 | A-WALL-LIDAR | lidar | <= max(2 cm, 1%) | NOT MEASURED | **NOT MEASURED** |
-| G-WALL-VIDEO | video | within +-3% of reference | footprint 62% worst over 2 capture(s) | **NOT MET** |
+| G-WALL-VIDEO | video | within +-3% of reference | footprint 60% worst over 2 capture(s) | **NOT MET** |
 | A-CALIB-VIDEO | video | nominal 90% interval contains the reference | 2/2 at the calibrated x11.0 | **MET** |
-| G-WALL-PHOTO | photo | within +-8% of reference | 2 room box(es), footprint 5.67 m2 | **NOT MEASURED** |
+| G-WALL-PHOTO | photo | within +-8% of reference | 2 room box(es), footprint 4.12 m2 | **NOT MEASURED** |
 | G-PHOTO-STITCH | photo | one stitched plan, correct adjacency | 2 disconnected group(s) | **NOT MET** |
 | G-H2H | lidar | beat or tie on >= 70% of shared dimensions | PENDING | **NOT MEASURED** |
 | A-DMG-DETECT | all | staged damage found with right class | NOT BUILT | **NOT MEASURED** |
