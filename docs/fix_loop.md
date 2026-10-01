@@ -1,7 +1,7 @@
 # Fix loop: outcome and post-mortem
 
 The declaration, committed before any of this was built, is
-[`fix_loop_declaration.md`](fix_loop_declaration.md) at commit `01cee6f`. Nothing in it has
+[`fix_loop_declaration.md`](fix_loop_declaration.md) at commit `e44441b`. Nothing in it has
 been edited since.
 
 ---
@@ -108,9 +108,9 @@ though one remains unmet.
 ## How to regenerate
 
 ```bash
-git checkout 01cee6f && python bench/gates.py   # before, writes bench/results/gates.json
+git checkout e44441b && python bench/gates.py   # before, writes bench/results/gates.json
 git checkout <fix commit> && python bench/gates.py   # after
-git diff 01cee6f <fix commit> -- scanplan/      # the change
+git diff e44441b <fix commit> -- scanplan/      # the change
 ```
 
 Committed results: `bench/results/fix_loop_before_gates.json` and `fix_loop_after_gates.json`.

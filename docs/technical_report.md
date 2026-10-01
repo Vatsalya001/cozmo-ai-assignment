@@ -120,9 +120,9 @@ a number rather than average two of them.
 other**, while G-REPEAT-FOOTPRINT was *met* at 1.9%. Area repeats; its division into rooms does
 not. That pairing is the diagnosis in one line.
 
-**Declared** (commit `01cee6f`, before any fix): the seed filter admits cores of 0.0064 m².
+**Declared** (commit `e44441b`, before any fix): the seed filter admits cores of 0.0064 m².
 **Predicted:** 5 vs 5, gate met.
-**Result** (commit `aae8622`): **4 vs 5, gate still not met.** Footprint improved to 0.8%.
+**Result** (commit `c002a66`): **4 vs 5, gate still not met.** Footprint improved to 0.8%.
 
 **The declared root cause was factually wrong.** `max(min_cells // 4, 16)` with
 `min_cells = 3000` is **750 cells = 0.30 m²**; the 16 never applies. The ablation confirms it —
