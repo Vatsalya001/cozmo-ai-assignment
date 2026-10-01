@@ -6,7 +6,7 @@
       "target": "<= 60 s",
       "result": "within budget",
       "status": "MET",
-      "detail": "measured seconds vary with the machine and are reported in timing.json, not here"
+      "detail": "measured seconds vary with the machine and are in timing.json, not here; 1-minute load was 5.7 on 12 cores when measured"
     },
     {
       "gate": "A-DET",
@@ -108,9 +108,9 @@
       "gate": "G-WALL-PHOTO",
       "tier": "photo",
       "target": "within +-8% of reference",
-      "result": "2 room box(es), footprint 4.12 m2",
-      "status": "NOT MEASURED",
-      "detail": "no reference exists for the derived photo folders; the tier reports boxes, not measured walls"
+      "result": "0/6 within 8% (median |error| 77%)",
+      "status": "NOT MET",
+      "detail": "LiDAR on the same frames as the stills is the reference, not truth. With the SAME six frames the reference gives 4.2-7.6 m where the tier reports 1.8-2.1 m, so this is inferred depth under-estimating scale 3-4x, NOT six photographs covering less of the room"
     },
     {
       "gate": "G-PHOTO-STITCH",

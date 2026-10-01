@@ -1,0 +1,105 @@
+{
+  "gate": "G-WALL-PHOTO: within +-8% of the reference",
+  "reference": "the LiDAR tier on EXACTLY the frames each photo segment was cut from, so both sides see the same part of the property from the same viewpoints",
+  "not_truth": "the LiDAR side is a reference, not ground truth: nobody has taped this property. It is anchored, though -- ceiling height from this same pipeline is within 15 mm of FARO laser depth (bench/ceiling_walks.py)",
+  "method": "bounding extent of the covered floor, not named walls: unposed stills carry no wall identities, and matching each photo dimension to whichever LiDAR wall is nearest would flatter whoever reports more walls",
+  "rows": [
+    {
+      "segment": "segment_a",
+      "quantity": "width_m",
+      "reference_kind": "the whole segment of the walk",
+      "photo_m": 1.789,
+      "lidar_reference_m": 4.84,
+      "relative_error_pct": -63.0,
+      "within_gate": false
+    },
+    {
+      "segment": "segment_a",
+      "quantity": "depth_m",
+      "reference_kind": "the whole segment of the walk",
+      "photo_m": 1.099,
+      "lidar_reference_m": 4.9,
+      "relative_error_pct": -77.6,
+      "within_gate": false
+    },
+    {
+      "segment": "segment_a",
+      "quantity": "width_m",
+      "reference_kind": "same six frames as the stills",
+      "photo_m": 1.789,
+      "lidar_reference_m": 4.2,
+      "relative_error_pct": -57.4,
+      "within_gate": false,
+      "scored_for_gate": false
+    },
+    {
+      "segment": "segment_a",
+      "quantity": "depth_m",
+      "reference_kind": "same six frames as the stills",
+      "photo_m": 1.099,
+      "lidar_reference_m": 4.72,
+      "relative_error_pct": -76.7,
+      "within_gate": false,
+      "scored_for_gate": false
+    },
+    {
+      "segment": "segment_a",
+      "quantity": "area_m2",
+      "photo_m": 1.9665,
+      "lidar_reference_m": 4.3132,
+      "relative_error_pct": -54.4,
+      "within_gate": false
+    },
+    {
+      "segment": "segment_b",
+      "quantity": "width_m",
+      "reference_kind": "the whole segment of the walk",
+      "photo_m": 2.085,
+      "lidar_reference_m": 8.74,
+      "relative_error_pct": -76.1,
+      "within_gate": false
+    },
+    {
+      "segment": "segment_b",
+      "quantity": "depth_m",
+      "reference_kind": "the whole segment of the walk",
+      "photo_m": 1.034,
+      "lidar_reference_m": 5.34,
+      "relative_error_pct": -80.6,
+      "within_gate": false
+    },
+    {
+      "segment": "segment_b",
+      "quantity": "width_m",
+      "reference_kind": "same six frames as the stills",
+      "photo_m": 2.085,
+      "lidar_reference_m": 7.56,
+      "relative_error_pct": -72.4,
+      "within_gate": false,
+      "scored_for_gate": false
+    },
+    {
+      "segment": "segment_b",
+      "quantity": "depth_m",
+      "reference_kind": "same six frames as the stills",
+      "photo_m": 1.034,
+      "lidar_reference_m": 4.96,
+      "relative_error_pct": -79.2,
+      "within_gate": false,
+      "scored_for_gate": false
+    },
+    {
+      "segment": "segment_b",
+      "quantity": "area_m2",
+      "photo_m": 2.1566,
+      "lidar_reference_m": 11.4824,
+      "relative_error_pct": -81.2,
+      "within_gate": false
+    }
+  ],
+  "scored": 6,
+  "within_gate": 0,
+  "fraction": 0.0,
+  "gate_met": false,
+  "median_abs_error_pct": 76.8
+}

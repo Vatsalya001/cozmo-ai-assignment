@@ -30,6 +30,8 @@ step "A-WALL-LIDAR: wall-to-wall distance vs laser truth" "$PY" bench/wall_dista
 step "storey-height calibration (earlier attempt; reports NOT MEASURED)" "$PY" bench/arkitscenes_laser.py
 step "video tier against the LiDAR reference, and interval calibration" "$PY" bench/video_vs_lidar.py
 step "photo tier room boxes and stitch grouping" "$PY" bench/photo_tier.py
+step "G-WALL-PHOTO: photo tier against the LiDAR reference, same frames" \
+     "$PY" bench/photo_vs_lidar.py
 step "two walks of one flat: G-REPEAT and G-OPEN" "$PY" bench/same_flat.py
 step "head-to-head vs magicplan" "$PY" bench/head_to_head.py
 step "head-to-head vs an independent implementation, on exact synthetic truth" \

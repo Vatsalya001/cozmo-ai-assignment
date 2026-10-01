@@ -55,6 +55,7 @@ PLAN=(
   "head_to_head_engineer.json|head_to_head_engineer|supplied|"
   "video_vs_lidar.json|video_vs_lidar|supplied|needs the models extra (torch + weights); pass --with-models"
   "photo_tier.json|photo_tier|supplied|needs the models extra (torch + weights); pass --with-models"
+  "photo_vs_lidar.json|photo_vs_lidar|supplied|needs the models extra (torch + weights); pass --with-models"
   "fix_loop_before_gates.json|-|-|snapshot of the code BEFORE the fix; not derivable from HEAD"
   "fix_loop_after_gates.json|-|-|its pair, captured by the same harness at the same moment"
   "timing.json|-|-|wall-clock seconds; a property of the machine, not of the pipeline"

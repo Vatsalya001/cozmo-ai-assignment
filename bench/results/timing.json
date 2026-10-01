@@ -1,10 +1,13 @@
 {
   "budget_s": 60.0,
-  "worst_s": 53.0,
+  "worst_s": 55.0,
   "per_capture_s": {
-    "c00a170fe1": 11.2,
-    "1a8384c3f6": 30.6,
-    "c7d28f72c6": 53.0
+    "c00a170fe1": 12.4,
+    "1a8384c3f6": 31.6,
+    "c7d28f72c6": 55.0
   },
-  "note": "wall-clock, machine-dependent; excluded from gates.json so that file reproduces exactly"
+  "load_1min_when_measured": 5.69,
+  "cores": 12,
+  "machine_was_loaded": false,
+  "note": "wall-clock, machine-dependent; excluded from gates.json so that file reproduces exactly. If machine_was_loaded is true these seconds are not this pipeline's and A-RUNTIME reports NOT MEASURED rather than guessing"
 }

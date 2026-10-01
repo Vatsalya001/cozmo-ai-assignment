@@ -62,19 +62,47 @@ def gate_rows(runs: dict) -> list[dict]:
     # --- A-RUNTIME ------------------------------------------------------------------
     times = {k: v["wall_s"] for k, v in runs.items()}
     worst = max(times.values()) if times else float("nan")
-    # The measured seconds go in `detail`, never in `result`. A wall-clock number inside the
-    # result string makes this file differ on every run, and a clean-clone check then cannot
-    # tell a real regression from a slightly busier machine.
-    add("A-RUNTIME", "lidar", f"<= {RUNTIME_BUDGET_S:.0f} s",
-        "within budget" if worst <= RUNTIME_BUDGET_S else "over budget",
-        "MET" if worst <= RUNTIME_BUDGET_S else "NOT MET",
-        "measured seconds vary with the machine and are reported in timing.json, not here")
+
+    # Taking the seconds out of the result string was not enough: the MET/NOT MET *status*
+    # still moved with machine load. Running this while another benchmark held the CPU pushed
+    # the worst capture from 44.6 s to 62.7 s and flipped the gate to NOT MET -- a false
+    # failure, and on a quieter machine the same mechanism would produce a false pass.
+    #
+    # So contention is detected rather than absorbed. Under load the gate reports NOT MEASURED
+    # with the reason, because a timing taken on a busy machine does not answer the question
+    # the gate asks: will this finish while examiners wait.
+    import os
+    try:
+        load1 = os.getloadavg()[0]
+        cores = os.cpu_count() or 1
+    except (OSError, AttributeError):
+        load1, cores = 0.0, 1
+    # Our own run accounts for roughly one core; anything much beyond that is someone else.
+    busy = load1 > cores * 0.75 + 1.0
+
+    if busy:
+        add("A-RUNTIME", "lidar", f"<= {RUNTIME_BUDGET_S:.0f} s", "NOT MEASURED",
+            "NOT MEASURED",
+            f"the machine was loaded while this ran (1-minute load {load1:.1f} on {cores} "
+            f"cores), so the wall-clock is not this pipeline's. Re-run on an idle machine. "
+            f"Scoring it anyway would be a coin flip in both directions")
+    else:
+        add("A-RUNTIME", "lidar", f"<= {RUNTIME_BUDGET_S:.0f} s",
+            "within budget" if worst <= RUNTIME_BUDGET_S else "over budget",
+            "MET" if worst <= RUNTIME_BUDGET_S else "NOT MET",
+            f"measured seconds vary with the machine and are in timing.json, not here; "
+            f"1-minute load was {load1:.1f} on {cores} cores when measured")
     (OUT / "timing.json").parent.mkdir(parents=True, exist_ok=True)
     (OUT / "timing.json").write_text(json.dumps(
         {"budget_s": RUNTIME_BUDGET_S, "worst_s": round(worst, 1),
          "per_capture_s": {k: round(v, 1) for k, v in times.items()},
+         "load_1min_when_measured": round(load1, 2),
+         "cores": cores,
+         "machine_was_loaded": bool(busy),
          "note": "wall-clock, machine-dependent; excluded from gates.json so that file "
-                 "reproduces exactly"}, indent=2) + "\n")
+                 "reproduces exactly. If machine_was_loaded is true these seconds are not "
+                 "this pipeline's and A-RUNTIME reports NOT MEASURED rather than guessing"},
+        indent=2) + "\n")
 
     # --- A-DET: determinism ---------------------------------------------------------
     name = next(iter(runs), None)
@@ -241,13 +269,27 @@ def gate_rows(runs: dict) -> list[dict]:
         add("G-WALL-VIDEO", "video", "within +-3%", "NOT RUN", "NOT MEASURED",
             "run bench/video_vs_lidar.py")
 
+    _pvlp = ROOT / "bench" / "results" / "photo_vs_lidar.json"
+    _pvl = json.loads(_pvlp.read_text()) if _pvlp.is_file() else None
+    if _pvl and not _pvl.get("scored"):
+        _pvl = None
     pj = ROOT / "bench" / "results" / "photo_tier.json"
     if pj.is_file():
         p_ = json.loads(pj.read_text())
-        add("G-WALL-PHOTO", "photo", "within +-8% of reference",
-            f"{p_['rooms']} room box(es), footprint {p_['footprint_m2']:.2f} m2", "NOT MEASURED",
-            "no reference exists for the derived photo folders; the tier reports boxes, "
-            "not measured walls")
+        if _pvl:
+            add("G-WALL-PHOTO", "photo", "within +-8% of reference",
+                f"{_pvl['within_gate']}/{_pvl['scored']} within 8% "
+                f"(median |error| {_pvl['median_abs_error_pct']:.0f}%)",
+                "MET" if _pvl["gate_met"] else "NOT MET",
+                "LiDAR on the same frames as the stills is the reference, not truth. With the "
+                "SAME six frames the reference gives 4.2-7.6 m where the tier reports "
+                "1.8-2.1 m, so this is inferred depth under-estimating scale 3-4x, NOT six "
+                "photographs covering less of the room")
+        else:
+            add("G-WALL-PHOTO", "photo", "within +-8% of reference",
+                f"{len(p_['per_room'])} room box(es), footprint {p_['footprint_m2']:.2f} m2",
+                "NOT MEASURED",
+                "run bench/photo_vs_lidar.py to compare against the LiDAR reference")
         add("G-PHOTO-STITCH", "photo", "one stitched plan, correct adjacency",
             f"{p_['groups']} disconnected group(s)", "NOT MET",
             "fails by construction: stills carry no poses, so nothing in the input says how "

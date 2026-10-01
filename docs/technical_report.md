@@ -275,6 +275,15 @@ carries a machine-specific path, the compliance matrix's gate table matches the 
 the CLI never prints a traceback — in front of examiners a stated failure is worth more than a
 stack trace.
 
+**A gate whose status moved with machine load.** A-RUNTIME had its measured seconds moved out
+of the result string so `gates.json` would reproduce — but the MET/NOT MET *status* still
+depended on wall-clock. Running the gates while another benchmark held the CPU pushed the worst
+capture from 44.6 s to 62.7 s and flipped the gate to NOT MET: a false failure, and by the same
+mechanism a quieter machine could produce a false pass. The gate now reads the 1-minute load
+average and reports **NOT MEASURED under contention**, with the load recorded in `timing.json`,
+because a timing taken on a busy machine does not answer the question the gate asks. Removing a
+number from a string is not the same as removing it from a decision.
+
 **Reproduction.** `bench/clean_clone_check.sh` clones the repo, installs from scratch, runs the
 tests, regenerates the benchmarks and diffs committed against regenerated. It classifies every
 result file rather than counting files it never recomputed: an earlier version reported "8
@@ -367,22 +376,33 @@ them. Plane-pair stability is a real weakness on our side.
 
 ## 7. Known failure modes
 
-1. **No ground truth for the captures the pipeline runs on.** This is now the largest gap.
-   Nobody has stood in the supplied properties with a tape, so most accuracy gates read *not
-   measured* — including the head-to-head, where magicplan's own output is deliberately **not**
-   used as truth, because it is the opponent and scoring an opponent against itself is circular.
-   One measurement escapes this and it is the one that mattered: the depth bias, per-pixel
-   against FARO laser depth registered to the same frames.
+1. **No tape truth on the rooms we captured ourselves.** This is the largest remaining gap. It
+   blocks the Part 3 head-to-head outright, where magicplan's own output is deliberately **not**
+   used as truth because it is the opponent and scoring an opponent against itself is circular.
+   What it does *not* block any more is absolute accuracy: three measurements rest on FARO
+   laser depth — the **depth bias** per-pixel over 4.79 M pixels, **ceiling height** within
+   15 mm on 5 of 5 walks, and **wall-to-wall distance** (6 of 12, and 7.5 mm median where our
+   plane selection agrees). Public laser truth turned out to substitute for a tape on
+   everything except our own two rooms.
 2. **The video tier is 27–60% from the LiDAR reference** on the same walks, and failed outright
    on the third capture with a stated `no floor found`. Its intervals are widened ×11 and do
    contain the reference 2/2, which is the correct response to an error of that size rather
    than a fix for it. Inferred depth is not measured depth, and the gap is the number this tier
    exists to report.
-3. **The photo tier does not stitch, by construction.** Two folders in, two disconnected groups
+3. **The photo tier's inferred depth under-estimates room scale by 3–4×, and that is now
+   measured.** G-WALL-PHOTO: **0 of 6 within ±8%, median error 77%** against the LiDAR tier run
+   on the same capture. The obvious objection — that six stills are being punished for covering
+   less than a 180-frame segment — is ruled out by a second reference built from *exactly the
+   six frames the stills were cut from*: it still gives 4.2–7.6 m where the tier reports
+   1.8–2.1 m. Coverage is not the explanation; the depth is. This gate previously read NOT
+   MEASURED on the grounds that "no reference exists for these folders", which was half true
+   and gave up too early — the folders come from known frame indices of a capture that has
+   measured depth.
+4. **The photo tier does not stitch, by construction.** Two folders in, two disconnected groups
    out. With no camera poses nothing in the input says how rooms relate, and an L-shaped room
    returns as its bounding box. The output carries an error-severity warning saying so rather
    than laying out a plausible arrangement.
-4. **The two walks of one flat do not agree about what the rooms are, and G-REPEAT-ROOMS
+5. **The two walks of one flat do not agree about what the rooms are, and G-REPEAT-ROOMS
    passing at "5 vs 5" is a count coincidence.** Both return five rooms. Paired by area rank
    they are 37%, 76%, 8%, 33% and 44% apart, and one walk keeps as a single room roughly what
    the other splits in two — while the total footprint agrees to 3.2%. The gate asks for the
@@ -392,12 +412,12 @@ them. Plane-pair stability is a real weakness on our side.
    even perfectly registered, a wall bounding a room in one walk runs through the middle of a
    room in the other, so there is no counterpart to match. Pairing by rank anyway and quoting a
    pass rate would rest on a correspondence that benchmark disproves.
-5. **G-OPEN is measured and failed: 0 of 12 openings agree within 2 cm** between the two walks,
+6. **G-OPEN is measured and failed: 0 of 12 openings agree within 2 cm** between the two walks,
    the closest pair 4 cm apart. It needed no tape truth — only comparing one walk against the
    other, which had not been attempted. Separately and worse, **every opening we measure is
    0.16–0.52 m wide where a doorway is 0.6–0.9 m**: the widths are not just irreproducible, they
    are too small. The clear-width measurement is under-reporting and that is unfixed.
-6. **Rooms under-split** — 5 found on a capture where this project's own fix-loop declaration
+7. **Rooms under-split** — 5 found on a capture where this project's own fix-loop declaration
    put the reference at 9. **That 9 has no source recorded anywhere in this repository.** It
    first appears in `fix_loop_declaration.md`, which is committed-before-the-fix and therefore
    never edited, and it has been repeated since without anyone establishing where it came from.
@@ -407,15 +427,15 @@ them. Plane-pair stability is a real weakness on our side.
    and 2 (`bench/results/head_to_head_engineer.json`). We under-split; that much is not in
    doubt. The safer failure: a merged pair still reports a correct combined area; an invented
    room does not.
-7. **Damage class is shape-derived.** A stain that has not lifted the plaster is geometrically
+8. **Damage class is shape-derived.** A stain that has not lifted the plaster is geometrically
    invisible. Every region says `class_source: "shape"` with confidence ≤ 0.5, and detection has
    no verified true-positive rate because no real damaged capture was obtainable.
-8. **Mirrors and glass are not detected.** Two geometric tests were built; neither separates a
+9. **Mirrors and glass are not detected.** Two geometric tests were built; neither separates a
    reflection from ordinary geometry — one fired on 19–30% of every capture, the other on
    10–13%. The flag is **disabled deliberately** and every run warns that mirrors are
    undetected, which is worth more than a detector that fires everywhere. Wet/glossy floor and
    low light *are* detected and warned about.
-9. **Room area is under-reported by design** — about −3% on known geometry. Coverage-based area
+10. **Room area is under-reported by design** — about −3% on known geometry. Coverage-based area
    cannot exceed what was seen, so occluded floor is missing rather than estimated.
 
 ## 8. What I would do next, in order
@@ -423,9 +443,11 @@ them. Plane-pair stability is a real weakness on our side.
 1. **Get tape truth onto two rooms.** It converts a whole column of *not measured* into numbers
    and unblocks the head-to-head. Highest value per hour by a wide margin — everything else on
    this list improves a number that is already known.
-2. **Find a single-storey ARKitScenes venue with its laser cloud** and close G-CEIL. That turns
-   an unmeasured gate into a measured one, which is worth more than improving a measured one.
-   The obstacle is identification, not method: the method is written and runs.
+2. **Stabilise the wall-plane selection**, which is now the clearest measured weakness.
+   A-WALL-LIDAR agrees with the laser to 7.5 mm median where both clouds choose the same pair
+   of walls and fails completely on the three rows where they do not. The sensor is fine; the
+   densest-plane heuristic is not. Fixing it would likely move A-WALL-LIDAR from 6 of 12 to
+   most of 12, and it is a bounded change with a measurement already in place to judge it.
 3. **Replace the global `door_max_m`** with a split that adapts to local room scale. Two
    parameter attempts have failed; §5 is clear that this is not a parameter problem.
 4. **Pose estimation for the video tier**, so it works on a bare clip rather than needing a pose
