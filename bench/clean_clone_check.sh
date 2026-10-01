@@ -56,6 +56,18 @@ PLAN=(
   "timing.json|-|-|wall-clock seconds; a property of the machine, not of the pipeline"
 )
 
+# Show what pip actually said. The first version discarded stderr and printed "install failed",
+# which turned a one-line pip diagnostic into a debugging session.
+pip_or_die () {
+  local log="$TMP/pip.log"
+  if ! "$@" >"$log" 2>&1; then
+    echo "  INSTALL FAILED: $*"
+    echo "  --- last 15 lines of pip output ---"
+    tail -15 "$log" | sed 's/^/  /'
+    exit 1
+  fi
+}
+
 echo "=== cloning into $TMP ==="
 git clone -q "$SRC" "$TMP/repo" || { echo "clone failed"; exit 1; }
 cd "$TMP/repo"
@@ -77,14 +89,16 @@ if [ "$WITH_MODELS" = 1 ]; then
   # CPU torch from PyTorch's own index, exactly as the README instructs. The default PyPI
   # wheel on Linux is the CUDA build: several GB, for a pipeline that runs on CPU throughout.
   echo "  .[dev,models] with CPU torch (large download, first run only)"
-  ./.venv/bin/pip install -q "torch>=2.4,<2.10" "torchvision>=0.19,<0.25" \
-      --index-url https://download.pytorch.org/whl/cpu >/dev/null 2>&1 \
-      || { echo "torch install failed"; exit 1; }
-  ./.venv/bin/pip install -q -e ".[dev,models]" >/dev/null 2>&1 \
-      || { echo "install failed"; exit 1; }
+  # --no-cache-dir: a download interrupted partway leaves a corrupt entry in pip's HTTP cache,
+  # and every later run then fails a hash check with a message about tampering. That happened
+  # here, cost real time to diagnose, and has nothing to do with this repo.
+  pip_or_die ./.venv/bin/pip install -q --no-cache-dir \
+      "torch>=2.4,<2.10" "torchvision>=0.19,<0.25" \
+      --index-url https://download.pytorch.org/whl/cpu
+  pip_or_die ./.venv/bin/pip install -q -e ".[dev,models]"
 else
   echo "  .[dev] -- no weights, no network; pass --with-models to include the model tiers"
-  ./.venv/bin/pip install -q -e ".[dev]" >/dev/null 2>&1 || { echo "install failed"; exit 1; }
+  pip_or_die ./.venv/bin/pip install -q -e ".[dev]"
 fi
 
 echo "=== tests ==="
