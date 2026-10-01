@@ -133,10 +133,41 @@ def gate_rows(runs: dict) -> list[dict]:
         "no tape truth for the supplied captures")
     add("A-WALL-LIDAR", "lidar", "<= max(2 cm, 1%)", "NOT MEASURED", "NOT MEASURED",
         "no tape truth; synthetic room gives -40 mm and -70 mm on 4.00 and 3.00 m")
-    for gate, tier in (("G-WALL-VIDEO", "video"), ("G-WALL-PHOTO", "photo"),
-                       ("G-PHOTO-STITCH", "photo")):
-        add(gate, tier, "see docs/gates.md", "TIER NOT BUILT", "NOT MEASURED",
-            "the video and photo tiers are not implemented")
+    # --- video and photo tiers ------------------------------------------------------
+    vv = ROOT / "bench" / "results" / "video_vs_lidar.json"
+    if vv.is_file():
+        v = json.loads(vv.read_text())
+        ok = [r for r in v["rows"] if "footprint_error_pct" in r]
+        failed = [r for r in v["rows"] if "video_failed" in r]
+        if ok:
+            worst = max(abs(r["footprint_error_pct"]) for r in ok)
+            add("G-WALL-VIDEO", "video", "within +-3% of reference",
+                f"footprint {worst:.0f}% worst over {len(ok)} capture(s)", "NOT MET",
+                f"video produced a plan on {len(ok)}/{len(v['rows'])} captures; "
+                f"{len(failed)} failed outright. Reference is the LiDAR result, not truth")
+            add("A-CALIB-VIDEO", "video", "nominal 90% interval contains the reference",
+                f"{v['intervals_holding_at_shipped_factor']}/{len(ok)} at the calibrated "
+                f"x{v['shipped_widening_factor']}",
+                "MET" if v["intervals_holding_at_shipped_factor"] == len(ok) else "NOT MET",
+                "widening factor measured from observed error, not inherited")
+    else:
+        add("G-WALL-VIDEO", "video", "within +-3%", "NOT RUN", "NOT MEASURED",
+            "run bench/video_vs_lidar.py")
+
+    pj = ROOT / "bench" / "results" / "photo_tier.json"
+    if pj.is_file():
+        p_ = json.loads(pj.read_text())
+        add("G-WALL-PHOTO", "photo", "within +-8% of reference",
+            f"{p_['rooms']} room box(es), footprint {p_['footprint_m2']:.2f} m2", "NOT MEASURED",
+            "no reference exists for the derived photo folders; the tier reports boxes, "
+            "not measured walls")
+        add("G-PHOTO-STITCH", "photo", "one stitched plan, correct adjacency",
+            f"{p_['groups']} disconnected group(s)", "NOT MET",
+            "fails by construction: stills carry no poses, so nothing in the input says how "
+            "the rooms relate. Reported as an error in every photo-tier run")
+    else:
+        add("G-WALL-PHOTO", "photo", "within +-8%", "NOT RUN", "NOT MEASURED", "")
+        add("G-PHOTO-STITCH", "photo", "one stitched plan", "NOT RUN", "NOT MEASURED", "")
     add("G-H2H", "lidar", "beat or tie on >= 70% of shared dimensions",
         "PENDING", "NOT MEASURED", "magicplan captured; tape measurements outstanding")
     add("A-DMG-DETECT", "all", "staged damage found with right class", "NOT BUILT",

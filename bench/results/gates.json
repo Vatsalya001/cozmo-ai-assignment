@@ -4,9 +4,9 @@
       "gate": "A-RUNTIME",
       "tier": "lidar",
       "target": "<= 60 s",
-      "result": "worst 43.0 s",
+      "result": "worst 47.8 s",
       "status": "MET",
-      "detail": "c00a170fe1 5.8s, 1a8384c3f6 22.4s, c7d28f72c6 43.0s"
+      "detail": "c00a170fe1 8.8s, 1a8384c3f6 28.7s, c7d28f72c6 47.8s"
     },
     {
       "gate": "A-DET",
@@ -30,7 +30,7 @@
       "target": "method stated + footprint ablation on/off",
       "result": "ablation run on all captures",
       "status": "MET",
-      "detail": "c00a170fe1: 14.90 -> 14.86 m2, 5 loops; 1a8384c3f6: 48.23 -> 47.54 m2, 25 loops; c7d28f72c6: 48.35 -> 47.93 m2, 124 loops"
+      "detail": "c00a170fe1: 14.90 -> 14.86 m2, 5 loops; 1a8384c3f6: 47.58 -> 47.62 m2, 25 loops; c7d28f72c6: 48.35 -> 47.93 m2, 124 loops"
     },
     {
       "gate": "G-CEIL-SPREAD",
@@ -52,9 +52,9 @@
       "gate": "G-REPEAT-FOOTPRINT",
       "tier": "lidar",
       "target": "two walks of one flat agree",
-      "result": "0.8% apart",
+      "result": "0.7% apart",
       "status": "MET",
-      "detail": "1a8384c3f6 47.54 m2 vs c7d28f72c6 47.93 m2"
+      "detail": "1a8384c3f6 47.62 m2 vs c7d28f72c6 47.93 m2"
     },
     {
       "gate": "G-REPEAT-ROOMS",
@@ -91,26 +91,34 @@
     {
       "gate": "G-WALL-VIDEO",
       "tier": "video",
-      "target": "see docs/gates.md",
-      "result": "TIER NOT BUILT",
-      "status": "NOT MEASURED",
-      "detail": "the video and photo tiers are not implemented"
+      "target": "within +-3% of reference",
+      "result": "footprint 62% worst over 2 capture(s)",
+      "status": "NOT MET",
+      "detail": "video produced a plan on 2/3 captures; 1 failed outright. Reference is the LiDAR result, not truth"
+    },
+    {
+      "gate": "A-CALIB-VIDEO",
+      "tier": "video",
+      "target": "nominal 90% interval contains the reference",
+      "result": "2/2 at the calibrated x11.0",
+      "status": "MET",
+      "detail": "widening factor measured from observed error, not inherited"
     },
     {
       "gate": "G-WALL-PHOTO",
       "tier": "photo",
-      "target": "see docs/gates.md",
-      "result": "TIER NOT BUILT",
+      "target": "within +-8% of reference",
+      "result": "2 room box(es), footprint 5.67 m2",
       "status": "NOT MEASURED",
-      "detail": "the video and photo tiers are not implemented"
+      "detail": "no reference exists for the derived photo folders; the tier reports boxes, not measured walls"
     },
     {
       "gate": "G-PHOTO-STITCH",
       "tier": "photo",
-      "target": "see docs/gates.md",
-      "result": "TIER NOT BUILT",
-      "status": "NOT MEASURED",
-      "detail": "the video and photo tiers are not implemented"
+      "target": "one stitched plan, correct adjacency",
+      "result": "2 disconnected group(s)",
+      "status": "NOT MET",
+      "detail": "fails by construction: stills carry no poses, so nothing in the input says how the rooms relate. Reported as an error in every photo-tier run"
     },
     {
       "gate": "G-H2H",
@@ -131,7 +139,7 @@
   ],
   "footprints": {
     "c00a170fe1": 14.8584,
-    "1a8384c3f6": 47.5396,
+    "1a8384c3f6": 47.6156,
     "c7d28f72c6": 47.93
   },
   "rooms": {

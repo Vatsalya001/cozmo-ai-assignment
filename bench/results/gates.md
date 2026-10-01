@@ -7,36 +7,38 @@ reported rather than omitted, because an absent row reads as a pass.
 
 | Gate | Tier | Target | Result | Status |
 |---|---|---|---|---|
-| A-RUNTIME | lidar | <= 60 s | worst 43.0 s | **MET** |
+| A-RUNTIME | lidar | <= 60 s | worst 47.8 s | **MET** |
 | A-DET | lidar | same input, same output | identical | **MET** |
 | A-SCHEMA | all | 100% validate, ci_low <= value <= ci_high | 3/3 valid | **MET** |
 | G-DRIFT | lidar | method stated + footprint ablation on/off | ablation run on all captures | **MET** |
 | G-CEIL-SPREAD | lidar | <= 1 cm across captures | NOT MEASURED | **NOT MEASURED** |
 | G-CEIL | lidar | <= 1.5 cm per room vs truth | NOT MEASURED | **NOT MEASURED** |
-| G-REPEAT-FOOTPRINT | lidar | two walks of one flat agree | 0.8% apart | **MET** |
+| G-REPEAT-FOOTPRINT | lidar | two walks of one flat agree | 0.7% apart | **MET** |
 | G-REPEAT-ROOMS | lidar | same room count from both walks | 4 vs 5 | **NOT MET** |
 | G-REPEAT | lidar | every wall within max(1 cm, 0.5%) | NOT MEASURED | **NOT MEASURED** |
 | G-OPEN | lidar | <= 2 cm on >= 85% of openings | NOT MEASURED | **NOT MEASURED** |
 | A-WALL-LIDAR | lidar | <= max(2 cm, 1%) | NOT MEASURED | **NOT MEASURED** |
-| G-WALL-VIDEO | video | see docs/gates.md | TIER NOT BUILT | **NOT MEASURED** |
-| G-WALL-PHOTO | photo | see docs/gates.md | TIER NOT BUILT | **NOT MEASURED** |
-| G-PHOTO-STITCH | photo | see docs/gates.md | TIER NOT BUILT | **NOT MEASURED** |
+| G-WALL-VIDEO | video | within +-3% of reference | footprint 62% worst over 2 capture(s) | **NOT MET** |
+| A-CALIB-VIDEO | video | nominal 90% interval contains the reference | 2/2 at the calibrated x11.0 | **MET** |
+| G-WALL-PHOTO | photo | within +-8% of reference | 2 room box(es), footprint 5.67 m2 | **NOT MEASURED** |
+| G-PHOTO-STITCH | photo | one stitched plan, correct adjacency | 2 disconnected group(s) | **NOT MET** |
 | G-H2H | lidar | beat or tie on >= 70% of shared dimensions | PENDING | **NOT MEASURED** |
 | A-DMG-DETECT | all | staged damage found with right class | NOT BUILT | **NOT MEASURED** |
 
 ## Detail
 
-- **A-RUNTIME** — c00a170fe1 5.8s, 1a8384c3f6 22.4s, c7d28f72c6 43.0s
+- **A-RUNTIME** — c00a170fe1 8.8s, 1a8384c3f6 28.7s, c7d28f72c6 47.8s
 - **A-DET** — c00a170fe1
-- **G-DRIFT** — c00a170fe1: 14.90 -> 14.86 m2, 5 loops; 1a8384c3f6: 48.23 -> 47.54 m2, 25 loops; c7d28f72c6: 48.35 -> 47.93 m2, 124 loops
+- **G-DRIFT** — c00a170fe1: 14.90 -> 14.86 m2, 5 loops; 1a8384c3f6: 47.58 -> 47.62 m2, 25 loops; c7d28f72c6: 48.35 -> 47.93 m2, 124 loops
 - **G-CEIL-SPREAD** — only 1 capture(s) saw a ceiling
 - **G-CEIL** — no laser or tape truth for the supplied captures; bench/arkitscenes_laser.py found no admissible scan
-- **G-REPEAT-FOOTPRINT** — 1a8384c3f6 47.54 m2 vs c7d28f72c6 47.93 m2
+- **G-REPEAT-FOOTPRINT** — 1a8384c3f6 47.62 m2 vs c7d28f72c6 47.93 m2
 - **G-REPEAT** — needs per-wall correspondence between the two walks
 - **G-OPEN** — no tape truth for the supplied captures
 - **A-WALL-LIDAR** — no tape truth; synthetic room gives -40 mm and -70 mm on 4.00 and 3.00 m
-- **G-WALL-VIDEO** — the video and photo tiers are not implemented
-- **G-WALL-PHOTO** — the video and photo tiers are not implemented
-- **G-PHOTO-STITCH** — the video and photo tiers are not implemented
+- **G-WALL-VIDEO** — video produced a plan on 2/3 captures; 1 failed outright. Reference is the LiDAR result, not truth
+- **A-CALIB-VIDEO** — widening factor measured from observed error, not inherited
+- **G-WALL-PHOTO** — no reference exists for the derived photo folders; the tier reports boxes, not measured walls
+- **G-PHOTO-STITCH** — fails by construction: stills carry no poses, so nothing in the input says how the rooms relate. Reported as an error in every photo-tier run
 - **G-H2H** — magicplan captured; tape measurements outstanding
 - **A-DMG-DETECT** — damage detection not implemented
