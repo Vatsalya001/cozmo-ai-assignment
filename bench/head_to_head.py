@@ -48,11 +48,36 @@ MAGICPLAN = {
 }
 
 
+# The template's element ids are not the dimension names magicplan's numbers are filed
+# under, and nothing joined them. Left as it was, the fieldwork would have been done and
+# every row would still have scored zero -- `R1.W-left` never matches `left wall`.
+ELEMENT_TO_DIMENSION = {
+    "R1.W-left": "left wall",
+    "R1.W-right": "right wall",
+    "R1.W-bottom": "bottom wall",
+    "R1.W-topleft": "top-left segment",
+    "R1.W-notch": "notch depth",
+    "R1.W-topright": "top-right segment",
+    "R1.O-bottom": "bottom door width",
+    "R1.O-right": "upper-right door width",
+    "R2.O1": "doorway width",
+}
+
+# Ceiling height is taped in two parts because a tape buckles above 2 m. The parts are summed
+# here rather than by the person holding the tape, so the raw readings stay auditable.
+CEILING_PARTS = {"ceiling_part1", "ceiling_part2"}
+
+
 def read_tape(path: Path) -> dict:
-    """Tape ground truth, averaging the two readings per row."""
+    """Tape ground truth, averaging the two readings per row and joining the naming.
+
+    Returns dimension names as MAGICPLAN files them, plus `_walls` (every wall segment) and
+    `_doors` (every opening) so area and perimeter can be derived under a stated convention.
+    """
     if not path.is_file():
         return {}
-    truth: dict[str, dict[str, float]] = {}
+    raw: dict[str, dict[str, float]] = {}
+    kinds: dict[str, dict[str, str]] = {}
     with path.open() as f:
         for row in csv.DictReader(r for r in f if not r.lstrip().startswith("#")):
             room = (row.get("room") or "").strip()
@@ -63,7 +88,56 @@ def read_tape(path: Path) -> dict:
                     if row.get(k) and row[k].strip()]
             if not vals:
                 continue
-            truth.setdefault(room, {})[el] = sum(vals) / len(vals)
+            raw.setdefault(room, {})[el] = sum(vals) / len(vals)
+            kinds.setdefault(room, {})[el] = (row.get("type") or "").strip()
+
+    truth: dict[str, dict] = {}
+    for room, items in raw.items():
+        out: dict[str, float] = {}
+        walls, doors, ceiling_parts = [], [], []
+        for el, v in items.items():
+            kind = kinds[room].get(el, "")
+            if kind in CEILING_PARTS:
+                ceiling_parts.append(v)
+            elif kind == "wall":
+                walls.append(v)
+            elif kind == "opening_width":
+                doors.append(v)
+            if el in ELEMENT_TO_DIMENSION:
+                out[ELEMENT_TO_DIMENSION[el]] = v
+        if ceiling_parts:
+            out["ceiling height"] = sum(ceiling_parts)
+        out["_walls"] = sorted(walls, reverse=True)
+        out["_doors"] = sorted(doors, reverse=True)
+
+        # Perimeter under MAGICPLAN'S convention, not ours. Its stated bedroom perimeter is
+        # 13.41 m while its own six wall segments sum to 15.09 m, and 15.09 - 0.77 - 0.90 =
+        # 13.42: it excludes door openings. Its bathroom numbers only close the same way
+        # (an area of 2.79 m2 needs a perimeter of at least 6.68 m for a rectangle, and
+        # 5.91 + a 0.77 m door is 6.68). Comparing our closed-polygon perimeter against that
+        # directly would have charged us both door widths as error.
+        if walls:
+            out["perimeter"] = sum(walls) - sum(doors)
+            out["_perimeter_closed"] = sum(walls)
+            out["_perimeter_convention"] = (
+                "wall segments minus door openings, matching magicplan. Our own "
+                "perimeter_m is the closed polygon, so the door widths are subtracted "
+                "from it before comparison")
+        # Floor area from the tape, with the shape assumption RECORDED rather than implied.
+        # Checked against magicplan before trusting it: for the bedroom the L-shape formula
+        # gives 13.23 m2 against its stated 13.25, so the formula and its numbers agree.
+        if room == "R1" and all(k in out for k in
+                                ("bottom wall", "right wall", "top-left segment", "notch depth")):
+            out["floor area"] = (out["bottom wall"] * out["right wall"]
+                                 - out["top-left segment"] * out["notch depth"])
+            out["_area_formula"] = ("L-shape: bottom x right minus top-left x notch. Validated "
+                                    "against magicplan's own numbers (13.23 vs its 13.25)")
+        elif len(walls) == 4:
+            w = sorted(walls, reverse=True)
+            out["floor area"] = ((w[0] + w[1]) / 2) * ((w[2] + w[3]) / 2)
+            out["_area_formula"] = ("rectangle: mean of the two longest walls times mean of the "
+                                    "two shortest. Only valid if the room IS rectangular")
+        truth[room] = out
     return truth
 
 
@@ -89,10 +163,17 @@ def read_ours(out_dir: Path | None = None) -> dict:
         if "own" not in str(doc["capture"].get("source_path", "")):
             continue
         for room in doc["rooms"]:
+            # Our perimeter_m is the CLOSED polygon; magicplan's excludes door openings
+            # (see read_tape). Both sides must use one convention or the comparison charges us
+            # the door widths as error, so ours has its own openings subtracted.
+            closed = room.get("perimeter_m", {}).get("value")
+            own_doors = sum(o["width_m"]["value"] for o in room.get("openings", []))
             out[room["id"]] = {
                 "floor area": room["floor_area_m2"]["value"],
                 "ceiling height": room["ceiling_height_m"]["value"],
-                "perimeter": room.get("perimeter_m", {}).get("value"),
+                "perimeter": (closed - own_doors) if closed is not None else None,
+                "_perimeter_closed": closed,
+                "_doors_subtracted_m": round(own_doors, 3),
                 "_walls": sorted((w["length_m"]["value"] for w in room.get("walls", [])),
                                  reverse=True),
                 "_openings": sorted((o["width_m"]["value"] for o in room.get("openings", [])),

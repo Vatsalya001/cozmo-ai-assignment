@@ -30,14 +30,43 @@ sys.path.insert(0, str(ROOT))
 import head_to_head as h2h                                                   # noqa: E402
 
 
+# The element ids and the `type` column are the real template's, not a convenience shape.
+# An earlier version of this helper invented its own columns, so the tests passed while the
+# committed template could not have been read at all -- the harness-is-not-the-product failure
+# again, this time in a test fixture.
+DIM_TO_ELEMENT = {v: k for k, v in h2h.ELEMENT_TO_DIMENSION.items()}
+
+
 def _tape_csv(path: Path, values: dict[str, dict[str, float]]) -> Path:
-    path.write_text("")
     with path.open("w", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["room", "element", "reading1_m", "reading2_m"])
+        w.writerow(["room", "element", "type", "reading1_m", "reading2_m", "note"])
         for room, dims in values.items():
-            for el, v in dims.items():
-                w.writerow([room, el, f"{v:.3f}", f"{v:.3f}"])
+            for dim, v in dims.items():
+                if dim == "ceiling height":
+                    # Taped in two parts, as the template instructs; read_tape sums them.
+                    w.writerow([room, f"{room}.C1a", "ceiling_part1", "0.450", "0.450", ""])
+                    w.writerow([room, f"{room}.C1b", "ceiling_part2",
+                                f"{v - 0.45:.3f}", f"{v - 0.45:.3f}", ""])
+                    continue
+                if dim in ("floor area", "perimeter"):
+                    continue          # derived by read_tape, never taped directly
+                if dim == "_walls":
+                    # R2's walls are unnamed in the template on purpose: magicplan publishes no
+                    # bathroom wall dimensions, so they only feed the derived area and
+                    # perimeter. Written here so that derivation is exercised.
+                    for i, wv in enumerate(v, 1):
+                        w.writerow([room, f"{room}.W{i}", "wall", f"{wv:.3f}", f"{wv:.3f}", ""])
+                    continue
+                if dim == "_door":
+                    w.writerow([room, f"{room}.O1", "opening_width",
+                                f"{v:.3f}", f"{v:.3f}", ""])
+                    continue
+                el = DIM_TO_ELEMENT.get(dim)
+                if el is None:
+                    continue
+                kind = "opening_width" if "door" in dim else "wall"
+                w.writerow([room, el, kind, f"{v:.3f}", f"{v:.3f}", ""])
     return path
 
 
@@ -68,8 +97,53 @@ def _point_at(monkeypatch, own_dir: Path, out_dir: Path):
 
 def test_tape_readings_are_averaged(tmp_path):
     p = tmp_path / "m.csv"
-    p.write_text("room,element,reading1_m,reading2_m\nR1,left wall,3.600,3.620\n")
+    p.write_text("room,element,type,reading1_m,reading2_m,note\n"
+                 "R1,R1.W-left,wall,3.600,3.620,\n")
     assert h2h.read_tape(p)["R1"]["left wall"] == pytest.approx(3.610)
+
+
+def test_the_template_element_ids_all_join_to_a_dimension():
+    """The committed template and the comparison code have to agree on names. They did not:
+    the template files the bedroom's left wall as `R1.W-left` and the comparison looked for
+    `left wall`, so the fieldwork would have been done and every row would still have scored
+    zero. This asserts the join exists for every wall and opening the template asks for."""
+    import csv as _csv
+    rows = [r for r in _csv.DictReader(
+        l for l in (ROOT / "data" / "own" / "measurements.csv").read_text().splitlines()
+        if not l.lstrip().startswith("#") and l.strip())]
+    measured = [r for r in rows if (r.get("type") or "").strip() in ("wall", "opening_width")]
+    assert measured, "the template must ask for walls and openings"
+    unjoined = [r["element"] for r in measured
+                if r["element"] not in h2h.ELEMENT_TO_DIMENSION]
+    # R2's four walls are intentionally unnamed: magicplan publishes no bathroom wall
+    # dimensions, so they feed the derived area and perimeter rather than a named comparison.
+    assert all(e.startswith("R2.W") for e in unjoined), (
+        f"these template rows join to nothing: {unjoined}")
+
+
+def test_ceiling_height_is_summed_from_its_two_taped_parts(tmp_path):
+    """A tape buckles above 2 m, so the template splits it. Summing is the code's job, not the
+    measurer's, so the raw readings stay auditable."""
+    p = tmp_path / "m.csv"
+    p.write_text("room,element,type,reading1_m,reading2_m,note\n"
+                 "R1,R1.C1a,ceiling_part1,0.450,0.450,\n"
+                 "R1,R1.C1b,ceiling_part2,2.380,2.380,\n")
+    assert h2h.read_tape(p)["R1"]["ceiling height"] == pytest.approx(2.830)
+
+
+def test_perimeter_uses_magicplans_convention_on_both_sides(tmp_path):
+    """magicplan's stated bedroom perimeter is 13.41 m while its own six wall segments sum to
+    15.09 m, and 15.09 - 0.77 - 0.90 = 13.42: it excludes door openings. Comparing our closed
+    polygon against that would charge us both door widths as error."""
+    p = tmp_path / "m.csv"
+    p.write_text("room,element,type,reading1_m,reading2_m,note\n"
+                 "R1,R1.W-left,wall,3.000,3.000,\n"
+                 "R1,R1.W-right,wall,4.000,4.000,\n"
+                 "R1,R1.O-bottom,opening_width,0.800,0.800,\n")
+    got = h2h.read_tape(p)["R1"]
+    assert got["perimeter"] == pytest.approx(7.0 - 0.8)
+    assert got["_perimeter_closed"] == pytest.approx(7.0)
+    assert "door" in got["_perimeter_convention"]
 
 
 def test_a_missing_tape_file_is_empty_not_an_error(tmp_path):
@@ -109,7 +183,10 @@ def test_the_whole_comparison_scores_when_both_inputs_exist(tmp_path, monkeypatc
                "top-left segment": 1.80, "notch depth": 0.50, "top-right segment": 1.68,
                "bottom door width": 0.78, "upper-right door width": 0.91,
                "ceiling height": 2.80, "floor area": 13.10, "perimeter": 13.38},
-        "R2": {"ceiling height": 2.78, "floor area": 2.80, "perimeter": 5.90},
+        # A 1.673 m square bathroom: area 2.80 m2, closed perimeter 6.69 m, and 6.69 - 0.78 =
+        # 5.91 under magicplan's door-excluding convention, which is its stated 5.91. Area and
+        # perimeter are DERIVED from these walls by read_tape, never taped directly.
+        "R2": {"ceiling height": 2.78, "_walls": [1.673, 1.673, 1.673, 1.673], "_door": 0.78},
     }
     _tape_csv(tmp_path / "measurements.csv", truth)
     out_dir = tmp_path / "out"
