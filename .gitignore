@@ -20,3 +20,9 @@ data/arkitscenes_up/
 data/supplied
 data/own/
 data/arkitscenes_walks/
+
+# Agent worktrees: each is its own git checkout. Staging them would embed repositories.
+.claude/
+
+# Fetched datasets, never committed (brief: "weights and large binaries fetched by script").
+data/external/

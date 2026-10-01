@@ -188,17 +188,21 @@ def gate_rows(runs: dict) -> list[dict]:
             f"{a_name} {fa:.2f} m2 vs {b_name} {fb:.2f} m2")
         ra, rb = len(runs[a_name]["on"]["rooms"]), len(runs[b_name]["on"]["rooms"])
         # The count is what the gate asks for, and it is met. It is also a weak proxy, and
-        # bench/same_flat.py showed how weak: the five rooms are up to 76% apart by area, so
-        # the two walks agree on how many rooms there are and not on what they are. The caveat
-        # rides in the result string, because a table reading MET and meaning "counts matched"
-        # is exactly the confident-garbage failure the brief penalises hardest.
+        # bench/same_flat.py showed how weak: with both walks registered into one frame, only
+        # two of the five rooms pair one-to-one by spatial overlap and one of walk A's rooms
+        # overlaps nothing at all in walk B. The caveat rides in the result string, because a
+        # table reading MET and meaning "counts matched" is exactly the confident-garbage
+        # failure the brief penalises hardest.
         sf = ROOT / "bench" / "results" / "same_flat.json"
         caveat = ""
         if sf.is_file():
-            rc = json.loads(sf.read_text())["room_correspondence"]
+            doc = json.loads(sf.read_text())
+            rc = doc["room_correspondence"]
             if not rc["pairing_is_credible"]:
-                caveat = (f" (counts only -- decompositions disagree by up to "
-                          f"{rc['worst_pair_difference_pct']:.0f}%, see same_flat.json)")
+                one_to_one = doc["g_repeat_per_wall"]["paired_room_dimensions"]
+                caveat = (f" (counts only -- registered into one frame, only "
+                          f"{one_to_one['pairs_one_to_one']} of {min(ra, rb)} rooms pair "
+                          f"one-to-one by spatial overlap, see same_flat.json)")
         add("G-REPEAT-ROOMS", "lidar", "same room count from both walks",
             f"{ra} vs {rb}{caveat}", "MET" if ra == rb else "NOT MET",
             "the gate asks for the count and the count matches; the rooms themselves do not "
@@ -207,13 +211,28 @@ def gate_rows(runs: dict) -> list[dict]:
     sf = ROOT / "bench" / "results" / "same_flat.json"
     same_flat = json.loads(sf.read_text()) if sf.is_file() else None
 
+    # G-REPEAT used to read NOT MEASURABLE here, on the grounds that the two walks share
+    # neither a frame nor a room decomposition. The frame turned out to be recoverable --
+    # scanplan/geometry/register.py searches the full circle for the rigid transform that makes
+    # the two coverage masks coincide -- so the gate is now MEASURED and failing. The headline
+    # number is the one that needs no room correspondence at all: the share of wall cells whose
+    # counterpart in the other walk is within 1 cm. The per-room reading rides in the detail,
+    # with its small denominator, because the decomposition really does still disagree.
     if same_flat:
         g = same_flat["g_repeat_per_wall"]
-        add("G-REPEAT", "lidar", "every wall within max(1 cm, 0.5%)", "NOT MEASURABLE",
-            "NOT MEASURED", "; ".join(g["why"]))
+        w, d = g["without_room_correspondence"], g["paired_room_dimensions"]
+        add("G-REPEAT", "lidar", "every wall within max(1 cm, 0.5%)",
+            f"{w['fraction_within_gate']*100:.0f}% of wall cells within 1 cm "
+            f"(median {w['common_coverage_only']['a_to_b']['median_cm']:.1f} cm)",
+            "MET" if w["gate_met"] else "NOT MET",
+            f"two walks registered by a rigid 2D fit of their floor coverage, no reference "
+            f"involved. Correspondence-free reading first; paired by spatial overlap, "
+            f"{d['pairs_one_to_one']} room pairs clear IoU 0.5 and "
+            f"{d['dimensions_within_gate']}/{d['dimensions_compared']} of their dimensions are "
+            f"within gate. {g['finding'][:200]}")
     else:
         add("G-REPEAT", "lidar", "every wall within max(1 cm, 0.5%)", "NOT MEASURED",
-            "NOT MEASURED", "needs per-wall correspondence between the two walks")
+            "NOT MEASURED", "run bench/same_flat.py")
 
     # --- G-OPEN: measured walk against walk, no tape needed -------------------------
     if same_flat:
@@ -222,8 +241,10 @@ def gate_rows(runs: dict) -> list[dict]:
             f"{o['within_gate']}/{o['denominator']} within 2 cm "
             f"({o['fraction']*100:.0f}%)",
             "MET" if o["gate_met"] else "NOT MET",
-            f"two walks of one flat, {o['openings_found']}; widths rank-paired. "
-            f"{o['caveat'][:120]}")
+            f"two walks of one flat, "
+            f"{' vs '.join(str(v) for v in o['openings_found'].values())} distinct openings, "
+            f"{o['paired']} paired by centre position in the registered frame and "
+            f"{o['unpaired']} unpaired (counted as misses). {o['method']}")
     else:
         add("G-OPEN", "lidar", "<= 2 cm on >= 85% of openings", "NOT MEASURED", "NOT MEASURED",
             "no tape truth for the supplied captures")

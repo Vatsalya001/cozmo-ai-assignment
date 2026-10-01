@@ -67,17 +67,49 @@ def _peak(heights: np.ndarray, candidates: np.ndarray) -> Level | None:
     return Level(float(near.mean()), int(len(near)), float(near.std()))
 
 
+def ceiling_of(points: np.ndarray, camera_heights: np.ndarray) -> Level | None:
+    """The strongest level above the camera among `points` alone.
+
+    Exists because a storey has ONE floor and as many ceilings as it has rooms. A home with a
+    boxed-in bathroom ceiling or a kitchen soffit has no single ceiling height, so the whole
+    cloud is the wrong population to ask: the histogram returns the mode, which is whichever
+    room contributed most points, and that one number then gets stamped on the bathroom too.
+
+    Handed the points of one room this returns that room's ceiling, using the same estimator
+    and the same constants as the capture-level fit -- the only thing that changes is the
+    population. MIN_SUPPORT_FRACTION in particular stays relative to the points handed in, so
+    a 2.5 m2 shower room is judged against its own point count rather than against a living
+    room's. That threshold is a fraction rather than a count for exactly this reason.
+
+    Returns None when these points never saw a ceiling. A caller must NOT substitute another
+    room's value: the rooms that go unobserved are the small, high-sided, hard-to-sweep ones,
+    which are also the ones most likely to have a dropped ceiling, so borrowing from next
+    door is biased rather than neutral.
+    """
+    if len(points) == 0:
+        return None
+    h = points[:, 1]
+    cam = float(np.median(camera_heights))
+    return _peak(h, h[h > cam + 0.10])
+
+
 def floor_and_ceiling(points: np.ndarray, camera_heights: np.ndarray) -> tuple[Level | None, Level | None]:
     """The floor is the strongest level below the camera, the ceiling the strongest above.
 
     Splitting at the camera path rather than at the global median is what makes this work on
     a capture that saw mostly floor (or mostly ceiling): the phone is always between the two.
+
+    The ceiling returned here is the whole capture's dominant one, which is the right quantity
+    for a single-room capture and for anything that needs one number per storey -- the damage
+    rules, the ARKitScenes walk benchmark. A per-room plan should call `ceiling_of` on each
+    room's own points instead; this function's own behaviour is unchanged, the ceiling half is
+    just no longer written out twice.
     """
     if len(points) == 0:
         return None, None
     h = points[:, 1]
     cam = float(np.median(camera_heights))
-    return _peak(h, h[h < cam - 0.10]), _peak(h, h[h > cam + 0.10])
+    return _peak(h, h[h < cam - 0.10]), ceiling_of(points, camera_heights)
 
 
 def ceiling_height(floor: Level | None, ceiling: Level | None) -> tuple[float, float] | None:

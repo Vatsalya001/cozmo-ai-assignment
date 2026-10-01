@@ -6,7 +6,7 @@
       "target": "<= 60 s",
       "result": "within budget",
       "status": "MET",
-      "detail": "measured seconds vary with the machine and are in timing.json, not here; 1-minute load was 5.5 on 12 cores when measured"
+      "detail": "measured seconds vary with the machine and are in timing.json, not here; 1-minute load was 4.3 on 12 cores when measured"
     },
     {
       "gate": "A-DET",
@@ -60,7 +60,7 @@
       "gate": "G-REPEAT-ROOMS",
       "tier": "lidar",
       "target": "same room count from both walks",
-      "result": "5 vs 5 (counts only -- decompositions disagree by up to 76%, see same_flat.json)",
+      "result": "5 vs 5 (counts only -- registered into one frame, only 2 of 5 rooms pair one-to-one by spatial overlap, see same_flat.json)",
       "status": "MET",
       "detail": "the gate asks for the count and the count matches; the rooms themselves do not correspond, which bench/same_flat.py measures"
     },
@@ -68,17 +68,17 @@
       "gate": "G-REPEAT",
       "tier": "lidar",
       "target": "every wall within max(1 cm, 0.5%)",
-      "result": "NOT MEASURABLE",
-      "status": "NOT MEASURED",
-      "detail": "no common frame: each walk is yaw-aligned from its own wall lines and starts at its own origin, so the two plans are in different coordinate systems; no common decomposition: a wall bounding a room in one walk can run through the middle of a room in the other, so there is no counterpart to match. This is the fatal one, and `room_correspondence` above is the evidence"
+      "result": "30% of wall cells within 1 cm (median 4.0 cm)",
+      "status": "NOT MET",
+      "detail": "two walks registered by a rigid 2D fit of their floor coverage, no reference involved. Correspondence-free reading first; paired by spatial overlap, 2 room pairs clear IoU 0.5 and 0/4 of their dimensions are within gate. with a frame the gate becomes measurable and it fails on both readings. Without any room correspondence, 30% of wall cells have their counterpart within 1 cm and the median offset is 4.0 cm. With room"
     },
     {
       "gate": "G-OPEN",
       "tier": "lidar",
       "target": "<= 2 cm on >= 85% of openings",
-      "result": "0/12 within 2 cm (0%)",
+      "result": "0/6 within 2 cm (0%)",
       "status": "NOT MET",
-      "detail": "two walks of one flat, {'1a8384c3f6': 12, 'c7d28f72c6': 12}; widths rank-paired. paired by rank among sorted widths, because openings carry no identity across two independent walks. Rank pairing is the"
+      "detail": "two walks of one flat, 6 vs 6 distinct openings, 3 paired by centre position in the registered frame and 3 unpaired (counted as misses). paired by centre position in the registered frame, optimal assignment under a 0.80 m cutoff (one door width)"
     },
     {
       "gate": "A-WALL-LIDAR",

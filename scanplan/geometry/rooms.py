@@ -55,6 +55,45 @@ class Room:
         p = self.polygon_xz
         return [float(math.dist(p[i], p[(i + 1) % len(p)])) for i in range(len(p))]
 
+    def contains_points(self, points: np.ndarray, grid: Grid) -> np.ndarray:
+        """Which of `points` stand over this room's floor: a boolean mask of length n.
+
+        The test is against the room's label mask, not its simplified polygon. The polygon has
+        been through approxPolyDP and rectify, so it cuts corners by up to SIMPLIFY_M; the mask
+        is the actual set of floor cells the watershed assigned to this room. For picking out a
+        room's own ceiling points the mask is what is wanted -- a polygon that bulges 28 cm into
+        the next room would pull that room's ceiling in with it.
+        """
+        if self.mask is None:
+            return np.zeros(len(points), dtype=bool)
+        ix = grid.to_pixel(points[:, [0, 2]])
+        h, w = grid.shape
+        inside = np.zeros(len(points), dtype=bool)
+        on_grid = ((ix[:, 0] >= 0) & (ix[:, 0] < w) & (ix[:, 1] >= 0) & (ix[:, 1] < h))
+        inside[on_grid] = self.mask[ix[on_grid, 1], ix[on_grid, 0]] > 0
+        return inside
+
+    def footprint_fraction(self, points: np.ndarray, grid: Grid) -> float:
+        """Share of this room's floor cells that `points` stand over, 0 to 1.
+
+        Reported rather than thresholded. Handed the points of a fitted ceiling plane it says
+        how much of the room that plane was actually seen over, which is the thing a reader
+        needs in order to judge the height: 87% of a shower room's footprint is a ceiling,
+        20% of a living room's is a ceiling measured over one end of it. Point counts cannot
+        answer that question because they scale with how long the phone lingered.
+        """
+        if self.mask is None:
+            return float("nan")
+        cells = int(self.mask.sum())
+        if cells == 0 or len(points) == 0:
+            return 0.0
+        inside = self.contains_points(points, grid)
+        if not inside.any():
+            return 0.0
+        ix = grid.to_pixel(points[inside][:, [0, 2]])
+        hit = np.unique(ix[:, 1] * grid.shape[1] + ix[:, 0])
+        return float(len(hit) / cells)
+
 
 def split_rooms(free: np.ndarray, grid: Grid, *, door_max_m: float = DOOR_MAX_M,
                 min_area_m2: float = ROOM_MIN_AREA_M2,

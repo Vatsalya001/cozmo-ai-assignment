@@ -134,6 +134,67 @@ brief is clear that both fail. The answer: uncorrected we are **repeatable and b
 and 2.0 mm over a 10 mm target. Accuracy was the right thing to buy with that trade, and the
 cost is stated rather than hidden.
 
+### One ceiling per room, not one per capture
+
+G-CEIL has always been written "≤ 1.5 cm **per room**", and until now the pipeline could not
+answer it per room: it fitted a single height histogram over the whole cloud and wrote that one
+number onto every room. On `c7d28f72c6` it wrote **3.087 m on all five rooms**. Fitting each
+room on the points standing over its own floor cells gives:
+
+| Room | Area | Ceiling, per room | Seen over | Was |
+|---|---|---|---|---|
+| R1 | 4.38 m² | 2.965 m | 43% of footprint | 3.087 m |
+| R2 | 36.96 m² | 3.087 m | 21% | 3.087 m |
+| R3 | 3.02 m² | 3.096 m | 72% | 3.087 m |
+| R4 | 2.74 m² | **2.278 m** | 42% | 3.087 m |
+| R5 | 2.54 m² | **2.365 m** | 87% | 3.087 m |
+
+Two rooms were out by **80 cm**, published as measurements with a ±7 mm interval. This is not a
+noise problem and no amount of averaging would have found it: a unimodal fit over a multimodal
+property returns the **mode**, and the mode is whichever room contributed the most points — here
+the 36.96 m² living room, which holds 26% of the cloud. The other three rooms agreed with it by
+accident, because they happen to sit under the same slab.
+
+Two numbers are now published per room that could not be published before: the height itself,
+and **how much of that room's footprint the fitted plane was seen over**. A ceiling fitted over
+87% of a shower room is a different claim from one fitted over 21% of a living room, and a point
+count cannot distinguish them because it scales with how long the phone lingered.
+
+**The floor stays per storey, deliberately.** A floor is continuous and poured in one go, and the
+capture-level histogram has the entire footprint supporting one peak; splitting it per room would
+add variance and remove nothing. Ceilings are the asymmetric case: boxed-in bathroom ceilings and
+kitchen soffits are ordinary construction.
+
+**A room that saw no ceiling keeps the unobserved population typical** (2.55 m, `observed=false`,
+wide interval). It does **not** inherit a neighbour's measured height. That fallback would look
+like an improvement and be a bias: the rooms that go unobserved are the small, high-sided,
+hard-to-sweep ones, which are the same rooms most likely to be boxed in — so borrowing from next
+door borrows from exactly the wrong distribution. On `1a8384c3f6` and `c00a170fe1` no room saw a
+ceiling and all ten rooms stay `observed=false`, unchanged.
+
+**Independent corroboration.** `cozmo-scan`, an independent submission to the same brief, reports
+nine distinct ceiling heights on this capture from a nine-room split. Against our five:
+
+| ours | 2.278 | 2.365 | 2.965 | 3.087 | 3.096 |
+|---|---|---|---|---|---|
+| theirs, nearest | 2.289 | 2.365 | 2.973 | 3.083 | 3.097 |
+| apart | 11 mm | 0 mm | 8 mm | 4 mm | 1 mm |
+
+Two pipelines that share no code agree to **within 11 mm on five distinct heights**, including the
+two low ones. That is independent evidence that the old single 3.087 m was wrong, not merely
+coarse. Their four unmatched values (2.435, 2.449, 2.982, 3.104 m) belong to rooms our
+conservative split does not separate; on that count the room-split gate, not the ceiling fit, is
+what still differs. Note also that they report a flat 2.500 m on the other two captures — the
+same captures where no ceiling is visible to us — which reads as a default rather than a fit, so
+this corroboration runs one way only.
+
+**G-CEIL itself is unmoved, and that was checked rather than assumed.** `bench/ceiling_walks.py`
+measures G-CEIL through `planes.floor_and_ceiling`, the capture-level entry point, on
+single-room ARKitScenes walks where the per-room and per-capture questions coincide. The
+per-room fit is a **new** entry point, `planes.ceiling_of`; `floor_and_ceiling` now delegates its
+ceiling half to it and is otherwise untouched. Re-running the benchmark reproduces
+`bench/results/ceiling_walks.json` **byte for byte**: still 5/5 within 15 mm, mean −4.3 mm.
+
 **This took three attempts and the first two published wrong conclusions.** They are kept in
 the repository with retraction notices, because the reasoning in them reads convincing:
 `bench/arkitscenes_laser.py` blamed multi-storey venues, and `bench/ceiling_vs_laser.py` blamed

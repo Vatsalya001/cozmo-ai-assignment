@@ -33,15 +33,17 @@ TYPICAL_DOOR_M = 0.80
 
 
 def _room_document(room: rooms_mod.Room, storey: tuple[float, float] | None,
-                   openings: list[rooms_mod.Opening], widen: float) -> dict:
+                   openings: list[rooms_mod.Opening], widen: float,
+                   ceiling_method: str = "ceiling plane minus floor plane") -> dict:
+    """One room's contract entry. `storey` is THIS room's floor-to-ceiling height, not the
+    capture's: see the per-room fit in `run`. None means this room never saw a ceiling."""
     lengths = room.wall_lengths()
     poly = room.polygon_xz
 
     if storey is None:
         ceiling = unobserved(2.55, 1.25, method="not seen; population typical")
     else:
-        ceiling = from_sigma(storey[0], storey[1], widen=widen,
-                             method="ceiling plane minus floor plane")
+        ceiling = from_sigma(storey[0], storey[1], widen=widen, method=ceiling_method)
 
     walls_out = []
     for i, L in enumerate(lengths, 1):
@@ -81,6 +83,74 @@ def _room_document(room: rooms_mod.Room, storey: tuple[float, float] | None,
         "walls": walls_out,
         "openings": ops_out,
     }
+
+
+MIXED_CEILING_M = 0.10      # report the spread once rooms disagree by more than this
+
+
+def _per_room_ceilings(found, points, camera_heights, grid, floor
+                       ) -> list[tuple[tuple[float, float] | None, str]]:
+    """This room's floor-to-ceiling height, per room, with the method string that earns it.
+
+    The CEILING is fitted per room; the FLOOR is not, and that asymmetry is the whole point. A
+    storey has one floor -- continuous, poured in one go, with the entire footprint supporting
+    the one histogram peak. Ceilings are not: a flat with a boxed-in bathroom ceiling and a
+    soffit over the kitchen has as many ceiling heights as it has boxed spaces, and a single
+    histogram over the whole cloud returns the MODE, which is whichever room contributed the
+    most points.
+
+    On c7d28f72c6 that stamped the 36.96 m2 living room's 3.087 m onto all five rooms, including
+    the two whose own points say 2.278 m and 2.365 m. An 80 cm error, published as a measurement
+    with a +-7 mm interval -- precisely the confident garbage the brief penalises hardest. Two
+    rooms were right by accident, because they happen to be under the same slab.
+
+    A room whose own points show no ceiling gets None, and `_room_document` turns that into the
+    unobserved population typical. It does NOT inherit a neighbour's height: the rooms that go
+    unobserved are the small, high-sided, hard-to-sweep ones, which are also the ones most
+    likely to be boxed in, so substituting next door's value is biased rather than neutral.
+    """
+    out = []
+    for room in found:
+        own = points[room.contains_points(points, grid)]
+        level = planes.ceiling_of(own, camera_heights)
+        if level is None:
+            out.append((None, ""))
+            continue
+        on_plane = own[np.abs(own[:, 1] - level.height_m) < planes.REFINE_HALF_WIDTH_M]
+        seen = room.footprint_fraction(on_plane, grid)
+        out.append((planes.ceiling_height(floor, level),
+                    f"this room's ceiling plane minus the storey floor plane, fitted on the "
+                    f"{len(own)} points over this room's floor and seen over {seen*100:.0f}% "
+                    f"of its footprint"))
+    return out
+
+
+def _ceiling_warnings(found, ceilings) -> list[dict]:
+    """What the per-room fit found that one storey height could not have said."""
+    out = []
+    missing = [f"R{r.id}" for r, (s, _) in zip(found, ceilings) if s is None]
+    if missing:
+        # Named per room now that the fit is per room. "The ceiling was never seen" was true of
+        # a capture that saw none at all and quietly false of one that saw four rooms of five:
+        # the fifth still carried a number, it was just the biggest room's number.
+        where = ("anywhere in this capture" if len(missing) == len(found)
+                 else f"over {len(missing)} of {len(found)} rooms")
+        out.append({"code": "NO_CEILING", "severity": "warning",
+                    "message": f"no ceiling was seen {where} ({', '.join(missing)}); those "
+                               f"ceiling heights are population typicals with wide intervals, "
+                               f"flagged observed=false. They are NOT filled in from a room "
+                               f"that did see its ceiling -- an unswept room is likelier than "
+                               f"average to be the one with a dropped ceiling"})
+    heights = [s[0] for s, _ in ceilings if s is not None]
+    if len(heights) >= 2 and max(heights) - min(heights) > MIXED_CEILING_M:
+        out.append({"code": "MIXED_CEILING_HEIGHTS", "severity": "info",
+                    "message": f"ceiling heights differ by "
+                               f"{(max(heights)-min(heights))*100:.0f} cm across rooms "
+                               f"({min(heights):.2f} to {max(heights):.2f} m), each fitted on "
+                               f"that room's own points. No single storey height describes this "
+                               f"property, which is what a boxed-in bathroom ceiling or a "
+                               f"kitchen soffit looks like from below"})
+    return out
 
 
 def _photo_document(ir, source, started, drift, damage) -> dict:
@@ -148,7 +218,7 @@ def _photo_document(ir, source, started, drift, damage) -> dict:
 
 def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
         damage: bool = True, door_max_m: float | None = None,
-        min_seed_area_m2: float | None = None) -> dict:
+        min_seed_area_m2: float | None = None, artifacts: dict | None = None) -> dict:
     """Measure a capture and return a document that satisfies schema/output.schema.json.
 
     The two room-split tunables are explicit parameters rather than module constants read at
@@ -251,8 +321,27 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
         r.polygon_xz = regularize.rectify(r.polygon_xz)
     openings = rooms_mod.openings(labels, grid, free)
 
+    # `artifacts`, when a caller passes a dict, is filled with the intermediate rasters. Nothing
+    # in the returned document depends on it. It exists because a benchmark that needs to compare
+    # two captures SPATIALLY -- bench/same_flat.py registers two walks of one flat into a common
+    # frame -- would otherwise have to rebuild this function's geometry by hand, and that is
+    # precisely how a harness drifts away from the code it claims to measure. This project has
+    # recorded that failure four times (docs/fix_loop.md 6.1, 9, 10, and the fixture aliasing).
+    # Handing the real rasters out is the cheapest way to stop it happening a fifth time.
+    if artifacts is not None:
+        artifacts.update(grid=grid, wall_mask=wall_mask, coverage=coverage, free=free,
+                         labels=labels, rooms=found, openings=openings, yaw_rad=yaw,
+                         floor_y=floor.height_m)
+
     regions, flags, scope_items = [], [], []
     if damage:
+        # KNOWN GAP, stated rather than hidden: R2-CEILING-LEAK asks whether damage sits within
+        # 300 mm of THE ceiling, and it is still handed the capture-level storey height. Under a
+        # dropped ceiling that is too high, so damage 300 mm under a 2.28 m bathroom ceiling
+        # would not fire the rule. It changes nothing on the supplied captures -- all three find
+        # zero damage regions -- and fixing it properly means mapping each region to its room
+        # and passing a per-room height into damage_rules.evaluate, which is a change to the
+        # damage contract rather than to the plan. Left out of this change deliberately.
         regions = damage_detect.detect(ir, found, floor.height_m)
         flags = damage_rules.evaluate(regions, found, openings,
                                       storey[0] if storey else None)
@@ -267,16 +356,16 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
     # interval on both. x11 is the factor that would have contained them. An interval that
     # excludes the reference is worse than no interval: it claims a precision never present.
     widen = {"lidar": 1.0, "video": 11.0, "photo": 11.0}[tier]
-    room_docs = [_room_document(r, storey, openings, widen) for r in found]
+
+    ceilings = _per_room_ceilings(found, ir.points, ir.trajectory[:, 1], grid, floor)
+    room_docs = [_room_document(r, s, openings, widen, ceiling_method=m)
+                 for r, (s, m) in zip(found, ceilings)]
     footprint = sum(r.area_m2 for r in found)
 
     warnings = [{"code": "GEOMETRY_WARNING", "severity": "warning", "message": w}
                 for w in ir.warnings]
     warnings += conditions.warnings()
-    if ceiling is None:
-        warnings.append({"code": "NO_CEILING", "severity": "warning",
-                         "message": "the ceiling was never seen; ceiling heights are population "
-                                    "typicals with wide intervals, flagged observed=false"})
+    warnings += _ceiling_warnings(found, ceilings)
     warnings.append({"code": "ROOM_SPLIT_CONSERVATIVE", "severity": "info",
                      "message": "rooms are split at doorway-width necks and under-split rather "
                                 "than over-split; a merged pair still reports a correct combined "

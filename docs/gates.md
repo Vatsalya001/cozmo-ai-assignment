@@ -52,7 +52,7 @@ failing number had nothing to check it against.
 
 | ID | Refines | Target | Why the parent could not be used as written |
 |---|---|---|---|
-| G-REPEAT-FOOTPRINT | G-REPEAT | Two walks of one flat agree on total footprint within **2%** | G-REPEAT asks for *every wall* within max(1 cm, 0.5%). Two independent walks produce two independent room decompositions with no shared wall identities, so there is nothing to pair up. Total footprint is the strongest quantity that survives having no correspondence |
+| G-REPEAT-FOOTPRINT | G-REPEAT | Two walks of one flat agree on total footprint within **2%** | G-REPEAT asks for *every wall* within max(1 cm, 0.5%). Two independent walks produce two independent room decompositions with no shared wall identities, so there is no *per-room* pairing to be had. Total footprint is the strongest quantity that survives having no correspondence at all |
 | G-REPEAT-ROOMS | G-REPEAT | Both walks report the **same room count** | The companion to the above. Area repeating while its division into rooms does not is a specific, diagnosable failure, and separating the two is what made it visible |
 | A-CALIB-VIDEO | A-CALIB | The nominal 90% interval **contains the LiDAR reference** on every capture where the video tier produced a plan | A-CALIB asks for 85–95% coverage of *truth*. There is no truth for these captures, and with 2 usable captures a coverage percentage would be meaningless anyway. Containing the reference is weaker and is honestly weaker: it says the interval is wide enough for the error we can see, not that it is correctly sized |
 | A-DMG-DETECT | A-DMG | Staged damage found with the right class | Reported as **NOT BUILT**: B.2 was never captured, because the only damaged room available is in a property with no LiDAR-capable device. The row exists so the absence is visible in the gate table rather than only in the compliance matrix |
@@ -64,6 +64,17 @@ and the two pipelines take opposite positions on it: ours measured an 18 mm bias
 laser truth and corrects it, the opponent carries 13 mm as an uncertainty and corrects nothing.
 Running only the capture that suits our correction would be choosing the input. Both are run,
 both are reported, and the result splits exactly where that disagreement predicts.
+
+**G-REPEAT itself is now reported as a measured failure, not as unmeasurable**, so the two
+surrogates above are no longer standing in for a parent nobody could score. The missing piece
+was a common frame, and that turned out to be recoverable without any reference: registering
+the two walks' floor-coverage masks with a rigid 2D transform searched over the full circle
+(`scanplan/geometry/register.py`). The parent gate is then scored on the quantity that needs no
+room pairing — the distance from every wall cell of one walk to the nearest wall cell of the
+other — which comes out at **29.7% within 1 cm, median 4 cm**. The surrogates stay because they
+answer different questions (does the area repeat; does the count repeat) and because the
+per-room reading of the parent has a denominator of 4, not 14: only 2 of 5 rooms pair one-to-one
+once the walks are in one frame. See `bench/same_flat.py`.
 
 **2% for G-REPEAT-FOOTPRINT is our decision.** It is roughly twice the 1%/A-WALL-LIDAR linear
 target, on the standing assumption that area error runs about twice linear error — the same
