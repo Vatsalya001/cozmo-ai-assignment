@@ -26,6 +26,7 @@ step "depth bias measured per-pixel against FARO laser truth" "$PY" bench/depth_
 step "storey-height calibration (reports NOT MEASURED; see the script header)" "$PY" bench/arkitscenes_laser.py
 step "video tier against the LiDAR reference, and interval calibration" "$PY" bench/video_vs_lidar.py
 step "photo tier room boxes and stitch grouping" "$PY" bench/photo_tier.py
+step "two walks of one flat: G-REPEAT and G-OPEN" "$PY" bench/same_flat.py
 step "head-to-head vs magicplan" "$PY" bench/head_to_head.py
 step "head-to-head vs an independent implementation, on exact synthetic truth" \
      "$PY" bench/head_to_head_engineer.py

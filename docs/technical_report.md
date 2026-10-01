@@ -316,9 +316,22 @@ which they carry as a 13 mm uncertainty rather than correcting.
    out. With no camera poses nothing in the input says how rooms relate, and an L-shaped room
    returns as its bounding box. The output carries an error-severity warning saying so rather
    than laying out a plausible arrangement.
-4. **Footprint repeatability is 3.2%, not met** — and its sibling gate passes. See §5's
-   postscript: the pair is not two independent properties.
-5. **Rooms under-split** — 5 found on a capture where this project's own fix-loop declaration
+4. **The two walks of one flat do not agree about what the rooms are, and G-REPEAT-ROOMS
+   passing at "5 vs 5" is a count coincidence.** Both return five rooms. Paired by area rank
+   they are 37%, 76%, 8%, 33% and 44% apart, and one walk keeps as a single room roughly what
+   the other splits in two — while the total footprint agrees to 3.2%. The gate asks for the
+   count, so it is met on its wording and the wording is a weak proxy; the gate table's result
+   string now says "counts only" so it cannot be read as agreement. `bench/same_flat.py`.
+   This is also why per-wall **G-REPEAT is not measurable** here rather than merely unmeasured:
+   even perfectly registered, a wall bounding a room in one walk runs through the middle of a
+   room in the other, so there is no counterpart to match. Pairing by rank anyway and quoting a
+   pass rate would rest on a correspondence that benchmark disproves.
+5. **G-OPEN is measured and failed: 0 of 12 openings agree within 2 cm** between the two walks,
+   the closest pair 4 cm apart. It needed no tape truth — only comparing one walk against the
+   other, which had not been attempted. Separately and worse, **every opening we measure is
+   0.16–0.52 m wide where a doorway is 0.6–0.9 m**: the widths are not just irreproducible, they
+   are too small. The clear-width measurement is under-reporting and that is unfixed.
+6. **Rooms under-split** — 5 found on a capture where this project's own fix-loop declaration
    put the reference at 9. **That 9 has no source recorded anywhere in this repository.** It
    first appears in `fix_loop_declaration.md`, which is committed-before-the-fix and therefore
    never edited, and it has been repeated since without anyone establishing where it came from.
@@ -328,15 +341,15 @@ which they carry as a 13 mm uncertainty rather than correcting.
    and 2 (`bench/results/head_to_head_engineer.json`). We under-split; that much is not in
    doubt. The safer failure: a merged pair still reports a correct combined area; an invented
    room does not.
-6. **Damage class is shape-derived.** A stain that has not lifted the plaster is geometrically
+7. **Damage class is shape-derived.** A stain that has not lifted the plaster is geometrically
    invisible. Every region says `class_source: "shape"` with confidence ≤ 0.5, and detection has
    no verified true-positive rate because no real damaged capture was obtainable.
-7. **Mirrors and glass are not detected.** Two geometric tests were built; neither separates a
+8. **Mirrors and glass are not detected.** Two geometric tests were built; neither separates a
    reflection from ordinary geometry — one fired on 19–30% of every capture, the other on
    10–13%. The flag is **disabled deliberately** and every run warns that mirrors are
    undetected, which is worth more than a detector that fires everywhere. Wet/glossy floor and
    low light *are* detected and warned about.
-8. **Room area is under-reported by design** — about −3% on known geometry. Coverage-based area
+9. **Room area is under-reported by design** — about −3% on known geometry. Coverage-based area
    cannot exceed what was seen, so occluded floor is missing rather than estimated.
 
 ## 8. What I would do next, in order

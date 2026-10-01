@@ -133,14 +133,46 @@ def gate_rows(runs: dict) -> list[dict]:
             f"{rel*100:.1f}% apart", "MET" if rel <= 0.02 else "NOT MET",
             f"{a_name} {fa:.2f} m2 vs {b_name} {fb:.2f} m2")
         ra, rb = len(runs[a_name]["on"]["rooms"]), len(runs[b_name]["on"]["rooms"])
+        # The count is what the gate asks for, and it is met. It is also a weak proxy, and
+        # bench/same_flat.py showed how weak: the five rooms are up to 76% apart by area, so
+        # the two walks agree on how many rooms there are and not on what they are. The caveat
+        # rides in the result string, because a table reading MET and meaning "counts matched"
+        # is exactly the confident-garbage failure the brief penalises hardest.
+        sf = ROOT / "bench" / "results" / "same_flat.json"
+        caveat = ""
+        if sf.is_file():
+            rc = json.loads(sf.read_text())["room_correspondence"]
+            if not rc["pairing_is_credible"]:
+                caveat = (f" (counts only -- decompositions disagree by up to "
+                          f"{rc['worst_pair_difference_pct']:.0f}%, see same_flat.json)")
         add("G-REPEAT-ROOMS", "lidar", "same room count from both walks",
-            f"{ra} vs {rb}", "MET" if ra == rb else "NOT MET")
-    add("G-REPEAT", "lidar", "every wall within max(1 cm, 0.5%)", "NOT MEASURED",
-        "NOT MEASURED", "needs per-wall correspondence between the two walks")
+            f"{ra} vs {rb}{caveat}", "MET" if ra == rb else "NOT MET",
+            "the gate asks for the count and the count matches; the rooms themselves do not "
+            "correspond, which bench/same_flat.py measures")
 
-    # --- gates that need data we do not have ----------------------------------------
-    add("G-OPEN", "lidar", "<= 2 cm on >= 85% of openings", "NOT MEASURED", "NOT MEASURED",
-        "no tape truth for the supplied captures")
+    sf = ROOT / "bench" / "results" / "same_flat.json"
+    same_flat = json.loads(sf.read_text()) if sf.is_file() else None
+
+    if same_flat:
+        g = same_flat["g_repeat_per_wall"]
+        add("G-REPEAT", "lidar", "every wall within max(1 cm, 0.5%)", "NOT MEASURABLE",
+            "NOT MEASURED", "; ".join(g["why"]))
+    else:
+        add("G-REPEAT", "lidar", "every wall within max(1 cm, 0.5%)", "NOT MEASURED",
+            "NOT MEASURED", "needs per-wall correspondence between the two walks")
+
+    # --- G-OPEN: measured walk against walk, no tape needed -------------------------
+    if same_flat:
+        o = same_flat["g_open"]
+        add("G-OPEN", "lidar", "<= 2 cm on >= 85% of openings",
+            f"{o['within_gate']}/{o['denominator']} within 2 cm "
+            f"({o['fraction']*100:.0f}%)",
+            "MET" if o["gate_met"] else "NOT MET",
+            f"two walks of one flat, {o['openings_found']}; widths rank-paired. "
+            f"{o['caveat'][:120]}")
+    else:
+        add("G-OPEN", "lidar", "<= 2 cm on >= 85% of openings", "NOT MEASURED", "NOT MEASURED",
+            "no tape truth for the supplied captures")
     # The synthetic figures deliberately are NOT repeated here. They were, and they went stale
     # the moment the depth-bias correction changed them -- a hardcoded cross-reference to a
     # number that lives in another file is a number that will be wrong eventually.

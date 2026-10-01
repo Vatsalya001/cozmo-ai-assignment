@@ -1,0 +1,217 @@
+{
+  "benchmark": "same_flat",
+  "what": "two walks of one flat, measured against each other; B.4 of the brief",
+  "walks": {
+    "1a8384c3f6": {
+      "rooms": 5,
+      "areas_m2": [
+        23.216,
+        18.264,
+        3.282,
+        1.851,
+        1.429
+      ],
+      "footprint_m2": 48.043,
+      "opening_widths_m": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.216,
+        0.216,
+        0.224,
+        0.224,
+        0.344,
+        0.344,
+        0.439,
+        0.439
+      ]
+    },
+    "c7d28f72c6": {
+      "rooms": 5,
+      "areas_m2": [
+        36.96,
+        4.379,
+        3.02,
+        2.741,
+        2.544
+      ],
+      "footprint_m2": 49.645,
+      "opening_widths_m": [
+        0.16,
+        0.16,
+        0.28,
+        0.28,
+        0.336,
+        0.336,
+        0.44,
+        0.44,
+        0.48,
+        0.48,
+        0.52,
+        0.52
+      ]
+    }
+  },
+  "g_repeat_footprint": {
+    "gate": "two walks agree on total footprint within 2%",
+    "footprints_m2": {
+      "1a8384c3f6": 48.043,
+      "c7d28f72c6": 49.645
+    },
+    "relative_difference_pct": 3.2,
+    "gate_met": false
+  },
+  "room_correspondence": {
+    "question": "do the two walks agree about what the rooms ARE, not just how many",
+    "counts": {
+      "1a8384c3f6": 5,
+      "c7d28f72c6": 5
+    },
+    "counts_match": true,
+    "paired_by_area_rank": [
+      {
+        "rank": 1,
+        "1a8384c3f6": 23.216,
+        "c7d28f72c6": 36.96,
+        "relative_difference_pct": 37.2
+      },
+      {
+        "rank": 2,
+        "1a8384c3f6": 18.264,
+        "c7d28f72c6": 4.379,
+        "relative_difference_pct": 76.0
+      },
+      {
+        "rank": 3,
+        "1a8384c3f6": 3.282,
+        "c7d28f72c6": 3.02,
+        "relative_difference_pct": 8.0
+      },
+      {
+        "rank": 4,
+        "1a8384c3f6": 1.851,
+        "c7d28f72c6": 2.741,
+        "relative_difference_pct": 32.5
+      },
+      {
+        "rank": 5,
+        "1a8384c3f6": 1.429,
+        "c7d28f72c6": 2.544,
+        "relative_difference_pct": 43.8
+      }
+    ],
+    "worst_pair_difference_pct": 76.0,
+    "pairing_is_credible": false,
+    "finding": "the room COUNTS match while the decompositions do not: paired by area rank the rooms are up to 76% apart, and walk c7d28f72c6 keeps as one room roughly what walk 1a8384c3f6 splits in two. G-REPEAT-ROOMS is met on its literal wording (same count) and that wording is a weak proxy -- stated here so the gate table cannot be read as agreement about rooms"
+  },
+  "g_repeat_per_wall": {
+    "gate": "every wall within max(1 cm, 0.5%)",
+    "status": "NOT MEASURABLE on this pair, with evidence",
+    "why": [
+      "no common frame: each walk is yaw-aligned from its own wall lines and starts at its own origin, so the two plans are in different coordinate systems",
+      "no common decomposition: a wall bounding a room in one walk can run through the middle of a room in the other, so there is no counterpart to match. This is the fatal one, and `room_correspondence` above is the evidence"
+    ],
+    "what_was_not_done": "pairing by area rank anyway and reporting a per-dimension pass rate. That number would rest on a correspondence this benchmark has just shown is false"
+  },
+  "g_open": {
+    "gate": "within 2 cm on >= 85% of openings; a missed or phantom opening counts as a miss",
+    "openings_found": {
+      "1a8384c3f6": 12,
+      "c7d28f72c6": 12
+    },
+    "note": "each physical opening is reported once per adjoining room, so these counts are roughly double the number of doorways",
+    "pairs": [
+      {
+        "rank": 1,
+        "1a8384c3f6": 0.2,
+        "c7d28f72c6": 0.16,
+        "difference_m": 0.04,
+        "within_gate": false
+      },
+      {
+        "rank": 2,
+        "1a8384c3f6": 0.2,
+        "c7d28f72c6": 0.16,
+        "difference_m": 0.04,
+        "within_gate": false
+      },
+      {
+        "rank": 3,
+        "1a8384c3f6": 0.2,
+        "c7d28f72c6": 0.28,
+        "difference_m": 0.08,
+        "within_gate": false
+      },
+      {
+        "rank": 4,
+        "1a8384c3f6": 0.2,
+        "c7d28f72c6": 0.28,
+        "difference_m": 0.08,
+        "within_gate": false
+      },
+      {
+        "rank": 5,
+        "1a8384c3f6": 0.216,
+        "c7d28f72c6": 0.336,
+        "difference_m": 0.12,
+        "within_gate": false
+      },
+      {
+        "rank": 6,
+        "1a8384c3f6": 0.216,
+        "c7d28f72c6": 0.336,
+        "difference_m": 0.12,
+        "within_gate": false
+      },
+      {
+        "rank": 7,
+        "1a8384c3f6": 0.224,
+        "c7d28f72c6": 0.44,
+        "difference_m": 0.216,
+        "within_gate": false
+      },
+      {
+        "rank": 8,
+        "1a8384c3f6": 0.224,
+        "c7d28f72c6": 0.44,
+        "difference_m": 0.216,
+        "within_gate": false
+      },
+      {
+        "rank": 9,
+        "1a8384c3f6": 0.344,
+        "c7d28f72c6": 0.48,
+        "difference_m": 0.136,
+        "within_gate": false
+      },
+      {
+        "rank": 10,
+        "1a8384c3f6": 0.344,
+        "c7d28f72c6": 0.48,
+        "difference_m": 0.136,
+        "within_gate": false
+      },
+      {
+        "rank": 11,
+        "1a8384c3f6": 0.439,
+        "c7d28f72c6": 0.52,
+        "difference_m": 0.081,
+        "within_gate": false
+      },
+      {
+        "rank": 12,
+        "1a8384c3f6": 0.439,
+        "c7d28f72c6": 0.52,
+        "difference_m": 0.081,
+        "within_gate": false
+      }
+    ],
+    "unpaired": 0,
+    "within_gate": 0,
+    "denominator": 12,
+    "fraction": 0.0,
+    "gate_met": false,
+    "caveat": "paired by rank among sorted widths, because openings carry no identity across two independent walks. Rank pairing is the same device used in the head-to-head and is only as good as the assumption that the Nth widest opening is the same doorway in both walks -- which, given the room decompositions disagree, is itself doubtful. The result is reported as a measurement rather than a NOT MEASURED, and this caveat travels with it"
+  }
+}

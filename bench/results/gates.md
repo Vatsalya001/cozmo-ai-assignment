@@ -14,9 +14,9 @@ reported rather than omitted, because an absent row reads as a pass.
 | G-CEIL-SPREAD | lidar | <= 1 cm across captures | NOT MEASURED | **NOT MEASURED** |
 | G-CEIL | lidar | <= 1.5 cm per room vs truth | NOT MEASURED | **NOT MEASURED** |
 | G-REPEAT-FOOTPRINT | lidar | two walks of one flat agree | 3.2% apart | **NOT MET** |
-| G-REPEAT-ROOMS | lidar | same room count from both walks | 5 vs 5 | **MET** |
-| G-REPEAT | lidar | every wall within max(1 cm, 0.5%) | NOT MEASURED | **NOT MEASURED** |
-| G-OPEN | lidar | <= 2 cm on >= 85% of openings | NOT MEASURED | **NOT MEASURED** |
+| G-REPEAT-ROOMS | lidar | same room count from both walks | 5 vs 5 (counts only -- decompositions disagree by up to 76%, see same_flat.json) | **MET** |
+| G-REPEAT | lidar | every wall within max(1 cm, 0.5%) | NOT MEASURABLE | **NOT MEASURED** |
+| G-OPEN | lidar | <= 2 cm on >= 85% of openings | 0/12 within 2 cm (0%) | **NOT MET** |
 | A-WALL-LIDAR | lidar | <= max(2 cm, 1%) | NOT MEASURED | **NOT MEASURED** |
 | G-WALL-VIDEO | video | within +-3% of reference | footprint 60% worst over 2 capture(s) | **NOT MET** |
 | A-CALIB-VIDEO | video | nominal 90% interval contains the reference | 2/2 at the calibrated x11.0 | **MET** |
@@ -34,8 +34,9 @@ reported rather than omitted, because an absent row reads as a pass.
 - **G-CEIL-SPREAD** — only 1 capture(s) saw a ceiling
 - **G-CEIL** — no laser or tape truth for the supplied captures; bench/arkitscenes_laser.py found no admissible scan
 - **G-REPEAT-FOOTPRINT** — 1a8384c3f6 48.04 m2 vs c7d28f72c6 49.65 m2
-- **G-REPEAT** — needs per-wall correspondence between the two walks
-- **G-OPEN** — no tape truth for the supplied captures
+- **G-REPEAT-ROOMS** — the gate asks for the count and the count matches; the rooms themselves do not correspond, which bench/same_flat.py measures
+- **G-REPEAT** — no common frame: each walk is yaw-aligned from its own wall lines and starts at its own origin, so the two plans are in different coordinate systems; no common decomposition: a wall bounding a room in one walk can run through the middle of a room in the other, so there is no counterpart to match. This is the fatal one, and `room_correspondence` above is the evidence
+- **G-OPEN** — two walks of one flat, {'1a8384c3f6': 12, 'c7d28f72c6': 12}; widths rank-paired. paired by rank among sorted widths, because openings carry no identity across two independent walks. Rank pairing is the
 - **A-WALL-LIDAR** — no tape truth for the supplied captures; the synthetic room of exactly known size is measured by tests/test_accuracy.py and tabulated in docs/technical_report.md section 6
 - **G-WALL-VIDEO** — video produced a plan on 2/3 captures; 1 failed outright. Reference is the LiDAR result, not truth
 - **A-CALIB-VIDEO** — widening factor measured from observed error, not inherited
