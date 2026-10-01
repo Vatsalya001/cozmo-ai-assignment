@@ -11,7 +11,7 @@ Everything below is current as of the latest commit. If a number here disagrees 
 
 ```bash
 cd cozmo-ai-assignment && source .venv/bin/activate
-pytest -q                 # 78 passed
+pytest -q                 # 86 passed
 scanplan --version        # scanplan 0.1.0
 ```
 
@@ -177,10 +177,10 @@ Two attempts at this are documented in `docs/fix_loop.md`, the second reverted. 
 conclusion is that it is not a parameter problem.
 
 **"Does the benchmark reproduce?"** `bash bench/clean_clone_check.sh` — fresh clone, fresh
-install, regenerate, diff. With `--with-models`, **seven of eleven regenerate byte-identically** and the other four are
-named along with why they cannot: three are historical snapshots of code states, one is
-wall-clock. It has caught four real defects, the latest being that `fix_loop_diagnosis.py` was
-itself measuring a pipeline we do not ship.
+install, regenerate, diff. With `--with-models`, **eight of eleven come back byte-identical**
+and the other three are named along with why they cannot: two are historical snapshots of code
+states that no longer exist, one is wall-clock. It has caught five real defects, including that
+`fix_loop_diagnosis.py` was itself measuring a pipeline we do not ship.
 
 **"What would you do with another week?"** Find a single-storey ARKitScenes venue with its
 laser cloud and close G-CEIL; replace the global `door_max_m` with a split that adapts to local

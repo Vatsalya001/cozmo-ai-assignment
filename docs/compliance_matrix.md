@@ -118,7 +118,7 @@ gate would be tuning to the benchmark. `docs/fix_loop.md` §10.
 | D.1 | Compliance matrix | this file | **Met** |
 | D.2 | Capture route and device matrix | `docs/capture_protocol.md`, `docs/device_matrix.md` | **Met** |
 | D.3 | README to a first result in <15 min on a clean machine, one command per capture | `README.md` | **Met** — verified from a fresh clone and fresh venv by `bench/clean_clone_check.sh` |
-| D.4 | Reproduction bundle | `bench/reproduce.sh`, `bench/clean_clone_check.sh` | **Met** — `reproduce.sh` regenerates every reported number after verifying input checksums; `clean_clone_check.sh` does it from a *fresh clone* and diffs committed against regenerated. **7 of 11 result files regenerate byte-identically from a fresh clone — including both model tiers — and the other 4 are named with the reason each cannot** (3 historical snapshots, 1 wall-clock). It has caught four real defects |
+| D.4 | Reproduction bundle | `bench/reproduce.sh`, `bench/clean_clone_check.sh` | **Met** — `reproduce.sh` regenerates every reported number after verifying input checksums; `clean_clone_check.sh` does it from a *fresh clone* and diffs committed against regenerated. **8 of 11 result files regenerate byte-identically from a fresh clone — including both model tiers — and the other 3 are named with the reason each cannot** (2 historical snapshots of code states that no longer exist, 1 wall-clock). It has caught five real defects |
 | D.5 | Benchmark report: gates at all three tiers, repeatability, head-to-head, timing | `bench/results/gates.md` | **Partial** — all three tiers, repeatability and timing present; head-to-head empty pending tape truth |
 | D.6 | Fix loop bundle | `docs/fix_loop_declaration.md`, `docs/fix_loop.md`, `bench/results/fix_loop_*.json` | **Met** |
 | D.7 | Technical report, max 6 pages | `docs/technical_report.md` | **Met** |
@@ -143,7 +143,7 @@ complete end to end — fusion, floor and ceiling, walls, rooms, openings, drift
 its on/off ablation, damage, scope, and three export formats — in 9 to 47 seconds on CPU with no
 model and no network. The depth-bias correction is **measured against a surveying instrument**,
 not assumed. There is a complete fix loop with its declaration committed before the fix, a
-second attempt measured and reverted, and 75 tests including accuracy checks against a room of
+second attempt measured and reverted, and 86 tests including accuracy checks against a room of
 exactly known dimensions (ceiling −3.3 mm, floor within 1.8 mm of zero).
 
 **What does not.** Three gates are **not met and the failing numbers are given**: footprint

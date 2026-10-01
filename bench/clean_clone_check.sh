@@ -25,10 +25,13 @@
 #                               only record of what the fix changed.
 #   fix_loop_after_gates.json   its pair, captured by the same harness at the same moment.
 #                               Kept together so the comparison stays like-for-like.
-#   head_to_head.json           needs tape-measured truth for the rooms in Part 4, which does
-#                               not exist. The file records which inputs are missing.
 #
 # and one varies by design: timing.json is wall-clock seconds, a property of the machine.
+#
+# head_to_head.json IS regenerated, although the comparison it describes cannot be scored yet.
+# The artifact is deterministic without its missing inputs -- magicplan's side plus a precise
+# statement of what is absent -- so there is no reason to exempt it, and regenerating it proves
+# the "missing inputs" list is current rather than a stale note someone wrote once.
 set -uo pipefail
 cd "$(dirname "$0")/.."
 SRC="$PWD"
@@ -45,11 +48,11 @@ PLAN=(
   "ceiling_vs_laser.json|ceiling_vs_laser|arkitscenes_up|"
   "arkitscenes_laser.json|arkitscenes_laser|arkitscenes|"
   "fix_loop_diagnosis.json|fix_loop_diagnosis|supplied|"
+  "head_to_head.json|head_to_head|own|"
   "video_vs_lidar.json|video_vs_lidar|supplied|needs the models extra (torch + weights); pass --with-models"
   "photo_tier.json|photo_tier|supplied|needs the models extra (torch + weights); pass --with-models"
   "fix_loop_before_gates.json|-|-|snapshot of the code BEFORE the fix; not derivable from HEAD"
   "fix_loop_after_gates.json|-|-|its pair, captured by the same harness at the same moment"
-  "head_to_head.json|-|-|needs tape-measured truth for Part 4, which does not exist"
   "timing.json|-|-|wall-clock seconds; a property of the machine, not of the pipeline"
 )
 

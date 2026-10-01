@@ -67,10 +67,21 @@ def read_tape(path: Path) -> dict:
     return truth
 
 
-def read_ours() -> dict:
-    """Our pipeline's output for the same rooms, if a capture of them has been processed."""
+# Dimensions that match by name on both sides, with no interpretation required.
+DIRECT = ("floor area", "ceiling height", "perimeter")
+
+
+def read_ours(out_dir: Path | None = None) -> dict:
+    """Our pipeline's output for the same rooms, if a capture of them has been processed.
+
+    Wall lengths and opening widths are carried through as *sorted lists*, not as named
+    dimensions. They cannot be named: our wall IDs are positional (R1.W1, R1.W2, ...) and
+    assigned by the order the polygon was traced, while magicplan's are human labels like
+    "left wall". Nothing in either output says which of ours is theirs.
+    """
     out = {}
-    for d in sorted((ROOT / "out").glob("*")) if (ROOT / "out").is_dir() else []:
+    base = out_dir if out_dir is not None else (ROOT / "out")
+    for d in sorted(base.glob("*")) if base.is_dir() else []:
         j = d / "result.json"
         if not j.is_file():
             continue
@@ -82,9 +93,37 @@ def read_ours() -> dict:
                 "floor area": room["floor_area_m2"]["value"],
                 "ceiling height": room["ceiling_height_m"]["value"],
                 "perimeter": room.get("perimeter_m", {}).get("value"),
+                "_walls": sorted((w["length_m"]["value"] for w in room.get("walls", [])),
+                                 reverse=True),
+                "_openings": sorted((o["width_m"]["value"] for o in room.get("openings", [])),
+                                    reverse=True),
                 "_tier": doc["capture"]["tier"],
             }
     return out
+
+
+def pair_by_rank(theirs: dict, ours: list[float]) -> dict[str, float | None]:
+    """Match unlabelled quantities by rank: longest to longest, second to second.
+
+    ## Why rank, and why not "closest"
+
+    Our wall IDs are positional and magicplan's are human labels, so there is no correspondence
+    in the data. Two ways to invent one:
+
+    - **Closest match** — for each of their dimensions, take whichever of ours is nearest. This
+      is what a benchmark that wants to win does. It cannot lose: every dimension is scored
+      against our most flattering wall, and a pipeline that emitted random lengths would still
+      post respectable errors.
+    - **Rank** — sort both sides by length and pair them off. Symmetric, uses each of our walls
+      exactly once, and can be badly wrong in a way that shows up as a bad score rather than
+      hiding in it.
+
+    Rank is used. It is only valid when both sides report the same number of walls, which is
+    checked by the caller: pairing 4 of ours against 6 of theirs would be comparing a room to a
+    different room.
+    """
+    names = sorted(theirs, key=lambda n: -theirs[n])
+    return {name: ours[i] for i, name in enumerate(names)}
 
 
 def main() -> int:
@@ -101,19 +140,50 @@ def main() -> int:
 
     rows = []
     for room, app_vals in MAGICPLAN.items():
-        for dim, app_v in app_vals.items():
-            if dim in ("app", "version", "mode"):
+        mine = ours.get(room) or {}
+        dims = {k: v for k, v in app_vals.items() if k not in ("app", "version", "mode")}
+
+        # Build the correspondence for the unlabelled quantities once per room.
+        walls = {k: v for k, v in dims.items() if "wall" in k or "segment" in k or "notch" in k}
+        doors = {k: v for k, v in dims.items() if "door" in k}
+        paired: dict[str, float | None] = {}
+        notes: dict[str, str] = {}
+        for group, key, label in ((walls, "_walls", "wall"), (doors, "_openings", "opening")):
+            if not group:
                 continue
+            got = mine.get(key)
+            if got is None:
+                continue                              # no output of ours at all; handled below
+            if len(got) != len(group):
+                for n in group:
+                    notes[n] = (f"not scorable: magicplan reports {len(group)} {label} "
+                                f"dimensions for {room} and we report {len(got)}. Pairing "
+                                f"unequal counts by rank would compare different geometry")
+                continue
+            paired.update(pair_by_rank(group, got))
+            for n in group:
+                notes[n] = f"paired by rank among the {len(got)} {label} lengths"
+
+        for dim, app_v in dims.items():
             truth_v = tape.get(room, {}).get(dim)
-            our_v = (ours.get(room) or {}).get(dim)
+            our_v = mine.get(dim) if dim in DIRECT else paired.get(dim)
             row = {"room": room, "dimension": dim, "magicplan_m": app_v,
                    "truth_m": truth_v, "ours_m": our_v}
-            if truth_v is not None:
+            if dim in notes:
+                row["correspondence"] = notes[dim]
+            elif dim in DIRECT:
+                row["correspondence"] = "matched by name; no interpretation needed"
+
+            if truth_v is None:
+                row["not_scored_because"] = "no tape truth for this dimension"
+            elif our_v is None:
+                row["not_scored_because"] = (
+                    notes.get(dim) or "our pipeline produced no value for this dimension")
+            else:
                 row["magicplan_error_m"] = abs(app_v - truth_v)
-                if our_v is not None:
-                    row["our_error_m"] = abs(our_v - truth_v)
-                    # "Beat or tie": ours is no worse than theirs, within 1 mm of measurement.
-                    row["we_beat_or_tie"] = row["our_error_m"] <= row["magicplan_error_m"] + 0.001
+                row["our_error_m"] = abs(our_v - truth_v)
+                # "Beat or tie": ours is no worse than theirs, within 1 mm of measurement.
+                row["we_beat_or_tie"] = row["our_error_m"] <= row["magicplan_error_m"] + 0.001
             rows.append(row)
 
     scored = [r for r in rows if "we_beat_or_tie" in r]
@@ -125,9 +195,18 @@ def main() -> int:
             "no depth sensor, so our side runs at the video tier. This is harder on us, not "
             "easier: the video tier measures 26-69% from the LiDAR reference, while "
             "magicplan's Corner Mode is a published 5-15 cm per wall.",
+        "correspondence_method":
+            "floor area, ceiling height and perimeter match by name. Wall lengths and opening "
+            "widths have no correspondence in the data -- our IDs are positional, magicplan's "
+            "are human labels -- so they are paired by RANK among sorted lengths, and only when "
+            "both sides report the same count. Pairing each of theirs to whichever of ours is "
+            "nearest would be the flattering choice and was rejected: it cannot lose.",
         "rows": rows,
         "dimensions_total": len(rows),
         "dimensions_scored": len(scored),
+        "dimensions_not_scored": len(rows) - len(scored),
+        "why_not_scored": sorted({r["not_scored_because"] for r in rows
+                                  if "not_scored_because" in r}),
         "missing_inputs": missing,
     }
     if scored:
@@ -135,6 +214,11 @@ def main() -> int:
         result["beat_or_tie"] = won
         result["beat_or_tie_pct"] = round(won / len(scored) * 100, 1)
         result["gate_met"] = won / len(scored) >= 0.70
+        # The denominator is what was scorable, not what magicplan reported. Stating the gap
+        # stops a 70% over 6 dimensions reading like a 70% over 14.
+        result["gate_denominator_note"] = (
+            f"{len(scored)} of {len(rows)} magicplan dimensions were scorable; the percentage "
+            f"above is over the {len(scored)}, not the {len(rows)}")
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(result, indent=2) + "\n")
@@ -156,7 +240,9 @@ def main() -> int:
                   f"ours {r['our_error_m']*1000:+6.0f} mm  magicplan "
                   f"{r['magicplan_error_m']*1000:+6.0f} mm   -> {mark}")
 
-    print(f"\nwrote {OUT.relative_to(ROOT)}")
+    # relative_to raises when OUT is redirected outside the repo, which the tests do. A
+    # cosmetic path in a log line must never be able to fail the run that produced the result.
+    print(f"\nwrote {OUT.relative_to(ROOT) if OUT.is_relative_to(ROOT) else OUT}")
     return 0
 
 

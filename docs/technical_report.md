@@ -188,7 +188,7 @@ attempt, §10 for both of the above.
 
 ## 6. Validation
 
-77 tests. The ones that matter assert **accuracy against geometry we constructed and therefore
+86 tests. The ones that matter assert **accuracy against geometry we constructed and therefore
 cannot be wrong about** — the fixture writes a real Stray Scanner export, so the actual loader
 is exercised, not a mock. It also writes depth **18 mm short, exactly as the device does**, so
 the correction is exercised rather than bypassed.

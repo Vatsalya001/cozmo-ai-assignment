@@ -39,7 +39,7 @@ Needs Python 3.10–3.12. **No model weights and no network are required for the
 git clone https://github.com/Vatsalya001/cozmo-ai-assignment.git && cd cozmo-ai-assignment
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
-pytest -q                                  # expect: 77 passed
+pytest -q                                  # expect: 86 passed
 ```
 
 On a CPU-only Linux machine, install PyTorch from the CPU index **first** if you plan to add
@@ -123,10 +123,10 @@ bash bench/clean_clone_check.sh --with-models   # also the two model tiers
 ```
 
 Clones the repo, installs from scratch, runs the tests, regenerates the benchmarks and diffs
-committed against regenerated. **With `--with-models`, 7 of 11 result files come back
-byte-identical and the other 4 are named with the reason each cannot** — three are historical
+committed against regenerated. **With `--with-models`, 8 of 11 result files come back
+byte-identical and the other 3 are named with the reason each cannot** — two are historical
 snapshots of code states that no longer exist, one is wall-clock. It reports what it did *not*
-regenerate rather than counting files it merely copied. It has caught four real defects.
+regenerate rather than counting files it merely copied. It has caught five real defects.
 
 ## Honest limits
 
