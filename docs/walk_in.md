@@ -11,7 +11,7 @@ Everything below is current as of the latest commit. If a number here disagrees 
 
 ```bash
 cd cozmo-ai-assignment && source .venv/bin/activate
-pytest -q                 # 75 passed
+pytest -q                 # 78 passed
 scanplan --version        # scanplan 0.1.0
 ```
 
@@ -19,7 +19,9 @@ scanplan --version        # scanplan 0.1.0
 section is three lines. If there is any chance the examiners pick video or photo, also run:
 
 ```bash
-pip install -e ".[dev,models]"    # torch + transformers, ~2 GB, do this on wifi beforehand
+pip install "torch>=2.4,<2.10" "torchvision>=0.19,<0.25" \
+    --index-url https://download.pytorch.org/whl/cpu   # CPU wheels; the default pulls CUDA
+pip install -e ".[dev,models]"    # then transformers + a 95 MB checkpoint
 python -c "from scanplan.ingest.video import _depth_model; _depth_model()"   # pre-cache weights
 ```
 
@@ -44,9 +46,10 @@ examiners chose, stop and sort out the folder before running.
 3. ```bash
    scanplan run /path/to/export
    ```
-4. Expect **11–53 s** depending on walk length (three supplied captures: 11.5 s, 29.8 s, 53.0 s
-   against a 60 s budget). Read the room table off `summary.md`, or open `plan.svg` to show the
-   plan. `result.json` is the contract document.
+4. Expect **roughly 10–50 s** depending on walk length, against a 60 s budget. Exact seconds
+   vary with the machine and live in `bench/results/timing.json` — which is precisely why they
+   are kept out of `gates.json`. Read the room table off `summary.md`, or open `plan.svg` to
+   show the plan. `result.json` is the contract document.
 
 This is the strongest tier and the one to steer towards if given a choice. It is also the only
 tier with a metric scale that was *measured* rather than inferred.
@@ -62,7 +65,7 @@ scanplan run /path/to/folder     # or point at the .mp4 directly
 
 Say this plainly before the number appears: **the video tier ignores depth entirely** and
 infers it with a metric monocular model, so it is a genuine measurement of what is lost when
-the depth sensor goes away. On the supplied captures its footprint lands up to **62% away**
+the depth sensor goes away. On the supplied captures its footprint lands up to **60% away**
 from the LiDAR result on the same walk — **G-WALL-VIDEO is NOT MET** and is reported as such.
 
 What *is* met is **A-CALIB-VIDEO**: the intervals are widened ×11 and the LiDAR reference falls
@@ -101,9 +104,11 @@ Also state: an L-shaped room returns as a rectangle. The tier reports room boxes
 - **Ceiling height** is the tightest quantity: on synthetic geometry whose true height is
   2.500 m by construction, it reads **2.4967 m — 3.3 mm low, σ 5.7 mm**, and the floor lands
   within 1.8 mm of zero.
-- **Floor area reads slightly short by design.** Area is the floor actually measured, not what
-  a flood fill could reach. Expect roughly −1 to −2%. It under-reports rather than inventing,
-  and an early version that filled was 3× too large.
+- **Floor area reads short by design — about −3%.** Area is the floor actually measured, not
+  what a flood fill could reach, so it under-reports rather than inventing; an early version
+  that filled was 3× too large. If asked why it is not better: it used to read +0.05%, which
+  was a 12 mm over-correction cancelling this −3%. Fixing the sensor model made the number look
+  worse and made it true.
 - **Room count may not match what a human would say.** It under-splits. A merged pair still
   reports a correct combined area; an invented room does not.
 - **Runtime is not in `gates.json`** on purpose — wall-clock is a property of the machine. It
@@ -121,7 +126,7 @@ from `gates.json`.
 | ✅ | G-REPEAT-ROOMS | met — 5 rooms vs 5 from two walks of one flat |
 | ✅ | A-CALIB-VIDEO | met — reference inside the widened interval, 2/2 |
 | ❌ | G-REPEAT-FOOTPRINT | **not met** — 3.2% apart |
-| ❌ | G-WALL-VIDEO | **not met** — 62% worst |
+| ❌ | G-WALL-VIDEO | **not met** — 60% worst |
 | ❌ | G-PHOTO-STITCH | **not met**, by construction |
 | ⚪ | G-CEIL, G-CEIL-SPREAD, G-REPEAT, G-OPEN, A-WALL-LIDAR | **not measured** — no truth obtainable |
 | ⚪ | G-H2H | **pending** — needs tape truth that does not exist |
@@ -172,10 +177,10 @@ Two attempts at this are documented in `docs/fix_loop.md`, the second reverted. 
 conclusion is that it is not a parameter problem.
 
 **"Does the benchmark reproduce?"** `bash bench/clean_clone_check.sh` — fresh clone, fresh
-install, regenerate, diff. Four regenerate byte-identically; six are named along with why they
-cannot be (three are historical snapshots, one is wall-clock, two need the model extra). It has
-caught three real defects, the latest being that `fix_loop_diagnosis.py` was itself measuring a
-pipeline we do not ship.
+install, regenerate, diff. With `--with-models`, **seven of eleven regenerate byte-identically** and the other four are
+named along with why they cannot: three are historical snapshots of code states, one is
+wall-clock. It has caught four real defects, the latest being that `fix_loop_diagnosis.py` was
+itself measuring a pipeline we do not ship.
 
 **"What would you do with another week?"** Find a single-storey ARKitScenes venue with its
 laser cloud and close G-CEIL; replace the global `door_max_m` with a split that adapts to local

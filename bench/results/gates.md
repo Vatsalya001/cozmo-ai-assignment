@@ -35,7 +35,7 @@ reported rather than omitted, because an absent row reads as a pass.
 - **G-REPEAT-FOOTPRINT** — 1a8384c3f6 48.04 m2 vs c7d28f72c6 49.65 m2
 - **G-REPEAT** — needs per-wall correspondence between the two walks
 - **G-OPEN** — no tape truth for the supplied captures
-- **A-WALL-LIDAR** — no tape truth; synthetic room gives -40 mm and -70 mm on 4.00 and 3.00 m
+- **A-WALL-LIDAR** — no tape truth for the supplied captures; the synthetic room of exactly known size is measured by tests/test_accuracy.py and tabulated in docs/technical_report.md section 6
 - **G-WALL-VIDEO** — video produced a plan on 2/3 captures; 1 failed outright. Reference is the LiDAR result, not truth
 - **A-CALIB-VIDEO** — widening factor measured from observed error, not inherited
 - **G-WALL-PHOTO** — no reference exists for the derived photo folders; the tier reports boxes, not measured walls

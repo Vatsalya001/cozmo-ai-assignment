@@ -86,7 +86,7 @@
       "target": "<= max(2 cm, 1%)",
       "result": "NOT MEASURED",
       "status": "NOT MEASURED",
-      "detail": "no tape truth; synthetic room gives -40 mm and -70 mm on 4.00 and 3.00 m"
+      "detail": "no tape truth for the supplied captures; the synthetic room of exactly known size is measured by tests/test_accuracy.py and tabulated in docs/technical_report.md section 6"
     },
     {
       "gate": "G-WALL-VIDEO",
@@ -146,5 +146,31 @@
     "c00a170fe1": 2,
     "1a8384c3f6": 5,
     "c7d28f72c6": 5
+  },
+  "drift_ablation": {
+    "c00a170fe1": {
+      "loop_closures": 5,
+      "submaps": 5,
+      "max_shift_mm": 1.0,
+      "mean_shift_mm": 0.7,
+      "footprint_off_m2": 14.9056,
+      "footprint_on_m2": 15.1084
+    },
+    "1a8384c3f6": {
+      "loop_closures": 25,
+      "submaps": 15,
+      "max_shift_mm": 6.0,
+      "mean_shift_mm": 3.1,
+      "footprint_off_m2": 47.5032,
+      "footprint_on_m2": 48.0428
+    },
+    "c7d28f72c6": {
+      "loop_closures": 124,
+      "submaps": 27,
+      "max_shift_mm": 11.6,
+      "mean_shift_mm": 7.1,
+      "footprint_off_m2": 47.866,
+      "footprint_on_m2": 49.6452
+    }
   }
 }

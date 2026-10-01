@@ -96,6 +96,22 @@ def test_the_compliance_matrix_gate_table_matches_the_benchmark():
         f"Run: python scripts/sync_compliance_matrix.py")
 
 
+def test_every_reported_gate_has_a_definition_to_look_up():
+    """A failing number with no definition is unauditable. Four IDs were reported with no
+    definition anywhere -- including G-REPEAT-FOOTPRINT, one of the gates that fails -- so a
+    reader checking the failure had nothing to check it against."""
+    import re
+    root = Path(__file__).resolve().parents[1]
+    gates = json.loads((RESULTS / "gates.json").read_text())
+    reported = {r["gate"] for r in gates["rows"]}
+    defined = set(re.findall(r"\|\s*\*{0,2}([A-Z]-[A-Z0-9-]+)\*{0,2}\s*\|",
+                             (root / "docs" / "gates.md").read_text()))
+    missing = sorted(reported - defined)
+    assert not missing, (
+        f"bench/gates.py reports {missing} but docs/gates.md defines no target for them. "
+        f"Every number in the gate table must be checkable against a stated target.")
+
+
 def test_no_committed_result_carries_an_absolute_path():
     """A machine-specific path in a result makes that file disagree with itself on any other
     machine, for a reason that has nothing to do with the measurement. Both offenders are
