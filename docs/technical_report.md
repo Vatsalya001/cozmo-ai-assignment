@@ -94,7 +94,7 @@ interval, and the validator enforces `ci_low ≤ value ≤ ci_high` before anyth
 |---|---|
 | Depth noise at the surface | 2.5 cm sigma on a wall length |
 | Plane-fit residual | RMS / √n |
-| **Unmeasured device depth bias** | **12 mm, added in quadrature, labelled an assumption** |
+| **Device depth bias** | **−18.0 mm, MEASURED against FARO laser truth, corrected at ingest**; the 4 mm the per-scan spread leaves unexplained is carried in the interval |
 | Tier thinness | ×1.0 LiDAR, **×11 video and photo — measured**, not chosen: ×4.5 left the reference outside the interval on both captures |
 
 The bias allowance exists because of a caught mistake. The first ceiling-height sigma came out
@@ -102,11 +102,19 @@ at **0.1 mm** — the standard error of 250,000 points. Arithmetically correct, 
 garbage: no phone measures to a tenth of a millimetre. Averaging removes noise; it does not
 remove a systematic offset.
 
-`bench/arkitscenes_laser.py` measures that offset against FARO laser truth, using storey height
-because it is frame-independent (the laser sits in a site datum at Z ≈ 393 m) and because it
-doubles the signal — a sensor reading long by *d* puts the floor *d* low and the ceiling *d*
-high. **It currently reports NOT MEASURED.** Both downloaded scans are multi-level walks whose
-cameras rise 4.3 m and 4.0 m, so neither has one floor to measure from.
+That offset is now **measured, not assumed**. The first attempt compared *storey heights*
+against FARO truth — frame-independent, and it doubles the signal, since a sensor reading long
+by *d* puts the floor *d* low and the ceiling *d* high. It returned NOT MEASURED: storey height
+is a difference of two fitted surfaces and needs a venue with exactly one floor and one ceiling,
+and ARKitScenes is overwhelmingly not that. Screening 319 trajectories put the median vertical
+camera movement at 4.8 m, and the scans downloaded had clouds spanning 5 m with no dominant
+floor layer — the strongest 5 cm band held 1.8% of points where a real floor holds 10–20%.
+
+The fix was to stop inferring. The upsampling split publishes device depth and laser-derived
+depth for the **same frames**, so the bias is a per-pixel subtraction with no floor to find and
+no venue geometry to be wrong about — and it needs 50 MB per scan rather than a 1.9 GB point
+cloud. Result: **−18.0 mm over 4.79 million pixels across 8 scans**, per-scan medians −14 to
+−27 mm. The device reads short; the correction adds it back at ingest.
 
 Two wrong answers were caught before that conclusion. Inferring the vertical axis from the data
 picked Z for one scan and Y for another *in the same venue*; their storeys then disagreed by
