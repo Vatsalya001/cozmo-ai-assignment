@@ -68,11 +68,21 @@ for d in supplied arkitscenes arkitscenes_up own; do
   fi
 done
 
-EXTRA="dev"
-[ "$WITH_MODELS" = 1 ] && EXTRA="dev,models"
-echo "=== installing .[$EXTRA] ==="
+echo "=== installing ==="
 python3 -m venv .venv >/dev/null 2>&1
-./.venv/bin/pip install -q -e ".[$EXTRA]" >/dev/null 2>&1 || { echo "install failed"; exit 1; }
+if [ "$WITH_MODELS" = 1 ]; then
+  # CPU torch from PyTorch's own index, exactly as the README instructs. The default PyPI
+  # wheel on Linux is the CUDA build: several GB, for a pipeline that runs on CPU throughout.
+  echo "  .[dev,models] with CPU torch (large download, first run only)"
+  ./.venv/bin/pip install -q "torch>=2.4,<2.10" "torchvision>=0.19,<0.25" \
+      --index-url https://download.pytorch.org/whl/cpu >/dev/null 2>&1 \
+      || { echo "torch install failed"; exit 1; }
+  ./.venv/bin/pip install -q -e ".[dev,models]" >/dev/null 2>&1 \
+      || { echo "install failed"; exit 1; }
+else
+  echo "  .[dev] -- no weights, no network; pass --with-models to include the model tiers"
+  ./.venv/bin/pip install -q -e ".[dev]" >/dev/null 2>&1 || { echo "install failed"; exit 1; }
+fi
 
 echo "=== tests ==="
 ./.venv/bin/pytest -q 2>&1 | tail -1
