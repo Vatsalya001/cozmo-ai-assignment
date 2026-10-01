@@ -6,7 +6,7 @@
       "target": "<= 60 s",
       "result": "within budget",
       "status": "MET",
-      "detail": "measured seconds vary with the machine and are in timing.json, not here; 1-minute load was 4.3 on 12 cores when measured"
+      "detail": "measured seconds vary with the machine and are in timing.json, not here; 1-minute load was 5.4 on 12 cores when measured"
     },
     {
       "gate": "A-DET",
@@ -84,9 +84,9 @@
       "gate": "A-WALL-LIDAR",
       "tier": "lidar",
       "target": "<= max(2 cm, 1%)",
-      "result": "7/12 wall-to-wall distances within gate (median |error| 16.4 mm)",
+      "result": "8/10 wall-to-wall distances within gate (median |error| 9.8 mm)",
       "status": "NOT MET",
-      "detail": "device vs FARO-derived laser depth on the same frames and poses. Where both clouds select the SAME pair of walls (8 of 12), 7 pass with median |error| 8.2 mm; the rest are our plane-pair selection disagreeing, not the sensor. Measures sensor and fusion through our fitting, NOT the layout's own wall segments"
+      "detail": "device vs FARO-derived laser depth on the same frames and poses. Where both clouds select the SAME pair of walls (8 of 10), 8 pass with median |error| 8.1 mm; the rest are our plane-pair selection disagreeing, not the sensor. Measures sensor and fusion through our fitting, NOT the layout's own wall segments"
     },
     {
       "gate": "G-WALL-VIDEO",

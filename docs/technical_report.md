@@ -409,18 +409,36 @@ Ceiling height is the separation of two horizontal surfaces; a wall-to-wall dist
 measurement turned ninety degrees. Once device and laser depth could be fused onto the same
 poses, this followed — and it measures the quantity a floor plan is actually made of.
 
-**A-WALL-LIDAR: 7 of 12 distances within max(2 cm, 1%). NOT MET.** The useful part is the split:
+**A-WALL-LIDAR: 8 of 10 distances within max(2 cm, 1%). NOT MET.** The useful part is the split:
 
 | | distances | within gate | median \|error\| |
 |---|---|---|---|
-| both clouds chose the **same** pair of walls | 8 of 12 | 7 | **8.2 mm** |
-| they chose **different** walls | 4 of 12 | 0 | 43–975 mm |
+| both clouds chose the **same** pair of walls | 8 of 10 | **8** | **8.1 mm** |
+| they chose **different** walls | 2 of 10 | 0 | 194–225 mm |
 
-**On matched walls the sensor agrees with the laser to single-digit millimetres.** The three
-large rows are not a 948 mm sensor error — that would be an extraordinary claim about a LiDAR
-phone — they are our densest-plane heuristic selecting a different pair of walls in one cloud
-than in the other. Each row publishes the coordinates it chose, so the two failures can be told
-apart; without them an error of that size is unreadable.
+**On matched walls the sensor now agrees with the laser on every single one, at 8.1 mm median.**
+The two remaining failures are not sensor errors — they are our plane selection choosing a
+different pair of walls in one cloud than in the other. Each row publishes the coordinates it
+chose, so the two failure modes can be told apart; without them an error of that size is
+unreadable.
+
+**What closed the gap: selection that knows orientation.** Density alone cannot tell a wall from
+a wardrobe side — along one horizontal axis a counter front, a sofa back and an actual wall all
+deposit a dense 1 cm column. Adding per-point normals, a facing test (the two walls must face
+*each other* across the room) and extent gates (a wall is long and tall; furniture fails one)
+took the worst row from **975 mm to 3.4 mm** and the median from 16.4 mm to 9.8 mm.
+
+The approach is not ours: normals from the depth grid plus depth-edge rejection are from
+`cozmo-scan`'s `fusion.py`, credited in `bench/wall_normals.py`. An earlier attempt at it was
+rejected for claiming independence it did not have, and for reaching MET via a second change
+that let the *device* choose which surfaces the laser then measured — relaxing what the gate
+penalises. `docs/declined_changes.md` §2 has that record; a test now guards against selection
+quietly becoming shared.
+
+**The denominator fell from 12 to 10.** One walk has no two wall-sized surfaces facing each
+other on either axis, which is a failure to *find* a measurement rather than to make one
+accurately. It is recorded per row, because a silently dropped axis shrinks the denominator and
+reads as a measurement that happened to pass.
 
 The denominator stays all twelve. Choosing the wrong walls is our error too, and scoring only
 the rows where our own selection happened to agree would convert a failure into a pass by
@@ -442,7 +460,7 @@ them. Plane-pair stability is a real weakness on our side.
    used as truth because it is the opponent and scoring an opponent against itself is circular.
    What it does *not* block any more is absolute accuracy: three measurements rest on FARO
    laser depth — the **depth bias** per-pixel over 4.79 M pixels, **ceiling height** within
-   15 mm on 5 of 5 walks, and **wall-to-wall distance** (7 of 12, and 8.2 mm median where our
+   15 mm on 5 of 5 walks, and **wall-to-wall distance** (8 of 10, and 8/8 at 8.1 mm where our
    plane selection agrees). Public laser truth turned out to substitute for a tape on
    everything except our own two rooms.
 2. **The video tier is 27–60% from the LiDAR reference** on the same walks, and failed outright

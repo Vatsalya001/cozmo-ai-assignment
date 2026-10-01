@@ -1,19 +1,28 @@
 """A-WALL-LIDAR against laser truth, and the distinction the result turns on.
 
-7 of 12 wall-to-wall distances are within max(2 cm, 1%). The gate is not met, and the useful
-part is why: where both clouds select the *same* pair of walls the median error is 8.2 mm, and
-the worst rows (43 to 975 mm) are our plane-pair selection choosing different walls in the
-device cloud than in the laser cloud. Those two failures need completely different fixes, and a
-reader cannot tell them apart from the error alone.
+8 of 10 wall-to-wall distances are within max(2 cm, 1%). The gate is not met, and the useful
+part is why: where both clouds select the *same* pair of walls it is **8 of 8 within gate,
+median 8.1 mm**, and the two failures are our plane-pair selection choosing different walls in
+the device cloud than in the laser cloud. Those need completely different fixes, and a reader
+cannot tell them apart from the error alone.
 
-It read 6 of 12 at 24.6 mm until a second defect was found: `wall_distances` estimated the yaw
-alignment **independently per cloud**, so "the distance along x" meant a different direction in
-each and the difference between them was not a distance error at all. Both clouds are now
-rotated into one frame taken from the DEVICE cloud -- never the laser, which would let the
-reference choose how the measurement is oriented.
+It got here through three corrections, each of which moved the number for a different reason:
 
-So the coordinates of the chosen planes are published per row, and the gate denominator stays
-the full set -- picking the wrong walls is our error too, not an excuse to shrink the sample.
+  6/12, median 24.6 mm   yaw estimated INDEPENDENTLY PER CLOUD, so "distance along x" meant a
+                         different direction in each and their difference was not a distance
+                         error at all. Both clouds now share one frame, taken from the DEVICE
+                         cloud -- never the laser, which would let the reference decide how the
+                         measurement is oriented.
+  7/12, median 16.4 mm   the shared frame, measured.
+  8/10, median 9.8 mm    plane selection now knows ORIENTATION. Density alone cannot tell a wall
+                         from a wardrobe side; both deposit a dense 1 cm column along one axis.
+                         Per-point normals, a facing test and extent gates took the worst row
+                         from 975 mm to 3.4 mm.
+
+The denominator fell from 12 to 10 because one walk has no two wall-sized surfaces facing each
+other on either axis. That is a failure to FIND a measurement, not to make one accurately, and
+it is recorded per row -- a silently dropped axis shrinks the denominator and reads as a
+measurement that happened to pass.
 """
 from __future__ import annotations
 
@@ -115,6 +124,46 @@ def test_the_plane_selection_limitation_is_stated_not_filtered(wd):
     assert "known_limitation" in wd
     assert "argmax" in wd["known_limitation"]
     assert "discarding the failures" in wd["known_limitation"]
+
+
+def test_each_cloud_selects_its_own_wall_pair(wd):
+    """The variant that reached 11/11 MET let the DEVICE choose which two surfaces the laser
+    then measured. That is defensible as a definition -- A-WALL-LIDAR is a length gate -- but it
+    stops charging us for naming a different valid pair than the laser names, which is a
+    relaxation of what the gate penalises introduced by the person reporting the pass. It was
+    built, measured, and declined (docs/declined_changes.md section 2).
+
+    This test is the guard. If selection ever becomes shared, the gate's meaning changed and
+    that has to be a deliberate, documented decision rather than a quiet improvement.
+    """
+    src = (ROOT / "bench" / "wall_distance_walks.py").read_text()
+    assert "normals=dev_n" in src and "normals=las_n" in src, (
+        "both clouds must be handed their OWN normals and select their own planes")
+    assert "declined_changes" in src, (
+        "the rejected shared-selection variant must stay referenced where the choice is made")
+
+
+def test_plane_selection_knows_orientation_not_just_density(wd):
+    """Density alone cannot tell a wall from a wardrobe side: along one axis both deposit a
+    dense 1 cm column. That ambiguity produced a 975 mm error. Every scored plane must now
+    carry the extent evidence that admitted it."""
+    scored = [r for r in wd["rows"] if "error_mm" in r]
+    assert scored
+    for r in scored:
+        for side in ("device_cover_m", "laser_cover_m", "device_span_m", "laser_span_m"):
+            if side in r:
+                assert all(v > 0 for v in r[side])
+
+
+def test_a_rejected_axis_is_reported_not_silently_dropped(wd):
+    """An axis with no opposing wall pair is a failure to FIND a measurement, which is different
+    from measuring one badly. Both belong in the record: a silently dropped axis shrinks the
+    denominator and reads as a measurement that happened to pass."""
+    total_rows = len(wd["rows"])
+    accounted = sum(1 for r in wd["rows"]
+                    if "error_mm" in r or "rejected" in r or "rejected_axis" in r)
+    assert accounted == total_rows, "every row must either score or say why it did not"
+    assert wd["distances_scored"] + wd["rejected"] <= total_rows + 1
 
 
 def test_the_gate_threshold_scales_with_the_distance(wd):

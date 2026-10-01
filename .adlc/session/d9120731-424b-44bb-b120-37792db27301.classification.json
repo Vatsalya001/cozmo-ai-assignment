@@ -1,18 +1,17 @@
 {
-  "tier": "2",
+  "tier": "0",
   "mode": "bug_fix",
-  "confidence": 0.9,
+  "confidence": 0.7,
   "source": "classifier-rules.json",
-  "timestamp": "2026-10-01T22:34:45Z",
-  "classification_id": "cls_1790894085_bd8916d6",
-  "active_task_id": "cls_1790894085_bd8916d6",
-  "prompt_hash": "bd8916d6",
-  "task_origin_prompt_hash": "bd8916d6",
-  "last_prompt_hash": "bd8916d6",
+  "timestamp": "2026-10-01T23:24:23Z",
+  "classification_id": "cls_1790897063_798aa3dd",
+  "active_task_id": "cls_1790897063_798aa3dd",
+  "prompt_hash": "798aa3dd",
+  "task_origin_prompt_hash": "798aa3dd",
+  "last_prompt_hash": "798aa3dd",
   "last_prompt_event": "task",
-  "last_prompt_ts": "2026-10-01T22:34:45Z",
+  "last_prompt_ts": "2026-10-01T23:24:23Z",
   "reasoning": [
-    "matched tier_2 contextual keyword + strong neighbor",
     "matched bug_fix mode keyword"
   ]
 }

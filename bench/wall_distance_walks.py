@@ -52,6 +52,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from ceiling_walks import (WALKS, disparity, fuse, frames_of)        # noqa: E402
+from wall_normals import fuse_with_normals                           # noqa: E402
 from scanplan.geometry import planes, regularize, walls              # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,6 +62,100 @@ WALL_BAND = (0.35, 0.25)    # keep points from floor+0.35 m up to ceiling-0.25 m
 BIN_M = 0.01
 MIN_SUPPORT_FRACTION = 0.004
 PEAK_SEPARATION_M = 1.0     # two opposing walls of a room are at least this far apart
+
+# --- orientation-aware selection -------------------------------------------------------
+# Density alone cannot tell a wall from a wardrobe side: along one axis both deposit a dense
+# 1 cm column. These four tests add what density lacks. See bench/wall_normals.py for the
+# provenance of the normals themselves, which is not mine.
+VERTICAL_MAX_NY = 0.20      # |n_y| above this is floor, ceiling or a table top, not wall
+FACING_COS = float(np.cos(np.radians(12)))   # how far off-axis a surface may face
+MIN_COVER_M = 0.50          # a wall runs at least this far along its own direction...
+MIN_SPAN_M = 0.80           # ...and this tall. A counter front or a sofa back is lower
+COVER_CELL_M = 0.05
+
+# Tied to the estimator's own window rather than left free. A suppression radius WIDER than the
+# window the estimator refines over would merge two surfaces it is capable of distinguishing;
+# narrower, and one surface answers twice. The previous value was a free 10 bins, which is why
+# competitors 0.19 m apart were invisible to it.
+PLANE_HALF_M = 0.02
+SUPPRESS_BINS = int(round(2 * PLANE_HALF_M / BIN_M))
+
+
+def wall_points(P: np.ndarray, N: np.ndarray, cam_y: np.ndarray, floor, ceiling):
+    """Points that are plausibly wall material: in the height band AND vertically oriented."""
+    top = (ceiling.height_m - WALL_BAND[1]) if ceiling else (floor.height_m + 2.2)
+    band = (P[:, 1] > floor.height_m + WALL_BAND[0]) & (P[:, 1] < top)
+    vertical = np.abs(N[:, 1]) < VERTICAL_MAX_NY
+    keep = band & vertical
+    return P[keep], N[keep]
+
+
+def find_planes(P: np.ndarray, N: np.ndarray, axis: int) -> list[dict]:
+    """Wall planes perpendicular to `axis`, each with the facing direction it presents.
+
+    Per facing sign separately, because a room's two opposing walls face OPPOSITE ways and
+    pooling them would let one wall's front and another's back land in the same histogram bin.
+    """
+    along = 2 if axis == 0 else 0
+    out = []
+    for sign in (+1.0, -1.0):
+        horiz = N[:, [0, 2]]
+        mag = np.linalg.norm(horiz, axis=1)
+        col = 0 if axis == 0 else 1
+        facing = np.divide(horiz[:, col], mag, out=np.zeros(len(mag)), where=mag > 1e-9)
+        sel = (facing * sign) > FACING_COS
+        if sel.sum() < 500:
+            continue
+        pos, side = P[sel, axis], P[sel, along]
+        heights = P[sel, 1]
+
+        lo, hi = pos.min(), pos.max()
+        if hi - lo < BIN_M:
+            continue
+        counts, edges = np.histogram(pos, bins=max(int((hi - lo) / BIN_M), 1))
+        counts = np.convolve(counts, np.ones(3) / 3.0, mode="same")   # 3 cm smoothing
+        centres = (edges[:-1] + edges[1:]) / 2
+        need = MIN_SUPPORT_FRACTION * len(pos)
+
+        taken = np.zeros(len(counts), bool)
+        for _ in range(8):
+            masked = np.where(taken, 0.0, counts)
+            k = int(masked.argmax())
+            if masked[k] < need:
+                break
+            taken[max(k - SUPPRESS_BINS, 0):k + SUPPRESS_BINS + 1] = True
+            near = np.abs(pos - centres[k]) < PLANE_HALF_M
+            if near.sum() < 100:
+                continue
+            # Extent: a wall is long and tall. Furniture fails one or both.
+            cover = len(np.unique(np.floor(side[near] / COVER_CELL_M))) * COVER_CELL_M
+            span = float(np.percentile(heights[near], 95) - np.percentile(heights[near], 5))
+            if cover < MIN_COVER_M or span < MIN_SPAN_M:
+                continue
+            out.append({"at": float(pos[near].mean()), "facing": sign,
+                        "support": int(near.sum()), "cover_m": round(cover, 3),
+                        "span_m": round(span, 3)})
+    return out
+
+
+def opposing_pair(found: list[dict]) -> tuple[dict, dict] | None:
+    """The two walls that face EACH OTHER across the room, ranked by the weaker one's extent.
+
+    Facing is what makes this a room measurement rather than a pair of parallel surfaces: the
+    wall at the low end must face up-axis and the one at the high end must face down-axis, which
+    is only true of surfaces with the room between them.
+    """
+    best, best_score = None, -1.0
+    for a in found:
+        for b in found:
+            if a["at"] >= b["at"] - PEAK_SEPARATION_M:
+                continue
+            if not (a["facing"] > 0 and b["facing"] < 0):
+                continue
+            score = min(a["cover_m"], b["cover_m"])
+            if score > best_score:
+                best, best_score = (a, b), score
+    return best
 
 
 def two_strongest(coord: np.ndarray) -> tuple[float, float, int, int] | None:
@@ -104,7 +199,8 @@ def estimate_yaw(points: np.ndarray, cam_y: np.ndarray) -> float | None:
     return orientations[0] if orientations else 0.0
 
 
-def wall_distances(points: np.ndarray, cam_y: np.ndarray, yaw: float | None = None) -> dict | None:
+def wall_distances(points: np.ndarray, cam_y: np.ndarray, yaw: float | None = None,
+                   normals: np.ndarray | None = None) -> dict | None:
     """Opposing-wall separations along both horizontal axes, after yaw alignment.
 
     `yaw` MUST be supplied by the caller when two clouds are being compared. The first version
@@ -127,20 +223,45 @@ def wall_distances(points: np.ndarray, cam_y: np.ndarray, yaw: float | None = No
         orientations = walls.dominant_orientations(walls.wall_mask(probe))
         yaw = orientations[0] if orientations else 0.0
     P = regularize.rotate_about_y(points, yaw)
+    N = regularize.rotate_about_y(normals, yaw) if normals is not None else None
 
-    top = (ceiling.height_m - WALL_BAND[1]) if ceiling else (floor.height_m + 2.2)
-    band = P[(P[:, 1] > floor.height_m + WALL_BAND[0]) & (P[:, 1] < top)]
-    if len(band) < 2000:
+    if N is None:                                   # no normals: the old density-only path
+        top = (ceiling.height_m - WALL_BAND[1]) if ceiling else (floor.height_m + 2.2)
+        band = P[(P[:, 1] > floor.height_m + WALL_BAND[0]) & (P[:, 1] < top)]
+        if len(band) < 2000:
+            return None
+        out = {"yaw_deg": round(float(np.degrees(yaw)), 2), "wall_points": int(len(band))}
+        for axis, name in ((0, "x"), (2, "z")):
+            got = two_strongest(band[:, axis])
+            if got is None:
+                continue
+            lo, hi, n1, n2 = got
+            out[name] = {"distance_m": round(hi - lo, 4), "at": [round(lo, 4), round(hi, 4)],
+                         "support": [n1, n2]}
+        return out if ("x" in out or "z" in out) else None
+
+    bp, bn = wall_points(P, N, cam_y, floor, ceiling)
+    if len(bp) < 2000:
         return None
-
-    out = {"yaw_deg": round(float(np.degrees(yaw)), 2), "wall_points": int(len(band))}
+    out = {"yaw_deg": round(float(np.degrees(yaw)), 2), "wall_points": int(len(bp))}
     for axis, name in ((0, "x"), (2, "z")):
-        got = two_strongest(band[:, axis])
-        if got is None:
+        found = find_planes(bp, bn, axis)
+        pair = opposing_pair(found)
+        if pair is None:
+            # Not a failure to measure accurately -- a failure to FIND a room measurement on
+            # this axis at all. Recorded so the shrunken denominator is visible, because a
+            # silently dropped axis reads as a measurement that happened to pass.
+            out[f"{name}_rejected"] = (
+                f"no two wall-sized surfaces face each other across the room on this axis "
+                f"({len(found)} wall plane(s) found)")
             continue
-        lo, hi, n1, n2 = got
-        out[name] = {"distance_m": round(hi - lo, 4), "at": [round(lo, 4), round(hi, 4)],
-                     "support": [n1, n2]}
+        a, b = pair
+        out[name] = {"distance_m": round(b["at"] - a["at"], 4),
+                     "at": [round(a["at"], 4), round(b["at"], 4)],
+                     "support": [a["support"], b["support"]],
+                     "cover_m": [a["cover_m"], b["cover_m"]],
+                     "span_m": [a["span_m"], b["span_m"]],
+                     "planes_found": len(found)}
     return out if ("x" in out or "z" in out) else None
 
 
@@ -171,8 +292,9 @@ def main() -> int:
         offset = 0.0 if args.no_bias_correction else (-float(np.median(other)) if other else 0.0)
 
         shared = sorted(set(frames_of(walk, "lowres_depth")) & set(frames_of(walk, "highres_depth")))
-        dev_pts, dev_cam = fuse(walk, "lowres_depth", offset_m=offset, keys=shared)
-        las_pts, las_cam = fuse(walk, "highres_depth", keys=shared)
+        dev_pts, dev_cam, dev_n = fuse_with_normals(walk, "lowres_depth", offset_m=offset,
+                                                    keys=shared)
+        las_pts, las_cam, las_n = fuse_with_normals(walk, "highres_depth", keys=shared)
         if dev_pts is None or las_pts is None:
             rows.append({"video_id": vid, "visit_id": visit, "rejected": "no usable cloud"})
             continue
@@ -180,8 +302,13 @@ def main() -> int:
         # One frame for both clouds, taken from the DEVICE cloud -- the one under test.
         shared_yaw = estimate_yaw(dev_pts, dev_cam)
         laser_yaw = estimate_yaw(las_pts, las_cam)      # recorded only, to keep the gap visible
-        wd = wall_distances(dev_pts, dev_cam, yaw=shared_yaw)
-        wl = wall_distances(las_pts, las_cam, yaw=shared_yaw)
+        # Each cloud selects its OWN wall pair. Letting the device choose and the laser merely
+        # measure those same surfaces would reach a better number by relaxing what the gate
+        # penalises -- it would stop charging us for naming a different valid pair than the
+        # laser names. That variant was built, measured at 11/11, and declined; see
+        # docs/declined_changes.md section 2.
+        wd = wall_distances(dev_pts, dev_cam, yaw=shared_yaw, normals=dev_n)
+        wl = wall_distances(las_pts, las_cam, yaw=shared_yaw, normals=las_n)
         if wd is None or wl is None:
             rows.append({"video_id": vid, "visit_id": visit,
                          "rejected": f"no opposing wall pair (device {'ok' if wd else 'no'}, "
@@ -191,6 +318,12 @@ def main() -> int:
 
         for name in ("x", "z"):
             if name not in wd or name not in wl:
+                why = wd.get(f"{name}_rejected") or wl.get(f"{name}_rejected")
+                if why:
+                    rows.append({"video_id": vid, "visit_id": visit, "axis": name,
+                                 "rejected_axis": why,
+                                 "which": "device" if f"{name}_rejected" in wd else "laser"})
+                    print(f"  {vid} {name}: axis rejected -- {why}")
                 continue
             d, l = wd[name]["distance_m"], wl[name]["distance_m"]
             err = d - l
@@ -221,6 +354,7 @@ def main() -> int:
                   f"error {err*1000:+6.1f} mm  gate {gate*1000:.0f} mm  "
                   f"{'within' if abs(err) <= gate else 'OUTSIDE'}")
 
+    rejected_axes = [r for r in rows if "rejected_axis" in r]
     scored = [r for r in rows if "error_mm" in r]
     result = {
         "gate": "A-WALL-LIDAR: wall-to-wall distance within max(2 cm, 1%) -- our gate, not the "

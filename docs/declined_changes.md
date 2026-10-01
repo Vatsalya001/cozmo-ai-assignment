@@ -75,11 +75,25 @@ are byte-identical. It was labelled "reimplemented approach". Computing normals 
 grid by central differences is a standard method with few degrees of freedom, so the overlap is
 partly unavoidable; the mislabelling is not.
 
-**The honest position.** The principled half is a real accuracy gain and is recorded here as
-available: normals + facing + extent gates, with the suppression radius tied to the window,
-takes the worst row from 975 mm to 612 mm without touching what the gate measures. It leaves the
-gate NOT MET. Shipping the half that flips it would mean publishing a pass bought by narrowing
-the question, which is the one thing this project has spent its whole history not doing.
+**What happened next.** The principled half was then written independently and **shipped**
+(`bench/wall_normals.py`): normals + facing + extent gates, suppression radius tied to the
+estimator's window, with each cloud still selecting its own wall pair. Measured:
+
+| | before | after |
+|---|---|---|
+| within gate | 7/12 | **8/10** |
+| median \|error\| | 16.4 mm | **9.8 mm** |
+| worst row | 975.4 mm | **225.3 mm** |
+| where both clouds chose the same walls | 6/9, 7.5 mm | **8/8, 8.1 mm** |
+
+The 975 mm row is now +3.4 mm. The gate is still **NOT MET**, which is the point: the half that
+flipped it to 11/11 is the half that narrowed the question, and it is still declined. A test
+(`test_each_cloud_selects_its_own_wall_pair`) fails if selection ever quietly becomes shared.
+
+The provenance is stated plainly in the new file instead of claimed away: normals from the depth
+grid and depth-edge rejection are `cozmo-scan`'s approach. Central differences on a depth grid
+have few degrees of freedom and I had their implementation open, so the file says so rather than
+asserting an independence it cannot demonstrate.
 
 ---
 
