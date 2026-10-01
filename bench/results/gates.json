@@ -35,18 +35,18 @@
     {
       "gate": "G-CEIL-SPREAD",
       "tier": "lidar",
-      "target": "<= 1 cm across captures",
-      "result": "NOT MEASURED",
-      "status": "NOT MEASURED",
-      "detail": "only 1 capture(s) saw a ceiling"
+      "target": "<= 1 cm across walks of one venue",
+      "result": "381644 10.3 mm, 381649 12.0 mm",
+      "status": "NOT MET",
+      "detail": "venues within the 10 mm target: 0/2. Repeated walks of the same venue, which is what 'spread' requires; the earlier row compared three unrelated captures and could not answer the question"
     },
     {
       "gate": "G-CEIL",
       "tier": "lidar",
       "target": "<= 1.5 cm per room vs truth",
-      "result": "NOT MEASURED",
-      "status": "NOT MEASURED",
-      "detail": "no laser or tape truth for the supplied captures; bench/arkitscenes_laser.py found no admissible scan"
+      "result": "5/5 walks within 15 mm (mean -4.3 mm)",
+      "status": "MET",
+      "detail": "FARO-derived laser depth on the same frames and poses, both streams through our own floor/ceiling fit; bias correction leave-one-venue-out, so no walk is corrected with its own truth. 1 walk(s) rejected for producing no floor+ceiling pair"
     },
     {
       "gate": "G-REPEAT-FOOTPRINT",

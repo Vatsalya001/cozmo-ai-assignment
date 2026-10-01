@@ -11,8 +11,8 @@ reported rather than omitted, because an absent row reads as a pass.
 | A-DET | lidar | same input, same output | identical | **MET** |
 | A-SCHEMA | all | 100% validate, ci_low <= value <= ci_high | 3/3 valid | **MET** |
 | G-DRIFT | lidar | method stated + footprint ablation on/off | ablation run on all captures | **MET** |
-| G-CEIL-SPREAD | lidar | <= 1 cm across captures | NOT MEASURED | **NOT MEASURED** |
-| G-CEIL | lidar | <= 1.5 cm per room vs truth | NOT MEASURED | **NOT MEASURED** |
+| G-CEIL-SPREAD | lidar | <= 1 cm across walks of one venue | 381644 10.3 mm, 381649 12.0 mm | **NOT MET** |
+| G-CEIL | lidar | <= 1.5 cm per room vs truth | 5/5 walks within 15 mm (mean -4.3 mm) | **MET** |
 | G-REPEAT-FOOTPRINT | lidar | two walks of one flat agree | 3.2% apart | **NOT MET** |
 | G-REPEAT-ROOMS | lidar | same room count from both walks | 5 vs 5 (counts only -- decompositions disagree by up to 76%, see same_flat.json) | **MET** |
 | G-REPEAT | lidar | every wall within max(1 cm, 0.5%) | NOT MEASURABLE | **NOT MEASURED** |
@@ -31,8 +31,8 @@ reported rather than omitted, because an absent row reads as a pass.
 - **A-RUNTIME** — measured seconds vary with the machine and are reported in timing.json, not here
 - **A-DET** — c00a170fe1
 - **G-DRIFT** — c00a170fe1: 14.91 -> 15.11 m2, 5 loops; 1a8384c3f6: 47.50 -> 48.04 m2, 25 loops; c7d28f72c6: 47.87 -> 49.65 m2, 124 loops
-- **G-CEIL-SPREAD** — only 1 capture(s) saw a ceiling
-- **G-CEIL** — no laser or tape truth for the supplied captures; bench/arkitscenes_laser.py found no admissible scan
+- **G-CEIL-SPREAD** — venues within the 10 mm target: 0/2. Repeated walks of the same venue, which is what 'spread' requires; the earlier row compared three unrelated captures and could not answer the question
+- **G-CEIL** — FARO-derived laser depth on the same frames and poses, both streams through our own floor/ceiling fit; bias correction leave-one-venue-out, so no walk is corrected with its own truth. 1 walk(s) rejected for producing no floor+ceiling pair
 - **G-REPEAT-FOOTPRINT** — 1a8384c3f6 48.04 m2 vs c7d28f72c6 49.65 m2
 - **G-REPEAT-ROOMS** — the gate asks for the count and the count matches; the rooms themselves do not correspond, which bench/same_flat.py measures
 - **G-REPEAT** — no common frame: each walk is yaw-aligned from its own wall lines and starts at its own origin, so the two plans are in different coordinate systems; no common decomposition: a wall bounding a room in one walk can run through the middle of a room in the other, so there is no counterpart to match. This is the fatal one, and `room_correspondence` above is the evidence

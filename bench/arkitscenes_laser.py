@@ -1,5 +1,9 @@
 """Measure the device depth bias against FARO laser ground truth.
 
+SUPERSEDED: this returned NOT MEASURED and blamed multi-storey venues. G-CEIL is measured in
+bench/ceiling_walks.py -- 5 of 5 walks within 15 mm -- once the trajectory is read correctly
+(cam_from_world, inverted, z-up). Kept as the record of the first of two wrong conclusions.
+
 Storey height is the right quantity to calibrate on, for two reasons.
 
 It is **frame-independent**: the laser clouds sit in a site datum with Z near 393 m and the

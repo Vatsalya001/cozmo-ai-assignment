@@ -111,7 +111,19 @@ def gate_rows(runs: dict) -> list[dict]:
                 if r["ceiling_height_m"].get("observed", True)]
         if vals:
             ceilings[k] = float(np.mean([c["value"] for c in vals]))
-    if len(ceilings) >= 2:
+    _cw = ROOT / "bench" / "results" / "ceiling_walks.json"
+    _ceil = json.loads(_cw.read_text()) if _cw.is_file() else None
+    if _ceil and _ceil.get("spread_within_venue_mm"):
+        # Measured where the gate actually means something: repeated walks of ONE venue.
+        # The old proxy compared three unrelated captures, which cannot be a spread.
+        sp = _ceil["spread_within_venue_mm"]
+        add("G-CEIL-SPREAD", "lidar", "<= 1 cm across walks of one venue",
+            ", ".join(f"{v} {s:.1f} mm" for v, s in sp.items()),
+            "MET" if _ceil["spread_gate"]["gate_met"] else "NOT MET",
+            f"venues within the 10 mm target: {_ceil['spread_gate']['venues_within']}. "
+            f"Repeated walks of the same venue, which is what 'spread' requires; the earlier "
+            f"row compared three unrelated captures and could not answer the question")
+    elif len(ceilings) >= 2:
         spread = max(ceilings.values()) - min(ceilings.values())
         add("G-CEIL-SPREAD", "lidar", "<= 1 cm across captures",
             f"{spread*100:.1f} cm", "MET" if spread <= 0.01 else "NOT MET",
@@ -119,9 +131,23 @@ def gate_rows(runs: dict) -> list[dict]:
     else:
         add("G-CEIL-SPREAD", "lidar", "<= 1 cm across captures", "NOT MEASURED",
             "NOT MEASURED", f"only {len(ceilings)} capture(s) saw a ceiling")
-    add("G-CEIL", "lidar", "<= 1.5 cm per room vs truth", "NOT MEASURED", "NOT MEASURED",
-        "no laser or tape truth for the supplied captures; "
-        "bench/arkitscenes_laser.py found no admissible scan")
+    # G-CEIL against FARO laser truth. Reported NOT MEASURED through two earlier attempts;
+    # bench/ceiling_walks.py measures it on full ARKitScenes walks. If that file is absent the
+    # row falls back to NOT MEASURED rather than silently vanishing.
+    cw = ROOT / "bench" / "results" / "ceiling_walks.json"
+    ceil_walks = json.loads(cw.read_text()) if cw.is_file() else None
+    if ceil_walks and ceil_walks.get("walks_scored"):
+        add("G-CEIL", "lidar", "<= 1.5 cm per room vs truth",
+            f"{ceil_walks['within_gate']}/{ceil_walks['total']} walks within 15 mm "
+            f"(mean {ceil_walks['mean_error_mm']:+.1f} mm)",
+            "MET" if ceil_walks["gate_met"] else "NOT MET",
+            f"FARO-derived laser depth on the same frames and poses, both streams through our "
+            f"own floor/ceiling fit; bias correction {ceil_walks['bias_correction']}, so no "
+            f"walk is corrected with its own truth. {ceil_walks['walks_rejected']} walk(s) "
+            f"rejected for producing no floor+ceiling pair")
+    else:
+        add("G-CEIL", "lidar", "<= 1.5 cm per room vs truth", "NOT MEASURED", "NOT MEASURED",
+            "run scripts/fetch_arkitscenes_walks.py then bench/ceiling_walks.py")
 
     # --- G-REPEAT -------------------------------------------------------------------
     a_name, b_name = REPEAT_PAIR

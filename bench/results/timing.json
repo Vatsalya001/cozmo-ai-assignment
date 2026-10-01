@@ -1,10 +1,10 @@
 {
   "budget_s": 60.0,
-  "worst_s": 43.6,
+  "worst_s": 51.3,
   "per_capture_s": {
-    "c00a170fe1": 8.6,
-    "1a8384c3f6": 26.1,
-    "c7d28f72c6": 43.6
+    "c00a170fe1": 11.5,
+    "1a8384c3f6": 30.7,
+    "c7d28f72c6": 51.3
   },
   "note": "wall-clock, machine-dependent; excluded from gates.json so that file reproduces exactly"
 }

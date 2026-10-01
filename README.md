@@ -17,6 +17,13 @@ Built for the Cozmo AI Applied AI case study. Start with
 | **Video** | `rgb.mp4` + the capture app's pose track | **Built, gate not met.** ~110 s. **+59.7%** and **−26.7%** from the LiDAR reference; failed on 1 of 3 captures |
 | **Photo** | one folder per room, 2–8 stills | **Built, gate not met.** ~13 s. Room boxes from unposed stills; **does not stitch, by construction** |
 
+**Ceiling height within 1.5 cm of FARO laser truth on 5 of 5 ARKitScenes walks — mean
+−4.3 mm, worst 6.6 mm (G-CEIL, met).** Device depth and laser-derived depth fused with the same
+poses on the same frames, both through our own floor/ceiling fit, with a **leave-one-venue-out**
+bias correction so no walk is corrected with its own truth. Uncorrected the same walks give 1 of
+5 and a −22.3 mm bias, which is the ablation that makes the correction a measurement rather than
+a claim: [`bench/ceiling_walks.py`](bench/ceiling_walks.py).
+
 Measured accuracy against a synthetic room of exactly known size, **through the same command a
 reviewer runs**: ceiling height **−3.1 mm**, floor height **+1.5 mm**, floor area **−0.05%**,
 wall dimensions −50 mm on 4.00 m and −80 mm on 3.00 m. Repeatability on two real walks of one
@@ -109,16 +116,22 @@ silently corrupted three PNGs while the archives themselves verified fine.
 | `bench/head_to_head.py` | magicplan comparison, dimension by dimension (Part 3; PENDING for want of tape truth) |
 | `bench/head_to_head_engineer.py` | **vs an independent implementation on exact synthetic truth — 9/10, 90%** |
 | `bench/fix_loop_diagnosis.py` | the evidence behind the fix-loop declaration, through `pipeline.run` |
-| `bench/arkitscenes_laser.py` | storey-height calibration — reports **NOT MEASURED**, and the header says why |
-| `bench/ceiling_vs_laser.py` | the second attempt at G-CEIL — also **NOT MEASURED**, all three approaches documented |
+| `bench/ceiling_walks.py` | **G-CEIL: 5/5 walks within 15 mm of laser truth**, with the held-out bias ablation |
+| `bench/same_flat.py` | G-REPEAT and G-OPEN: two walks of one flat against each other |
+| `bench/arkitscenes_laser.py` | the **first** attempt at G-CEIL — returned NOT MEASURED; kept with a retraction notice |
+| `bench/ceiling_vs_laser.py` | the **second** attempt — also wrong, and the reasoning reads convincing; kept as the record |
 | `bench/clean_clone_check.sh` | **clone, install, regenerate, diff** — reproduction from scratch |
 | `scripts/capture_manifest.py` | checksum the captures, and check them later |
 | `scripts/build_photoset.py` | the photo-tier input, at fixed frame indices |
 | `scripts/sync_compliance_matrix.py` | writes the matrix gate table from `gates.json` |
 
-Two of these report **NOT MEASURED** and are kept anyway. A gate that was attempted and cannot
-be answered is a different thing from a gate nobody tried, and the difference is only visible if
-the attempt is still in the repo.
+Two of these are **wrong, and kept on purpose.** `arkitscenes_laser.py` and
+`ceiling_vs_laser.py` each concluded G-CEIL could not be measured from ARKitScenes, with
+reasoning that reads entirely convincing — 319 trajectories screened, a 4.8 m median vertical
+camera movement, frame counts too low to reconstruct a room. The gate is measured. What was
+actually wrong was three format facts about the trajectory, not the dataset. Both files carry
+retraction notices and are left in place, because a confident wrong conclusion is worth more as
+a record than as a deletion.
 
 ### Reproduction from a clean clone
 

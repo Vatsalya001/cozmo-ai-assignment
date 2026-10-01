@@ -112,13 +112,47 @@ at **0.1 mm** — the standard error of 250,000 points. Arithmetically correct, 
 garbage: no phone measures to a tenth of a millimetre. Averaging removes noise; it does not
 remove a systematic offset.
 
-That offset is now **measured, not assumed**. The first attempt compared *storey heights*
-against FARO truth — frame-independent, and it doubles the signal, since a sensor reading long
-by *d* puts the floor *d* low and the ceiling *d* high. It returned NOT MEASURED: storey height
-is a difference of two fitted surfaces and needs a venue with exactly one floor and one ceiling,
-and ARKitScenes is overwhelmingly not that. Screening 319 trajectories put the median vertical
-camera movement at 4.8 m, and the scans downloaded had clouds spanning 5 m with no dominant
-floor layer — the strongest 5 cm band held 1.8% of points where a real floor holds 10–20%.
+That offset is now **measured, not assumed** — and so is the ceiling height it feeds.
+
+**G-CEIL: 5 of 5 ARKitScenes walks within 15 mm, mean −4.3 mm, worst 6.6 mm.** Device depth and
+FARO-derived laser depth are fused with the same poses on the same frames, and both go through
+*our* floor and ceiling fit, so the number reported is device-minus-laser rather than either
+height alone. The bias correction is **leave-one-venue-out**: a walk is corrected with the
+offset measured on the other venue's walks, never its own, because a correction fitted on the
+test walk would absorb the error being reported.
+
+The ablation is what makes that a measurement rather than a claim:
+
+| | G-CEIL | G-CEIL-SPREAD |
+|---|---|---|
+| **corrected, held out** | **5/5 within 15 mm, mean −4.3 mm — MET** | 10.3 / 12.0 mm — not met |
+| depth as recorded | 1/5, mean −22.3 mm — not met | 9.7 / 8.4 mm — met |
+
+G-CEIL-SPREAD asks the report to say whether we are **biased** or **unrepeatable**, and the
+brief is clear that both fail. The answer: uncorrected we are **repeatable and biased**, by
+−22.3 mm; the correction removes the bias and costs 2–4 mm of repeatability, leaving us 0.3 mm
+and 2.0 mm over a 10 mm target. Accuracy was the right thing to buy with that trade, and the
+cost is stated rather than hidden.
+
+**This took three attempts and the first two published wrong conclusions.** They are kept in
+the repository with retraction notices, because the reasoning in them reads convincing:
+`bench/arkitscenes_laser.py` blamed multi-storey venues, and `bench/ceiling_vs_laser.py` blamed
+the upsampling split for publishing 7 to 38 isolated frames per scan. Screening 319
+trajectories for median vertical camera movement, finding 4.8 m, and concluding the venues were
+unusable was real work that reached the wrong answer.
+
+What was actually wrong was three format facts. The `lowres_wide.traj` rotation is
+**cam_from_world** and has to be inverted; its translation is consequently in the camera frame,
+so the world position is −R⁻¹t and not t; and the ARKitScenes world is **z-up** where this
+project is y-up. With the poses wrong the fused cloud genuinely has no dominant floor layer —
+which is the symptom that got blamed on the venues. The data was fine throughout.
+
+**Credit:** that the full raw walks carry laser depth across the trajectory, and the three
+conventions above, were learned from `cozmo/ingest/arkitscenes.py` and
+`scripts/fetch_external.py` in github.com/ashupal22/cozmo-scan, an independent submission to the
+same brief that measured this gate. The venues here are chosen by a stated rule rather than
+copied, and the pipeline measured is ours — but the approach is theirs, and this project had
+already published twice that the measurement was unavailable.
 
 The fix was to stop inferring. The upsampling split publishes device depth and laser-derived
 depth for the **same frames**, so the bias is a per-pixel subtraction with no floor to find and

@@ -128,7 +128,10 @@ from `gates.json`.
 | ❌ | G-REPEAT-FOOTPRINT | **not met** — 3.2% apart |
 | ❌ | G-WALL-VIDEO | **not met** — 60% worst |
 | ❌ | G-PHOTO-STITCH | **not met**, by construction |
-| ⚪ | G-CEIL, G-CEIL-SPREAD, G-REPEAT, G-OPEN, A-WALL-LIDAR | **not measured** — no truth obtainable |
+| ✅ | **G-CEIL** | met — **5/5 walks within 15 mm** of FARO laser truth, mean −4.3 mm |
+| ❌ | G-CEIL-SPREAD | **not met** — 10.3 and 12.0 mm against a 10 mm target |
+| ❌ | G-OPEN | **not met** — 0/12 openings agree within 2 cm between two walks |
+| ⚪ | G-REPEAT, A-WALL-LIDAR, G-WALL-PHOTO | **not measured** |
 | ⚪ | G-H2H | **pending** — needs tape truth that does not exist |
 | ⚪ | A-DMG-DETECT | **not built** |
 
@@ -159,8 +162,11 @@ where a plain camera measures nothing and scale is mathematically unobservable: 
 a room project identically. Both those tiers use a metric depth model for exactly that reason.
 Nothing in the LiDAR path that produces a number uses a model.
 
-**"Where is your ground truth?"** One measurement is against a surveying instrument: the 18 mm
-depth bias, against FARO laser depth registered to the same frames. Everything else is either
+**"Where is your ground truth?"** Two measurements are against a surveying instrument. The
+**depth bias** (18 mm per-pixel over 4.79 M pixels) and **ceiling height** — 5 of 5 ARKitScenes
+walks within 15 mm, mean −4.3 mm, with a leave-one-venue-out correction so no walk is corrected
+with its own truth. If asked how the correction is justified: uncorrected the same walks give
+1 of 5 and −22.3 mm, so the ablation shows the correction doing the work. Everything else is either
 synthetic geometry we built and therefore cannot be wrong about, or one tier against another.
 There is no truth for the supplied captures — nobody here has stood in that property — and
 `G-CEIL` reports **NOT MEASURED** rather than a number it cannot defend. Three approaches to

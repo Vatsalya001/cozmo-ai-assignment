@@ -9,7 +9,27 @@ This is the measurement the project most needed. Every other accuracy number her
 either synthetic geometry we built ourselves, or from one tier agreeing with another. This one
 is against a surveying instrument.
 
-## Outcome: NOT MEASURED, and the reason is in the data
+## SUPERSEDED: the conclusion below was wrong. See bench/ceiling_walks.py
+
+This script concluded that G-CEIL could not be measured from ARKitScenes. **It can, and it is:
+5 of 5 walks within 15 mm, mean -4.3 mm.** `bench/ceiling_walks.py` does it.
+
+Two things were wrong here, and the first is the one worth remembering:
+
+1. **Three format facts were being read incorrectly.** The `lowres_wide.traj` rotation is
+   cam_from_world and must be inverted; its translation is therefore in the camera frame; and
+   the ARKitScenes world is z-up where this project is y-up. With the poses wrong the fused
+   cloud has no dominant floor layer -- which is exactly the symptom reported below and blamed
+   on the venues. The data was fine. The reader was not.
+2. **The upsampling split was the wrong slice.** A video listed there also exists as a full raw
+   Validation walk which publishes laser depth across the whole trajectory, 133 to 466 frames
+   rather than 7 to 38.
+
+This file is kept, unedited below this notice, because a wrong conclusion stated confidently is
+worth more as a record than as a deletion: it is the second time this project explained away a
+measurement it had simply failed to take, and the reasoning below reads perfectly convincing.
+
+## Outcome as originally reported: NOT MEASURED, and the reason is in the data
 
 This script runs and is kept, but on everything obtainable it reports NOT MEASURED. Three
 approaches were tried and all fail for the same underlying reason — **storey height needs a

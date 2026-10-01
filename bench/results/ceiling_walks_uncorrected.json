@@ -1,0 +1,140 @@
+{
+  "gate": "G-CEIL: ceiling height within 1.5 cm of truth",
+  "method": "device depth and FARO-derived laser depth fused with the SAME poses on the same frames, both run through OUR floor/ceiling fit; the difference is reported rather than either height alone",
+  "bias_correction": "none",
+  "credit": "the full raw Validation walk carries laser depth across the trajectory, not just the 7-38 upsampling frames this project first looked at. Learned from github.com/ashupal22/cozmo-scan, which measures G-CEIL this way",
+  "caveat": "the laser side goes through our fitting, not Apple's annotations, so a fitting weakness would partly cancel on both sides. This measures our geometry on device depth against our geometry on laser-grade depth",
+  "per_walk_disparity_mm": {
+    "41069048": -14.0,
+    "41069050": -15.0,
+    "41069051": -12.0,
+    "41069042": -11.0,
+    "41069043": -14.0,
+    "41069046": -17.0
+  },
+  "rows": [
+    {
+      "video_id": "41069048",
+      "visit_id": 381644,
+      "frames_used": 152,
+      "applied_offset_mm": 0.0,
+      "device": {
+        "ceiling_height_m": 2.2354,
+        "sigma_m": 0.0057,
+        "floor_m": -0.977,
+        "ceiling_m": 1.2584
+      },
+      "laser": {
+        "ceiling_height_m": 2.2605,
+        "sigma_m": 0.0057,
+        "floor_m": -0.9933,
+        "ceiling_m": 1.2672
+      },
+      "ceiling_error_mm": -25.1,
+      "within_gate": false
+    },
+    {
+      "video_id": "41069050",
+      "visit_id": 381644,
+      "frames_used": 133,
+      "applied_offset_mm": 0.0,
+      "device": {
+        "ceiling_height_m": 2.2451,
+        "sigma_m": 0.0057,
+        "floor_m": -0.5394,
+        "ceiling_m": 1.7057
+      },
+      "laser": {
+        "ceiling_height_m": 2.2673,
+        "sigma_m": 0.0057,
+        "floor_m": -0.5514,
+        "ceiling_m": 1.7159
+      },
+      "ceiling_error_mm": -22.2,
+      "within_gate": false
+    },
+    {
+      "video_id": "41069051",
+      "visit_id": 381644,
+      "frames_used": 292,
+      "applied_offset_mm": 0.0,
+      "device": {
+        "ceiling_height_m": 2.2363,
+        "sigma_m": 0.0057,
+        "floor_m": -1.066,
+        "ceiling_m": 1.1703
+      },
+      "laser": {
+        "ceiling_height_m": 2.2615,
+        "sigma_m": 0.0057,
+        "floor_m": -1.0831,
+        "ceiling_m": 1.1784
+      },
+      "ceiling_error_mm": -25.2,
+      "within_gate": false
+    },
+    {
+      "video_id": "41069042",
+      "visit_id": 381649,
+      "rejected": "no floor+ceiling pair (device no, laser ok)",
+      "frames_used": 397
+    },
+    {
+      "video_id": "41069043",
+      "visit_id": 381649,
+      "frames_used": 410,
+      "applied_offset_mm": 0.0,
+      "device": {
+        "ceiling_height_m": 2.2263,
+        "sigma_m": 0.0057,
+        "floor_m": -0.7983,
+        "ceiling_m": 1.428
+      },
+      "laser": {
+        "ceiling_height_m": 2.2549,
+        "sigma_m": 0.0057,
+        "floor_m": -0.8949,
+        "ceiling_m": 1.36
+      },
+      "ceiling_error_mm": -28.6,
+      "within_gate": false
+    },
+    {
+      "video_id": "41069046",
+      "visit_id": 381649,
+      "frames_used": 466,
+      "applied_offset_mm": 0.0,
+      "device": {
+        "ceiling_height_m": 2.2347,
+        "sigma_m": 0.0057,
+        "floor_m": -0.8979,
+        "ceiling_m": 1.3368
+      },
+      "laser": {
+        "ceiling_height_m": 2.245,
+        "sigma_m": 0.0057,
+        "floor_m": -0.9021,
+        "ceiling_m": 1.3429
+      },
+      "ceiling_error_mm": -10.3,
+      "within_gate": true
+    }
+  ],
+  "walks_scored": 5,
+  "walks_rejected": 1,
+  "within_gate": 1,
+  "total": 5,
+  "mean_error_mm": -22.3,
+  "median_error_mm": -25.1,
+  "max_abs_error_mm": 28.6,
+  "gate_met": false,
+  "spread_within_venue_mm": {
+    "381644": 9.7,
+    "381649": 8.4
+  },
+  "spread_gate": {
+    "target_mm": 10.0,
+    "venues_within": "2/2",
+    "gate_met": true
+  }
+}
