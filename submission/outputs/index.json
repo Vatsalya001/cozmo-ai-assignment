@@ -22,7 +22,7 @@
         "result.json",
         "summary.md"
       ],
-      "seconds": 13.3
+      "seconds": 12.3
     },
     {
       "tier": "lidar",
@@ -62,9 +62,76 @@
         "result.json",
         "summary.md"
       ],
-      "seconds": 82.3
+      "seconds": 53.0
+    },
+    {
+      "tier": "video",
+      "capture": "c00a170fe1",
+      "status": "ok",
+      "rooms": 2,
+      "footprint_m2": 24.13,
+      "footprint_ci": [
+        6.67,
+        41.6
+      ],
+      "interval_widening": 11.0,
+      "warnings": 5,
+      "files": [
+        "plan.svg",
+        "report.pdf",
+        "result.json",
+        "summary.md"
+      ],
+      "seconds": 116.7
+    },
+    {
+      "tier": "video",
+      "capture": "1a8384c3f6",
+      "status": "ok",
+      "rooms": 1,
+      "footprint_m2": 35.2,
+      "footprint_ci": [
+        9.72,
+        60.68
+      ],
+      "interval_widening": 11.0,
+      "warnings": 5,
+      "files": [
+        "plan.svg",
+        "report.pdf",
+        "result.json",
+        "summary.md"
+      ],
+      "seconds": 103.3
+    },
+    {
+      "tier": "video",
+      "capture": "c7d28f72c6",
+      "status": "failed",
+      "error": "CaptureError: ./data/supplied/single_scan_with_ceiling/c7d28f72c6: no floor found. 639586 of 1131844 points below the camera: 57% of points ARE below the camera, but no single height holds enough of them to be a surface. That is what depth looks like when it is inconsistent between frames rather than when the floor was unseen, and on the video tier it is the inferred depth rather than the capture",
+      "seconds": 98.1
+    },
+    {
+      "tier": "photo",
+      "capture": "photoset",
+      "status": "ok",
+      "rooms": 2,
+      "footprint_m2": 3.81,
+      "footprint_ci": [
+        1.05,
+        6.56
+      ],
+      "interval_widening": 11.0,
+      "warnings": 2,
+      "files": [
+        "plan.svg",
+        "report.pdf",
+        "result.json",
+        "summary.md"
+      ],
+      "seconds": 11.7
     }
   ],
-  "ok": 3,
-  "failed": 0
+  "ok": 6,
+  "failed": 1
 }

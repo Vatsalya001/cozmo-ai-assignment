@@ -136,6 +136,14 @@ actually wrong was three format facts about the trajectory, not the dataset. Bot
 retraction notices and are left in place, because a confident wrong conclusion is worth more as
 a record than as a deletion.
 
+### Read the outputs without installing anything
+
+[`submission/outputs/`](submission/outputs/) holds every tier's output for every capture —
+`result.json`, `plan.svg`, `summary.md` and a one-page `report.pdf` each. Six produced; the
+seventh (video tier on `c7d28f72c6`) is recorded **with its error** rather than omitted, because
+an absent row reads as *not attempted*. Committed rather than linked: a sharing link rots, is not
+versioned and cannot be diffed.
+
 ### Reproduction from a clean clone
 
 ```bash

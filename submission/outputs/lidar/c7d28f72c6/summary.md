@@ -1,6 +1,6 @@
 # c7d28f72c6 — lidar tier
 
-5 rooms · footprint **49.65 m²** (46.38 to 52.91) · 81.16 s
+5 rooms · footprint **49.65 m²** (46.38 to 52.91) · 52.56 s
 
 Every value carries a nominal 90% interval. Values the sensor never saw are marked *not observed* and given deliberately wide ranges.
 

@@ -1,0 +1,1213 @@
+{
+  "schema_version": "0.1.0",
+  "units": "m",
+  "capture": {
+    "id": "1a8384c3f6",
+    "tier": "video",
+    "source_path": "/home/vatsalyaroy/Desktop/cozmo-case-study/data/supplied/single_scan_floor_only/1a8384c3f6",
+    "frames": 119,
+    "pipeline_version": "0.1.0",
+    "runtime_s": 102.87,
+    "drift_correction": true
+  },
+  "rooms": [
+    {
+      "id": "R1",
+      "label": "room 1",
+      "polygon": [
+        [
+          -0.462,
+          -0.457
+        ],
+        [
+          -2.732,
+          -0.457
+        ],
+        [
+          -2.732,
+          0.103
+        ],
+        [
+          -1.542,
+          0.423
+        ],
+        [
+          -2.212,
+          1.203
+        ],
+        [
+          -2.212,
+          0.663
+        ],
+        [
+          -3.462,
+          0.943
+        ],
+        [
+          -2.602,
+          1.233
+        ],
+        [
+          -3.382,
+          1.233
+        ],
+        [
+          -3.642,
+          2.283
+        ],
+        [
+          -3.642,
+          1.843
+        ],
+        [
+          -4.702,
+          1.523
+        ],
+        [
+          -4.382,
+          2.583
+        ],
+        [
+          -5.262,
+          4.163
+        ],
+        [
+          -4.642,
+          4.163
+        ],
+        [
+          -4.642,
+          5.663
+        ],
+        [
+          -5.942,
+          6.103
+        ],
+        [
+          -5.682,
+          6.503
+        ],
+        [
+          -4.102,
+          6.183
+        ],
+        [
+          -3.782,
+          6.743
+        ],
+        [
+          -3.782,
+          6.053
+        ],
+        [
+          -2.802,
+          6.053
+        ],
+        [
+          -3.472,
+          6.583
+        ],
+        [
+          -3.472,
+          7.403
+        ],
+        [
+          -2.702,
+          6.843
+        ],
+        [
+          -2.122,
+          7.483
+        ],
+        [
+          -1.962,
+          6.643
+        ],
+        [
+          -2.422,
+          5.523
+        ],
+        [
+          -0.242,
+          4.383
+        ],
+        [
+          0.118,
+          6.743
+        ],
+        [
+          1.478,
+          6.563
+        ],
+        [
+          1.478,
+          5.763
+        ],
+        [
+          2.138,
+          5.183
+        ],
+        [
+          1.798,
+          4.983
+        ],
+        [
+          1.258,
+          5.563
+        ],
+        [
+          0.498,
+          5.003
+        ],
+        [
+          0.138,
+          4.203
+        ],
+        [
+          0.878,
+          3.203
+        ],
+        [
+          0.398,
+          2.703
+        ],
+        [
+          -0.382,
+          3.383
+        ],
+        [
+          -0.542,
+          2.903
+        ],
+        [
+          -0.082,
+          1.893
+        ],
+        [
+          0.838,
+          1.893
+        ],
+        [
+          1.118,
+          1.163
+        ],
+        [
+          0.518,
+          0.743
+        ],
+        [
+          0.158,
+          1.423
+        ],
+        [
+          -0.602,
+          1.183
+        ],
+        [
+          -0.102,
+          0.663
+        ]
+      ],
+      "floor_area_m2": {
+        "value": 35.2024,
+        "ci_low": 9.7229,
+        "ci_high": 60.6819,
+        "confidence": 0.9,
+        "method": "measured floor coverage"
+      },
+      "perimeter_m": {
+        "value": 48.9887,
+        "ci_low": 45.8545,
+        "ci_high": 52.1228,
+        "confidence": 0.9,
+        "method": "sum of wall lengths"
+      },
+      "ceiling_height_m": {
+        "value": 2.55,
+        "ci_low": 2.04,
+        "ci_high": 3.1875,
+        "confidence": 0.9,
+        "method": "not seen; population typical",
+        "observed": false
+      },
+      "walls": [
+        {
+          "id": "R1.W1",
+          "surface_id": "R1.W1",
+          "start": [
+            -0.462,
+            -0.457
+          ],
+          "end": [
+            -2.732,
+            -0.457
+          ],
+          "length_m": {
+            "value": 2.27,
+            "ci_low": 1.8176,
+            "ci_high": 2.7224,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W2",
+          "surface_id": "R1.W2",
+          "start": [
+            -2.732,
+            -0.457
+          ],
+          "end": [
+            -2.732,
+            0.103
+          ],
+          "length_m": {
+            "value": 0.56,
+            "ci_low": 0.1076,
+            "ci_high": 1.0124,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W3",
+          "surface_id": "R1.W3",
+          "start": [
+            -2.732,
+            0.103
+          ],
+          "end": [
+            -1.542,
+            0.423
+          ],
+          "length_m": {
+            "value": 1.2323,
+            "ci_low": 0.7799,
+            "ci_high": 1.6846,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W4",
+          "surface_id": "R1.W4",
+          "start": [
+            -1.542,
+            0.423
+          ],
+          "end": [
+            -2.212,
+            1.203
+          ],
+          "length_m": {
+            "value": 1.0283,
+            "ci_low": 0.5759,
+            "ci_high": 1.4806,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W5",
+          "surface_id": "R1.W5",
+          "start": [
+            -2.212,
+            1.203
+          ],
+          "end": [
+            -2.212,
+            0.663
+          ],
+          "length_m": {
+            "value": 0.54,
+            "ci_low": 0.0876,
+            "ci_high": 0.9924,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W6",
+          "surface_id": "R1.W6",
+          "start": [
+            -2.212,
+            0.663
+          ],
+          "end": [
+            -3.462,
+            0.943
+          ],
+          "length_m": {
+            "value": 1.281,
+            "ci_low": 0.8286,
+            "ci_high": 1.7334,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W7",
+          "surface_id": "R1.W7",
+          "start": [
+            -3.462,
+            0.943
+          ],
+          "end": [
+            -2.602,
+            1.233
+          ],
+          "length_m": {
+            "value": 0.9076,
+            "ci_low": 0.4552,
+            "ci_high": 1.36,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W8",
+          "surface_id": "R1.W8",
+          "start": [
+            -2.602,
+            1.233
+          ],
+          "end": [
+            -3.382,
+            1.233
+          ],
+          "length_m": {
+            "value": 0.78,
+            "ci_low": 0.3276,
+            "ci_high": 1.2324,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W9",
+          "surface_id": "R1.W9",
+          "start": [
+            -3.382,
+            1.233
+          ],
+          "end": [
+            -3.642,
+            2.283
+          ],
+          "length_m": {
+            "value": 1.0817,
+            "ci_low": 0.6293,
+            "ci_high": 1.5341,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W10",
+          "surface_id": "R1.W10",
+          "start": [
+            -3.642,
+            2.283
+          ],
+          "end": [
+            -3.642,
+            1.843
+          ],
+          "length_m": {
+            "value": 0.44,
+            "ci_low": -0.0124,
+            "ci_high": 0.8924,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W11",
+          "surface_id": "R1.W11",
+          "start": [
+            -3.642,
+            1.843
+          ],
+          "end": [
+            -4.702,
+            1.523
+          ],
+          "length_m": {
+            "value": 1.1072,
+            "ci_low": 0.6549,
+            "ci_high": 1.5596,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W12",
+          "surface_id": "R1.W12",
+          "start": [
+            -4.702,
+            1.523
+          ],
+          "end": [
+            -4.382,
+            2.583
+          ],
+          "length_m": {
+            "value": 1.1072,
+            "ci_low": 0.6549,
+            "ci_high": 1.5596,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W13",
+          "surface_id": "R1.W13",
+          "start": [
+            -4.382,
+            2.583
+          ],
+          "end": [
+            -5.262,
+            4.163
+          ],
+          "length_m": {
+            "value": 1.8085,
+            "ci_low": 1.3562,
+            "ci_high": 2.2609,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W14",
+          "surface_id": "R1.W14",
+          "start": [
+            -5.262,
+            4.163
+          ],
+          "end": [
+            -4.642,
+            4.163
+          ],
+          "length_m": {
+            "value": 0.62,
+            "ci_low": 0.1676,
+            "ci_high": 1.0724,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W15",
+          "surface_id": "R1.W15",
+          "start": [
+            -4.642,
+            4.163
+          ],
+          "end": [
+            -4.642,
+            5.663
+          ],
+          "length_m": {
+            "value": 1.5,
+            "ci_low": 1.0476,
+            "ci_high": 1.9524,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W16",
+          "surface_id": "R1.W16",
+          "start": [
+            -4.642,
+            5.663
+          ],
+          "end": [
+            -5.942,
+            6.103
+          ],
+          "length_m": {
+            "value": 1.3724,
+            "ci_low": 0.9201,
+            "ci_high": 1.8248,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W17",
+          "surface_id": "R1.W17",
+          "start": [
+            -5.942,
+            6.103
+          ],
+          "end": [
+            -5.682,
+            6.503
+          ],
+          "length_m": {
+            "value": 0.4771,
+            "ci_low": 0.0247,
+            "ci_high": 0.9294,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W18",
+          "surface_id": "R1.W18",
+          "start": [
+            -5.682,
+            6.503
+          ],
+          "end": [
+            -4.102,
+            6.183
+          ],
+          "length_m": {
+            "value": 1.6121,
+            "ci_low": 1.1597,
+            "ci_high": 2.0645,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W19",
+          "surface_id": "R1.W19",
+          "start": [
+            -4.102,
+            6.183
+          ],
+          "end": [
+            -3.782,
+            6.743
+          ],
+          "length_m": {
+            "value": 0.645,
+            "ci_low": 0.1926,
+            "ci_high": 1.0974,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W20",
+          "surface_id": "R1.W20",
+          "start": [
+            -3.782,
+            6.743
+          ],
+          "end": [
+            -3.782,
+            6.053
+          ],
+          "length_m": {
+            "value": 0.69,
+            "ci_low": 0.2376,
+            "ci_high": 1.1424,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W21",
+          "surface_id": "R1.W21",
+          "start": [
+            -3.782,
+            6.053
+          ],
+          "end": [
+            -2.802,
+            6.053
+          ],
+          "length_m": {
+            "value": 0.98,
+            "ci_low": 0.5276,
+            "ci_high": 1.4324,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W22",
+          "surface_id": "R1.W22",
+          "start": [
+            -2.802,
+            6.053
+          ],
+          "end": [
+            -3.472,
+            6.583
+          ],
+          "length_m": {
+            "value": 0.8543,
+            "ci_low": 0.4019,
+            "ci_high": 1.3067,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W23",
+          "surface_id": "R1.W23",
+          "start": [
+            -3.472,
+            6.583
+          ],
+          "end": [
+            -3.472,
+            7.403
+          ],
+          "length_m": {
+            "value": 0.82,
+            "ci_low": 0.3676,
+            "ci_high": 1.2724,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W24",
+          "surface_id": "R1.W24",
+          "start": [
+            -3.472,
+            7.403
+          ],
+          "end": [
+            -2.702,
+            6.843
+          ],
+          "length_m": {
+            "value": 0.9521,
+            "ci_low": 0.4997,
+            "ci_high": 1.4045,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W25",
+          "surface_id": "R1.W25",
+          "start": [
+            -2.702,
+            6.843
+          ],
+          "end": [
+            -2.122,
+            7.483
+          ],
+          "length_m": {
+            "value": 0.8637,
+            "ci_low": 0.4113,
+            "ci_high": 1.3161,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W26",
+          "surface_id": "R1.W26",
+          "start": [
+            -2.122,
+            7.483
+          ],
+          "end": [
+            -1.962,
+            6.643
+          ],
+          "length_m": {
+            "value": 0.8551,
+            "ci_low": 0.4027,
+            "ci_high": 1.3075,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W27",
+          "surface_id": "R1.W27",
+          "start": [
+            -1.962,
+            6.643
+          ],
+          "end": [
+            -2.422,
+            5.523
+          ],
+          "length_m": {
+            "value": 1.2108,
+            "ci_low": 0.7584,
+            "ci_high": 1.6632,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W28",
+          "surface_id": "R1.W28",
+          "start": [
+            -2.422,
+            5.523
+          ],
+          "end": [
+            -0.242,
+            4.383
+          ],
+          "length_m": {
+            "value": 2.4601,
+            "ci_low": 2.0077,
+            "ci_high": 2.9125,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W29",
+          "surface_id": "R1.W29",
+          "start": [
+            -0.242,
+            4.383
+          ],
+          "end": [
+            0.118,
+            6.743
+          ],
+          "length_m": {
+            "value": 2.3873,
+            "ci_low": 1.9349,
+            "ci_high": 2.8397,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W30",
+          "surface_id": "R1.W30",
+          "start": [
+            0.118,
+            6.743
+          ],
+          "end": [
+            1.478,
+            6.563
+          ],
+          "length_m": {
+            "value": 1.3719,
+            "ci_low": 0.9195,
+            "ci_high": 1.8242,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W31",
+          "surface_id": "R1.W31",
+          "start": [
+            1.478,
+            6.563
+          ],
+          "end": [
+            1.478,
+            5.763
+          ],
+          "length_m": {
+            "value": 0.8,
+            "ci_low": 0.3476,
+            "ci_high": 1.2524,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W32",
+          "surface_id": "R1.W32",
+          "start": [
+            1.478,
+            5.763
+          ],
+          "end": [
+            2.138,
+            5.183
+          ],
+          "length_m": {
+            "value": 0.8786,
+            "ci_low": 0.4263,
+            "ci_high": 1.331,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W33",
+          "surface_id": "R1.W33",
+          "start": [
+            2.138,
+            5.183
+          ],
+          "end": [
+            1.798,
+            4.983
+          ],
+          "length_m": {
+            "value": 0.3945,
+            "ci_low": -0.0579,
+            "ci_high": 0.8468,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W34",
+          "surface_id": "R1.W34",
+          "start": [
+            1.798,
+            4.983
+          ],
+          "end": [
+            1.258,
+            5.563
+          ],
+          "length_m": {
+            "value": 0.7925,
+            "ci_low": 0.3401,
+            "ci_high": 1.2448,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W35",
+          "surface_id": "R1.W35",
+          "start": [
+            1.258,
+            5.563
+          ],
+          "end": [
+            0.498,
+            5.003
+          ],
+          "length_m": {
+            "value": 0.944,
+            "ci_low": 0.4917,
+            "ci_high": 1.3964,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W36",
+          "surface_id": "R1.W36",
+          "start": [
+            0.498,
+            5.003
+          ],
+          "end": [
+            0.138,
+            4.203
+          ],
+          "length_m": {
+            "value": 0.8773,
+            "ci_low": 0.4249,
+            "ci_high": 1.3296,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W37",
+          "surface_id": "R1.W37",
+          "start": [
+            0.138,
+            4.203
+          ],
+          "end": [
+            0.878,
+            3.203
+          ],
+          "length_m": {
+            "value": 1.244,
+            "ci_low": 0.7917,
+            "ci_high": 1.6964,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W38",
+          "surface_id": "R1.W38",
+          "start": [
+            0.878,
+            3.203
+          ],
+          "end": [
+            0.398,
+            2.703
+          ],
+          "length_m": {
+            "value": 0.6931,
+            "ci_low": 0.2407,
+            "ci_high": 1.1455,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W39",
+          "surface_id": "R1.W39",
+          "start": [
+            0.398,
+            2.703
+          ],
+          "end": [
+            -0.382,
+            3.383
+          ],
+          "length_m": {
+            "value": 1.0348,
+            "ci_low": 0.5824,
+            "ci_high": 1.4872,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W40",
+          "surface_id": "R1.W40",
+          "start": [
+            -0.382,
+            3.383
+          ],
+          "end": [
+            -0.542,
+            2.903
+          ],
+          "length_m": {
+            "value": 0.506,
+            "ci_low": 0.0536,
+            "ci_high": 0.9583,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W41",
+          "surface_id": "R1.W41",
+          "start": [
+            -0.542,
+            2.903
+          ],
+          "end": [
+            -0.082,
+            1.893
+          ],
+          "length_m": {
+            "value": 1.1098,
+            "ci_low": 0.6574,
+            "ci_high": 1.5622,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W42",
+          "surface_id": "R1.W42",
+          "start": [
+            -0.082,
+            1.893
+          ],
+          "end": [
+            0.838,
+            1.893
+          ],
+          "length_m": {
+            "value": 0.92,
+            "ci_low": 0.4676,
+            "ci_high": 1.3724,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W43",
+          "surface_id": "R1.W43",
+          "start": [
+            0.838,
+            1.893
+          ],
+          "end": [
+            1.118,
+            1.163
+          ],
+          "length_m": {
+            "value": 0.7819,
+            "ci_low": 0.3295,
+            "ci_high": 1.2342,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W44",
+          "surface_id": "R1.W44",
+          "start": [
+            1.118,
+            1.163
+          ],
+          "end": [
+            0.518,
+            0.743
+          ],
+          "length_m": {
+            "value": 0.7324,
+            "ci_low": 0.28,
+            "ci_high": 1.1848,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W45",
+          "surface_id": "R1.W45",
+          "start": [
+            0.518,
+            0.743
+          ],
+          "end": [
+            0.158,
+            1.423
+          ],
+          "length_m": {
+            "value": 0.7694,
+            "ci_low": 0.317,
+            "ci_high": 1.2218,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W46",
+          "surface_id": "R1.W46",
+          "start": [
+            0.158,
+            1.423
+          ],
+          "end": [
+            -0.602,
+            1.183
+          ],
+          "length_m": {
+            "value": 0.797,
+            "ci_low": 0.3446,
+            "ci_high": 1.2494,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W47",
+          "surface_id": "R1.W47",
+          "start": [
+            -0.602,
+            1.183
+          ],
+          "end": [
+            -0.102,
+            0.663
+          ],
+          "length_m": {
+            "value": 0.7214,
+            "ci_low": 0.269,
+            "ci_high": 1.1738,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W48",
+          "surface_id": "R1.W48",
+          "start": [
+            -0.102,
+            0.663
+          ],
+          "end": [
+            -0.462,
+            -0.457
+          ],
+          "length_m": {
+            "value": 1.1764,
+            "ci_low": 0.7241,
+            "ci_high": 1.6288,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        }
+      ],
+      "openings": []
+    }
+  ],
+  "plan": {
+    "footprint_m2": {
+      "value": 35.2024,
+      "ci_low": 9.7229,
+      "ci_high": 60.6819,
+      "confidence": 0.9,
+      "method": "sum of room floor areas, inside faces"
+    },
+    "adjacency": [],
+    "groups": 1,
+    "overlap_m2": 0.0,
+    "drift": {
+      "method": "15 submaps of 8 s, revisit-based loop closures, 4-DoF pose graph (x, z, yaw) solved by damped least squares; roll and pitch left to the IMU",
+      "loop_closures": 20,
+      "applied": true,
+      "submaps": 15,
+      "max_shift_m": 0.0042,
+      "mean_shift_m": 0.0021,
+      "notes": []
+    }
+  },
+  "damage": [],
+  "concealed_flags": [],
+  "scope": [],
+  "quality": {
+    "warnings": [
+      {
+        "code": "GEOMETRY_WARNING",
+        "severity": "warning",
+        "message": "video tier: depth for 119 keyframes is INFERRED by Depth-Anything-V2-Metric-Indoor-Small-hf, not measured. Scale is unobservable from monocular images, so it comes from the model's metric training rather than from this room. Intervals are widened accordingly"
+      },
+      {
+        "code": "MIRROR_DETECTION_UNCALIBRATED",
+        "severity": "warning",
+        "message": "mirrors and glass are NOT detected. Two geometric tests were built and neither separates a reflection from ordinary geometry; 3.8% of points sit outside the floor envelope here, which is normal for ceilings and occluded floor. Geometry near any mirror in this capture is wrong and unflagged. The capture protocol asks the operator to approach mirrors at an angle"
+      },
+      {
+        "code": "WET_OR_GLOSSY_FLOOR",
+        "severity": "warning",
+        "message": "floor is missing beneath 42% of the path the camera actually walked, which is the signature of a wet or glossy surface scattering the beam away. Floor area is under-reported there"
+      },
+      {
+        "code": "NO_CEILING",
+        "severity": "warning",
+        "message": "the ceiling was never seen; ceiling heights are population typicals with wide intervals, flagged observed=false"
+      },
+      {
+        "code": "ROOM_SPLIT_CONSERVATIVE",
+        "severity": "info",
+        "message": "rooms are split at doorway-width necks and under-split rather than over-split; a merged pair still reports a correct combined floor area, an invented room does not"
+      }
+    ],
+    "scene_conditions": {
+      "mirror": false,
+      "glass": false,
+      "wet_floor": true,
+      "low_light": false,
+      "_beyond_envelope_pct_uncalibrated": 3.82,
+      "_floor_hole_pct": 42.0,
+      "_dark_pct": 0.0
+    },
+    "interval_widening_factor": 11.0
+  }
+}

@@ -198,10 +198,25 @@ def run(path, *, tier: str | None = None, stride: int = 3, drift: bool = True,
                 f"sweep aliasing with the frame stride rather than of a capture that never saw "
                 f"the floor. Re-run with --stride 1 (slower, keeps every frame); if that also "
                 f"finds no floor, the capture genuinely never showed it")
+        # Say which of the two it is rather than asserting "too few". On the video tier of
+        # c7d28f72c6 this branch reports 56% of points below the camera -- not too few by any
+        # reading -- so the old wording named the wrong cause. Plenty of points below the
+        # camera with no floor among them means no single height holds enough of them to be a
+        # surface, which is what inferred depth looks like when it is inconsistent frame to
+        # frame. A diagnostic that misnames the cause is worse than one that just gives numbers.
+        share = below / max(len(ir.points), 1)
+        if share < 0.05:
+            why = (f"only {share*100:.1f}% of points are below the camera, so the floor was "
+                   f"barely seen -- ask for a re-walk with the floor sweep in "
+                   f"docs/capture_protocol.md")
+        else:
+            why = (f"{share*100:.0f}% of points ARE below the camera, but no single height "
+                   f"holds enough of them to be a surface. That is what depth looks like when "
+                   f"it is inconsistent between frames rather than when the floor was unseen, "
+                   f"and on the video tier it is the inferred depth rather than the capture")
         raise CaptureError(
-            f"{source}: no floor found; the capture must show the floor. "
-            f"{below} of {len(ir.points)} points are below the camera, which is too few to fit "
-            f"a floor plane -- ask for a re-walk with the floor sweep in the capture protocol")
+            f"{source}: no floor found. {below} of {len(ir.points)} points below the camera: "
+            f"{why}")
     storey = planes.ceiling_height(floor, ceiling)
 
     # Yaw-align before rasterising: the cloud is gravity-aligned but sits at whatever heading

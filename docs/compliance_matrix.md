@@ -124,6 +124,7 @@ gate would be tuning to the benchmark. `docs/fix_loop.md` §10.
 | D.5 | Benchmark report: gates at all three tiers, repeatability, head-to-head, timing | `bench/results/gates.md` | **Met** — all three tiers, repeatability, timing, and a **scored head-to-head** (G-H2H-ENGINEER, 9/10). The consumer-app head-to-head (G-H2H) remains PENDING for want of tape truth and says so in the table rather than being omitted |
 | D.6 | Fix loop bundle | `docs/fix_loop_declaration.md`, `docs/fix_loop.md`, `bench/results/fix_loop_*.json` | **Met** |
 | D.7 | Technical report, max 6 pages | `docs/technical_report.md` | **Met** |
+| D.9 | *(not required)* Outputs a reviewer can read without installing anything | `submission/outputs/` | **Met** — every tier's output for every capture: `result.json`, `plan.svg`, `summary.md` and a one-page `report.pdf` each, 6 produced and 1 failure recorded with its error. Committed rather than put behind a sharing link, because a link rots, is not versioned and cannot be diffed. Regenerate with `python scripts/build_submission_bundle.py` |
 | D.8 | Raw benchmark data | supplied captures, `data/arkitscenes_up/`, `data/own/`, `data/captures_manifest.json` | **Partial** — sensor data and checksums yes; no tape truth yet |
 
 ## Constraints

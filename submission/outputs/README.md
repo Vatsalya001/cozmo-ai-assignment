@@ -9,6 +9,10 @@ install anything can still see what the pipeline produces.
 | lidar | c00a170fe1 | 2 | 15.11 | 14.11–16.1 | ×1 | 5 | plan.svg, report.pdf, result.json, summary.md |
 | lidar | 1a8384c3f6 | 5 | 48.04 | 44.88–51.2 | ×1 | 4 | plan.svg, report.pdf, result.json, summary.md |
 | lidar | c7d28f72c6 | 5 | 49.65 | 46.38–52.91 | ×1 | 2 | plan.svg, report.pdf, result.json, summary.md |
+| video | c00a170fe1 | 2 | 24.13 | 6.67–41.6 | ×11 | 5 | plan.svg, report.pdf, result.json, summary.md |
+| video | 1a8384c3f6 | 1 | 35.2 | 9.72–60.68 | ×11 | 5 | plan.svg, report.pdf, result.json, summary.md |
+| video | c7d28f72c6 | — | **failed** | — | — | — | `CaptureError: ./data/supplied/single_scan_with_ceiling/c7d28f72c6: no floor found. 639586 ` |
+| photo | photoset | 2 | 3.81 | 1.05–6.56 | ×11 | 2 | plan.svg, report.pdf, result.json, summary.md |
 
-**3 produced, 0 failed.** A failing tier is listed with its error rather than omitted: an absent row reads as *not attempted*, which is not what happened.
+**6 produced, 1 failed.** A failing tier is listed with its error rather than omitted: an absent row reads as *not attempted*, which is not what happened.
 

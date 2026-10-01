@@ -7,7 +7,7 @@
     "source_path": "/home/vatsalyaroy/Desktop/cozmo-case-study/data/supplied/single_scan_floor_only/1a8384c3f6",
     "frames": 1751,
     "pipeline_version": "0.1.0",
-    "runtime_s": 31.14,
+    "runtime_s": 31.09,
     "drift_correction": true
   },
   "rooms": [
