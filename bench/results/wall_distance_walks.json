@@ -1,6 +1,7 @@
 {
   "gate": "A-WALL-LIDAR: wall-to-wall distance within max(2 cm, 1%) -- our gate, not the brief's; the brief loosens walls to +-3% for video so LiDAR must be tighter",
-  "method": "two strongest opposing vertical planes along each horizontal axis after yaw-aligning on the walls, device cloud against laser cloud on the same frames and poses, both through our own fitting",
+  "method": "two strongest opposing vertical planes along each horizontal axis, both clouds rotated into ONE frame estimated from the DEVICE cloud (never the laser), on the same frames and poses, both through our own fitting",
+  "known_limitation": "plane selection is a raw histogram argmax, so where two parallel surfaces 0.19-0.99 m apart have near-equal support the choice is decided on a margin as small as 2.2% and the two clouds can pick differently. That is the mechanism behind the catastrophic rows, and it is reported rather than filtered: dropping those rows would convert a failure into a pass by discarding the failures",
   "bias_correction": "leave-one-venue-out",
   "does_not_measure": "our layout's wall segments. This measures the sensor and the fusion through our plane fitting on a room-scale distance; the wall lengths `scanplan run` emits still have no truth to check against, because nobody has taped the supplied captures",
   "rows": [
@@ -22,6 +23,8 @@
         -1.2291,
         0.6138
       ],
+      "shared_yaw_deg": 38.5,
+      "laser_own_yaw_deg": 38.5,
       "same_walls": true
     },
     {
@@ -42,6 +45,8 @@
         -0.958,
         0.9374
       ],
+      "shared_yaw_deg": 38.5,
+      "laser_own_yaw_deg": 38.5,
       "same_walls": true
     },
     {
@@ -50,8 +55,8 @@
       "axis": "x",
       "applied_offset_mm": 14.0,
       "device_m": 1.8554,
-      "laser_m": 1.6873,
-      "error_mm": 168.1,
+      "laser_m": 1.6926,
+      "error_mm": 162.8,
       "gate_m": 0.02,
       "within_gate": false,
       "device_at": [
@@ -59,9 +64,11 @@
         0.2812
       ],
       "laser_at": [
-        -1.3887,
-        0.2986
+        -1.4064,
+        0.2862
       ],
+      "shared_yaw_deg": 0.5,
+      "laser_own_yaw_deg": 1.5,
       "same_walls": false
     },
     {
@@ -70,8 +77,8 @@
       "axis": "z",
       "applied_offset_mm": 14.0,
       "device_m": 1.8395,
-      "laser_m": 1.8467,
-      "error_mm": -7.2,
+      "laser_m": 1.8516,
+      "error_mm": -12.1,
       "gate_m": 0.02,
       "within_gate": true,
       "device_at": [
@@ -79,9 +86,11 @@
         1.3635
       ],
       "laser_at": [
-        -0.4681,
-        1.3786
+        -0.486,
+        1.3656
       ],
+      "shared_yaw_deg": 0.5,
+      "laser_own_yaw_deg": 1.5,
       "same_walls": true
     },
     {
@@ -102,6 +111,8 @@
         -0.1805,
         1.6335
       ],
+      "shared_yaw_deg": 13.5,
+      "laser_own_yaw_deg": 13.5,
       "same_walls": true
     },
     {
@@ -122,6 +133,8 @@
         -0.3347,
         1.5319
       ],
+      "shared_yaw_deg": 13.5,
+      "laser_own_yaw_deg": 13.5,
       "same_walls": false
     },
     {
@@ -130,18 +143,20 @@
       "axis": "x",
       "applied_offset_mm": 14.0,
       "device_m": 2.61,
-      "laser_m": 2.6585,
-      "error_mm": -48.5,
-      "gate_m": 0.0266,
-      "within_gate": false,
+      "laser_m": 2.6307,
+      "error_mm": -20.7,
+      "gate_m": 0.0263,
+      "within_gate": true,
       "device_at": [
         -1.9612,
         0.6488
       ],
       "laser_at": [
-        -1.9965,
-        0.662
+        -1.9744,
+        0.6563
       ],
+      "shared_yaw_deg": 30.5,
+      "laser_own_yaw_deg": 29.5,
       "same_walls": true
     },
     {
@@ -150,18 +165,20 @@
       "axis": "z",
       "applied_offset_mm": 14.0,
       "device_m": 2.422,
-      "laser_m": 2.3811,
-      "error_mm": 40.9,
-      "gate_m": 0.0238,
-      "within_gate": false,
+      "laser_m": 2.4252,
+      "error_mm": -3.2,
+      "gate_m": 0.0243,
+      "within_gate": true,
       "device_at": [
         -1.4451,
         0.9769
       ],
       "laser_at": [
-        -1.4384,
-        0.9427
+        -1.4423,
+        0.9829
       ],
+      "shared_yaw_deg": 30.5,
+      "laser_own_yaw_deg": 29.5,
       "same_walls": true
     },
     {
@@ -170,18 +187,20 @@
       "axis": "x",
       "applied_offset_mm": 14.0,
       "device_m": 2.5711,
-      "laser_m": 2.6627,
-      "error_mm": -91.6,
-      "gate_m": 0.0266,
-      "within_gate": false,
+      "laser_m": 2.5603,
+      "error_mm": 10.8,
+      "gate_m": 0.0256,
+      "within_gate": true,
       "device_at": [
         -1.9904,
         0.5806
       ],
       "laser_at": [
-        -2.0091,
-        0.6537
+        -1.991,
+        0.5693
       ],
+      "shared_yaw_deg": 1.5,
+      "laser_own_yaw_deg": 3.5,
       "same_walls": true
     },
     {
@@ -190,18 +209,20 @@
       "axis": "z",
       "applied_offset_mm": 14.0,
       "device_m": 3.5464,
-      "laser_m": 3.5539,
-      "error_mm": -7.5,
-      "gate_m": 0.0355,
-      "within_gate": true,
+      "laser_m": 3.5896,
+      "error_mm": -43.2,
+      "gate_m": 0.0359,
+      "within_gate": false,
       "device_at": [
         -0.4671,
         3.0793
       ],
       "laser_at": [
-        -0.4425,
-        3.1114
+        -0.5039,
+        3.0857
       ],
+      "shared_yaw_deg": 1.5,
+      "laser_own_yaw_deg": 3.5,
       "same_walls": true
     },
     {
@@ -210,18 +231,20 @@
       "axis": "x",
       "applied_offset_mm": 14.0,
       "device_m": 3.6427,
-      "laser_m": 2.6951,
-      "error_mm": 947.6,
-      "gate_m": 0.027,
+      "laser_m": 2.6673,
+      "error_mm": 975.4,
+      "gate_m": 0.0267,
       "within_gate": false,
       "device_at": [
         -0.873,
         2.7697
       ],
       "laser_at": [
-        -0.898,
-        1.7971
+        -0.878,
+        1.7893
       ],
+      "shared_yaw_deg": 9.5,
+      "laser_own_yaw_deg": 8.5,
       "same_walls": false
     },
     {
@@ -230,33 +253,35 @@
       "axis": "z",
       "applied_offset_mm": 14.0,
       "device_m": 2.4631,
-      "laser_m": 2.4548,
-      "error_mm": 8.3,
-      "gate_m": 0.0245,
-      "within_gate": true,
+      "laser_m": 3.09,
+      "error_mm": -626.9,
+      "gate_m": 0.0309,
+      "within_gate": false,
       "device_at": [
         -0.1367,
         2.3264
       ],
       "laser_at": [
-        -0.0975,
-        2.3572
+        -0.7623,
+        2.3277
       ],
-      "same_walls": true
+      "shared_yaw_deg": 9.5,
+      "laser_own_yaw_deg": 8.5,
+      "same_walls": false
     }
   ],
   "distances_scored": 12,
   "rejected": 0,
-  "within_gate": 6,
+  "within_gate": 7,
   "total": 12,
-  "median_abs_error_mm": 24.6,
-  "max_abs_error_mm": 947.6,
+  "median_abs_error_mm": 16.4,
+  "max_abs_error_mm": 975.4,
   "gate_met": false,
   "where_both_clouds_chose_the_same_walls": {
-    "distances": 9,
-    "within_gate": 6,
-    "median_abs_error_mm": 7.5,
-    "max_abs_error_mm": 91.6,
+    "distances": 8,
+    "within_gate": 7,
+    "median_abs_error_mm": 8.2,
+    "max_abs_error_mm": 43.2,
     "note": "a sub-result, NOT the gate. Reported because it separates two very different failures: where both clouds select the same pair of walls the remaining difference is the sensor, and where they do not the difference is our plane-pair selection. The gate stays the full set, because choosing the wrong walls is our error too"
   }
 }

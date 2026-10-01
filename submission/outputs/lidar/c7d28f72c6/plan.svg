@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="965" height="1366" viewBox="0 0 965 1366">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g font-family="Helvetica,Arial,sans-serif">
+<polygon points="192.4,1291.3 159.1,1291.3 159.1,1198.6 103.3,1198.6 103.3,1295.8 70.0,1295.8 107.8,1101.4 79.0,939.4 180.7,973.6 180.7,1029.4 244.6,1061.8 244.6,1160.8 192.4,1178.8" fill="#f2f4f7" stroke="#111111" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="129.4,971.8 86.2,939.4 86.2,775.6 124.0,736.0 89.8,718.9 258.1,718.9 258.1,602.8 206.8,555.1 244.6,555.1 210.4,336.4 149.2,336.4 163.6,213.1 200.5,213.1 200.5,95.2 385.0,70.0 408.4,455.2 617.2,476.8 588.4,493.0 628.0,511.0 700.0,858.4 771.1,858.4 771.1,721.6 820.6,721.6 736.0,656.8 793.6,698.2 847.6,615.4 847.6,764.8 784.6,745.0 784.6,884.5 615.4,884.5 676.6,813.4 653.2,651.4 604.6,620.8 604.6,822.4 507.4,851.2 307.6,806.2 307.6,899.8 246.4,865.6 187.9,905.2 181.1,871.0 181.1,971.8" fill="#f2f4f7" stroke="#111111" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="755.8,859.3 701.8,859.3 669.4,786.4 685.6,626.2 777.4,716.2" fill="#f2f4f7" stroke="#111111" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="89.8,613.6 118.6,512.8 199.6,512.8 250.0,592.0" fill="#f2f4f7" stroke="#111111" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="895.3,374.2 895.3,480.4 847.6,499.3 588.4,493.4 737.8,493.4 737.8,406.6" fill="#f2f4f7" stroke="#111111" stroke-width="3" stroke-linejoin="round"/>
+<text x="175.8" y="1286.3" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(360.0 175.8 1291.3)">0.37</text>
+<text x="159.1" y="1239.9" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-90.0 159.1 1244.9)">1.03</text>
+<text x="131.2" y="1193.6" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(360.0 131.2 1198.6)">0.62</text>
+<text x="103.3" y="1242.2" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(90.0 103.3 1247.2)">1.08</text>
+<text x="86.7" y="1290.8" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(360.0 86.7 1295.8)">0.37</text>
+<text x="88.9" y="1193.6" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-79.0 88.9 1198.6)">2.20</text>
+<text x="93.4" y="1015.4" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(79.9 93.4 1020.4)">1.83</text>
+<text x="129.8" y="951.5" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(18.6 129.8 956.5)">1.19</text>
+<text x="180.7" y="996.5" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(90.0 180.7 1001.5)">0.62</text>
+<text x="212.6" y="1040.6" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(26.9 212.6 1045.6)">0.80</text>
+<text x="244.6" y="1106.3" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(90.0 244.6 1111.3)">1.10</text>
+<text x="218.5" y="1164.8" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(341.0 218.5 1169.8)">0.61</text>
+<text x="192.4" y="1230.0" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(90.0 192.4 1235.0)">1.25</text>
+<text x="155.2" y="1155.1" font-size="15" font-weight="bold" text-anchor="middle" fill="#111111">R1</text>
+<text x="155.2" y="1173.1" font-size="12" text-anchor="middle" fill="#444444">4.38 m²</text>
+<text x="155.2" y="1189.1" font-size="11" text-anchor="middle" fill="#777777">h 3.09 m</text>
+<text x="107.8" y="950.6" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(36.9 107.8 955.6)">0.60</text>
+<text x="86.2" y="852.5" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-90.0 86.2 857.5)">1.82</text>
+<text x="105.1" y="750.8" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-46.3 105.1 755.8)">0.61</text>
+<text x="106.9" y="722.4" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(26.6 106.9 727.4)">0.42</text>
+<text x="174.0" y="713.9" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(0.0 174.0 718.9)">1.87</text>
+<text x="258.1" y="655.8" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-90.0 258.1 660.8)">1.29</text>
+<text x="232.5" y="573.9" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(42.9 232.5 578.9)">0.78</text>
+<text x="225.7" y="550.1" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(0.0 225.7 555.1)">0.42</text>
+<text x="227.5" y="440.7" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(81.1 227.5 445.7)">2.46</text>
+<text x="179.8" y="331.4" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(360.0 179.8 336.4)">0.68</text>
+<text x="156.4" y="269.7" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-83.3 156.4 274.7)">1.38</text>
+<text x="182.1" y="208.1" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(0.0 182.1 213.1)">0.41</text>
+<text x="200.5" y="149.1" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-90.0 200.5 154.1)">1.31</text>
+<text x="292.8" y="77.6" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-7.8 292.8 82.6)">2.07</text>
+<text x="396.7" y="257.6" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(86.5 396.7 262.6)">4.29</text>
+<text x="512.8" y="461.0" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(5.9 512.8 466.0)">2.33</text>
+<text x="602.8" y="479.9" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(330.6 602.8 484.9)">0.37</text>
+<text x="608.2" y="497.0" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(24.4 608.2 502.0)">0.48</text>
+<text x="664.0" y="679.7" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(78.3 664.0 684.7)">3.94</text>
+<text x="735.5" y="853.4" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(0.0 735.5 858.4)">0.79</text>
+<text x="771.1" y="785.0" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-90.0 771.1 790.0)">1.52</text>
+<text x="795.9" y="716.6" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(0.0 795.9 721.6)">0.55</text>
+<text x="778.3" y="684.2" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(37.5 778.3 689.2)">1.18</text>
+<text x="764.8" y="672.5" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(35.7 764.8 677.5)">0.79</text>
+<text x="820.6" y="651.8" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-56.9 820.6 656.8)">1.10</text>
+<text x="847.6" y="685.1" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(90.0 847.6 690.1)">1.66</text>
+<text x="816.1" y="749.9" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(17.4 816.1 754.9)">0.73</text>
+<text x="784.6" y="809.7" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(90.0 784.6 814.7)">1.55</text>
+<text x="700.0" y="879.5" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(360.0 700.0 884.5)">1.88</text>
+<text x="646.0" y="843.9" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-49.3 646.0 848.9)">1.04</text>
+<text x="664.9" y="727.4" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(81.8 664.9 732.4)">1.82</text>
+<text x="628.9" y="631.1" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(32.2 628.9 636.1)">0.64</text>
+<text x="604.6" y="716.6" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(90.0 604.6 721.6)">2.24</text>
+<text x="556.0" y="831.8" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(343.5 556.0 836.8)">1.13</text>
+<text x="407.5" y="823.7" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(12.7 407.5 828.7)">2.28</text>
+<text x="307.6" y="848.0" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(90.0 307.6 853.0)">1.04</text>
+<text x="277.0" y="877.7" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(29.2 277.0 882.7)">0.78</text>
+<text x="217.2" y="880.4" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(325.9 217.2 885.4)">0.78</text>
+<text x="184.5" y="883.1" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(78.8 184.5 888.1)">0.39</text>
+<text x="181.1" y="916.4" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(90.0 181.1 921.4)">1.12</text>
+<text x="155.3" y="966.8" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(360.0 155.3 971.8)">0.57</text>
+<text x="438.2" y="664.9" font-size="15" font-weight="bold" text-anchor="middle" fill="#111111">R2</text>
+<text x="438.2" y="682.9" font-size="12" text-anchor="middle" fill="#444444">36.96 m²</text>
+<text x="438.2" y="698.9" font-size="11" text-anchor="middle" fill="#777777">h 3.09 m</text>
+<text x="728.8" y="854.3" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(360.0 728.8 859.3)">0.60</text>
+<text x="685.6" y="817.8" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(66.0 685.6 822.8)">0.89</text>
+<text x="677.5" y="701.3" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-84.2 677.5 706.3)">1.79</text>
+<text x="731.5" y="666.2" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(44.4 731.5 671.2)">1.43</text>
+<text x="766.6" y="782.8" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(278.6 766.6 787.8)">1.61</text>
+<text x="718.0" y="769.5" font-size="15" font-weight="bold" text-anchor="middle" fill="#111111">R3</text>
+<text x="718.0" y="787.5" font-size="12" text-anchor="middle" fill="#444444">3.02 m²</text>
+<text x="718.0" y="803.5" font-size="11" text-anchor="middle" fill="#777777">h 3.09 m</text>
+<text x="104.2" y="558.2" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-74.1 104.2 563.2)">1.16</text>
+<text x="159.1" y="507.8" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(0.0 159.1 512.8)">0.90</text>
+<text x="224.8" y="547.4" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(57.5 224.8 552.4)">1.04</text>
+<text x="169.9" y="597.8" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(352.3 169.9 602.8)">1.80</text>
+<text x="164.5" y="557.8" font-size="15" font-weight="bold" text-anchor="middle" fill="#111111">R4</text>
+<text x="164.5" y="575.8" font-size="12" text-anchor="middle" fill="#444444">2.74 m²</text>
+<text x="164.5" y="591.8" font-size="11" text-anchor="middle" fill="#777777">h 3.09 m</text>
+<text x="895.3" y="422.3" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(90.0 895.3 427.3)">1.18</text>
+<text x="871.4" y="484.8" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(338.4 871.4 489.8)">0.57</text>
+<text x="718.0" y="491.4" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(1.3 718.0 496.4)">2.88</text>
+<text x="663.1" y="488.4" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(0.0 663.1 493.4)">1.66</text>
+<text x="737.8" y="445.0" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-90.0 737.8 450.0)">0.96</text>
+<text x="816.5" y="385.4" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-11.6 816.5 390.4)">1.79</text>
+<text x="783.7" y="457.9" font-size="15" font-weight="bold" text-anchor="middle" fill="#111111">R5</text>
+<text x="783.7" y="475.9" font-size="12" text-anchor="middle" fill="#444444">2.54 m²</text>
+<text x="783.7" y="491.9" font-size="11" text-anchor="middle" fill="#777777">h 3.09 m</text>
+<text x="70" y="1342" font-size="12" fill="#111111">c7d28f72c6 · lidar tier · 5 rooms · 49.65 m² [46.38, 52.91]</text>
+<text x="70" y="1358" font-size="10" fill="#777777">every dimension in metres; intervals are nominal 90%</text>
+</g>
+</svg>

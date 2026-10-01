@@ -1,10 +1,16 @@
 """A-WALL-LIDAR against laser truth, and the distinction the result turns on.
 
-6 of 12 wall-to-wall distances are within max(2 cm, 1%). The gate is not met, and the useful
-part is why: where both clouds select the *same* pair of walls the median error is 7.5 mm, and
-the three worst rows (168, 198 and 948 mm) are our plane-pair selection choosing different
-walls in the device cloud than in the laser cloud. Those two failures need completely different
-fixes, and a reader cannot tell them apart from the error alone.
+7 of 12 wall-to-wall distances are within max(2 cm, 1%). The gate is not met, and the useful
+part is why: where both clouds select the *same* pair of walls the median error is 8.2 mm, and
+the worst rows (43 to 975 mm) are our plane-pair selection choosing different walls in the
+device cloud than in the laser cloud. Those two failures need completely different fixes, and a
+reader cannot tell them apart from the error alone.
+
+It read 6 of 12 at 24.6 mm until a second defect was found: `wall_distances` estimated the yaw
+alignment **independently per cloud**, so "the distance along x" meant a different direction in
+each and the difference between them was not a distance error at all. Both clouds are now
+rotated into one frame taken from the DEVICE cloud -- never the laser, which would let the
+reference choose how the measurement is oriented.
 
 So the coordinates of the chosen planes are published per row, and the gate denominator stays
 the full set -- picking the wrong walls is our error too, not an excuse to shrink the sample.
@@ -80,6 +86,35 @@ def test_the_benchmark_states_what_it_does_not_measure(wd):
     wall segments `scanplan run` emits, which still have no truth."""
     assert "layout" in wd["does_not_measure"]
     assert "taped" in wd["does_not_measure"] or "tape" in wd["does_not_measure"]
+
+
+def test_both_clouds_are_measured_in_one_shared_frame(wd):
+    """The second defect, and the one that made the comparison invalid rather than merely noisy.
+
+    `wall_distances` used to estimate the yaw alignment independently per cloud, so "the distance
+    along x" meant a different direction in the device cloud than in the laser cloud. The
+    difference between two distances measured along two different axes is not a distance error.
+    `walls.dominant_orientations` quantises to 1 degree, and a one-bin disagreement was measured.
+
+    The shared frame must come from the DEVICE cloud. Taking it from the laser would let the
+    reference decide how the measurement is oriented, which is a quieter form of fitting to truth.
+    """
+    scored = [r for r in wd["rows"] if "error_mm" in r]
+    assert scored
+    for r in scored:
+        assert "shared_yaw_deg" in r and "laser_own_yaw_deg" in r, (
+            "both the frame used and the laser's own independent estimate must be published, "
+            "or a reader cannot see how far apart the two frames would have been")
+    assert "DEVICE cloud" in wd["method"] and "never the" in wd["method"]
+
+
+def test_the_plane_selection_limitation_is_stated_not_filtered(wd):
+    """The catastrophic rows come from a raw histogram argmax deciding between near-tied
+    parallel surfaces. Dropping those rows would turn a failure into a pass by discarding the
+    failures, so the limitation is declared and the denominator left alone."""
+    assert "known_limitation" in wd
+    assert "argmax" in wd["known_limitation"]
+    assert "discarding the failures" in wd["known_limitation"]
 
 
 def test_the_gate_threshold_scales_with_the_distance(wd):

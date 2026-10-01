@@ -6,7 +6,7 @@
       "target": "<= 60 s",
       "result": "within budget",
       "status": "MET",
-      "detail": "measured seconds vary with the machine and are in timing.json, not here; 1-minute load was 5.7 on 12 cores when measured"
+      "detail": "measured seconds vary with the machine and are in timing.json, not here; 1-minute load was 5.5 on 12 cores when measured"
     },
     {
       "gate": "A-DET",
@@ -84,9 +84,9 @@
       "gate": "A-WALL-LIDAR",
       "tier": "lidar",
       "target": "<= max(2 cm, 1%)",
-      "result": "6/12 wall-to-wall distances within gate (median |error| 24.6 mm)",
+      "result": "7/12 wall-to-wall distances within gate (median |error| 16.4 mm)",
       "status": "NOT MET",
-      "detail": "device vs FARO-derived laser depth on the same frames and poses. Where both clouds select the SAME pair of walls (9 of 12), 6 pass with median |error| 7.5 mm; the rest are our plane-pair selection disagreeing, not the sensor. Measures sensor and fusion through our fitting, NOT the layout's own wall segments"
+      "detail": "device vs FARO-derived laser depth on the same frames and poses. Where both clouds select the SAME pair of walls (8 of 12), 7 pass with median |error| 8.2 mm; the rest are our plane-pair selection disagreeing, not the sensor. Measures sensor and fusion through our fitting, NOT the layout's own wall segments"
     },
     {
       "gate": "G-WALL-VIDEO",
@@ -108,7 +108,7 @@
       "gate": "G-WALL-PHOTO",
       "tier": "photo",
       "target": "within +-8% of reference",
-      "result": "0/6 within 8% (median |error| 77%)",
+      "result": "0/6 within 8% (median |error| 76%)",
       "status": "NOT MET",
       "detail": "LiDAR on the same frames as the stills is the reference, not truth. With the SAME six frames the reference gives 4.2-7.6 m where the tier reports 1.8-2.1 m, so this is inferred depth under-estimating scale 3-4x, NOT six photographs covering less of the room"
     },

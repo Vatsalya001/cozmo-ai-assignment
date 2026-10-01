@@ -8,27 +8,27 @@
       "segment": "segment_a",
       "quantity": "width_m",
       "reference_kind": "the whole segment of the walk",
-      "photo_m": 1.789,
+      "photo_m": 1.348,
       "lidar_reference_m": 4.84,
-      "relative_error_pct": -63.0,
+      "relative_error_pct": -72.1,
       "within_gate": false
     },
     {
       "segment": "segment_a",
       "quantity": "depth_m",
       "reference_kind": "the whole segment of the walk",
-      "photo_m": 1.099,
+      "photo_m": 1.315,
       "lidar_reference_m": 4.9,
-      "relative_error_pct": -77.6,
+      "relative_error_pct": -73.2,
       "within_gate": false
     },
     {
       "segment": "segment_a",
       "quantity": "width_m",
       "reference_kind": "same six frames as the stills",
-      "photo_m": 1.789,
+      "photo_m": 1.348,
       "lidar_reference_m": 4.2,
-      "relative_error_pct": -57.4,
+      "relative_error_pct": -67.9,
       "within_gate": false,
       "scored_for_gate": false
     },
@@ -36,45 +36,45 @@
       "segment": "segment_a",
       "quantity": "depth_m",
       "reference_kind": "same six frames as the stills",
-      "photo_m": 1.099,
+      "photo_m": 1.315,
       "lidar_reference_m": 4.72,
-      "relative_error_pct": -76.7,
+      "relative_error_pct": -72.1,
       "within_gate": false,
       "scored_for_gate": false
     },
     {
       "segment": "segment_a",
       "quantity": "area_m2",
-      "photo_m": 1.9665,
+      "photo_m": 1.7716,
       "lidar_reference_m": 4.3132,
-      "relative_error_pct": -54.4,
+      "relative_error_pct": -58.9,
       "within_gate": false
     },
     {
       "segment": "segment_b",
       "quantity": "width_m",
       "reference_kind": "the whole segment of the walk",
-      "photo_m": 2.085,
+      "photo_m": 1.718,
       "lidar_reference_m": 8.74,
-      "relative_error_pct": -76.1,
+      "relative_error_pct": -80.3,
       "within_gate": false
     },
     {
       "segment": "segment_b",
       "quantity": "depth_m",
       "reference_kind": "the whole segment of the walk",
-      "photo_m": 1.034,
+      "photo_m": 1.184,
       "lidar_reference_m": 5.34,
-      "relative_error_pct": -80.6,
+      "relative_error_pct": -77.8,
       "within_gate": false
     },
     {
       "segment": "segment_b",
       "quantity": "width_m",
       "reference_kind": "same six frames as the stills",
-      "photo_m": 2.085,
+      "photo_m": 1.718,
       "lidar_reference_m": 7.56,
-      "relative_error_pct": -72.4,
+      "relative_error_pct": -77.3,
       "within_gate": false,
       "scored_for_gate": false
     },
@@ -82,18 +82,18 @@
       "segment": "segment_b",
       "quantity": "depth_m",
       "reference_kind": "same six frames as the stills",
-      "photo_m": 1.034,
+      "photo_m": 1.184,
       "lidar_reference_m": 4.96,
-      "relative_error_pct": -79.2,
+      "relative_error_pct": -76.1,
       "within_gate": false,
       "scored_for_gate": false
     },
     {
       "segment": "segment_b",
       "quantity": "area_m2",
-      "photo_m": 2.1566,
+      "photo_m": 2.0343,
       "lidar_reference_m": 11.4824,
-      "relative_error_pct": -81.2,
+      "relative_error_pct": -82.3,
       "within_gate": false
     }
   ],
@@ -101,5 +101,5 @@
   "within_gate": 0,
   "fraction": 0.0,
   "gate_met": false,
-  "median_abs_error_pct": 76.8
+  "median_abs_error_pct": 75.5
 }

@@ -348,12 +348,12 @@ Ceiling height is the separation of two horizontal surfaces; a wall-to-wall dist
 measurement turned ninety degrees. Once device and laser depth could be fused onto the same
 poses, this followed — and it measures the quantity a floor plan is actually made of.
 
-**A-WALL-LIDAR: 6 of 12 distances within max(2 cm, 1%). NOT MET.** The useful part is the split:
+**A-WALL-LIDAR: 7 of 12 distances within max(2 cm, 1%). NOT MET.** The useful part is the split:
 
 | | distances | within gate | median \|error\| |
 |---|---|---|---|
-| both clouds chose the **same** pair of walls | 9 of 12 | 6 | **7.5 mm** |
-| they chose **different** walls | 3 of 12 | 0 | 168–948 mm |
+| both clouds chose the **same** pair of walls | 8 of 12 | 7 | **8.2 mm** |
+| they chose **different** walls | 4 of 12 | 0 | 43–975 mm |
 
 **On matched walls the sensor agrees with the laser to single-digit millimetres.** The three
 large rows are not a 948 mm sensor error — that would be an extraordinary claim about a LiDAR
@@ -381,7 +381,7 @@ them. Plane-pair stability is a real weakness on our side.
    used as truth because it is the opponent and scoring an opponent against itself is circular.
    What it does *not* block any more is absolute accuracy: three measurements rest on FARO
    laser depth — the **depth bias** per-pixel over 4.79 M pixels, **ceiling height** within
-   15 mm on 5 of 5 walks, and **wall-to-wall distance** (6 of 12, and 7.5 mm median where our
+   15 mm on 5 of 5 walks, and **wall-to-wall distance** (7 of 12, and 8.2 mm median where our
    plane selection agrees). Public laser truth turned out to substitute for a tape on
    everything except our own two rooms.
 2. **The video tier is 27–60% from the LiDAR reference** on the same walks, and failed outright
@@ -389,15 +389,30 @@ them. Plane-pair stability is a real weakness on our side.
    contain the reference 2/2, which is the correct response to an error of that size rather
    than a fix for it. Inferred depth is not measured depth, and the gap is the number this tier
    exists to report.
-3. **The photo tier's inferred depth under-estimates room scale by 3–4×, and that is now
-   measured.** G-WALL-PHOTO: **0 of 6 within ±8%, median error 77%** against the LiDAR tier run
-   on the same capture. The obvious objection — that six stills are being punished for covering
-   less than a 180-frame segment — is ruled out by a second reference built from *exactly the
-   six frames the stills were cut from*: it still gives 4.2–7.6 m where the tier reports
-   1.8–2.1 m. Coverage is not the explanation; the depth is. This gate previously read NOT
-   MEASURED on the grounds that "no reference exists for these folders", which was half true
-   and gave up too early — the folders come from known frame indices of a capture that has
-   measured depth.
+3. **The photo tier under-reports room extent by 3–4×. G-WALL-PHOTO: 0 of 6 within ±8%,
+   median error 75.5%.** Getting to the cause took three wrong answers, and the retractions
+   matter more than the number:
+
+   - **Published and WRONG:** "the inferred depth under-estimates scale". Measured per-pixel
+     against the LiDAR depth on the same twelve stills, the inferred depth runs about **1.26×
+     LONG**. The depth model is not the problem, and this report said it was.
+   - **Found and fixed, but not the binding constraint:** `_level_to_floor` assumed the camera
+     was upright, requiring the floor normal within 32° of camera-y. On these frames camera-down
+     is **92.8–93.8° from world-down** — the phone was held turned — so the fit accepted a plane
+     normal to camera-y, which is a **wall**, and levelled the room against it. A landscape
+     photograph of a room is ordinary input, so the assumption was removed rather than
+     documented: the floor is now identified by geometry alone, as the large plane with ≥80% of
+     the room on one side of it. Walls fail that test; table tops fail it too.
+   - **What the fix revealed:** it moved the gate from 76.8% to 75.5%. Essentially nothing.
+     A real bug whose repair does not move the number is evidence about where the constraint
+     actually is.
+   - **Measured, and structural:** a single levelled view spans **2.2–2.9 m** in plan where the
+     six-frame *posed* LiDAR reference spans **4.2–4.7 m**. With no poses the tier cannot merge
+     views, so its box is bounded by what one viewpoint can reach. That is the limit
+     `scanplan/ingest/photos.py` has always declared in its docstring; it is now quantified.
+
+   The gate stays NOT MET and the reference is the LiDAR tier on the same frames — a reference,
+   not truth, since nobody has taped this property.
 4. **The photo tier does not stitch, by construction.** Two folders in, two disconnected groups
    out. With no camera poses nothing in the input says how rooms relate, and an L-shaped room
    returns as its bounding box. The output carries an error-severity warning saying so rather
@@ -444,10 +459,18 @@ them. Plane-pair stability is a real weakness on our side.
    and unblocks the head-to-head. Highest value per hour by a wide margin — everything else on
    this list improves a number that is already known.
 2. **Stabilise the wall-plane selection**, which is now the clearest measured weakness.
-   A-WALL-LIDAR agrees with the laser to 7.5 mm median where both clouds choose the same pair
-   of walls and fails completely on the three rows where they do not. The sensor is fine; the
-   densest-plane heuristic is not. Fixing it would likely move A-WALL-LIDAR from 6 of 12 to
-   most of 12, and it is a bounded change with a measurement already in place to judge it.
+   A-WALL-LIDAR agrees with the laser to **8.2 mm median** where both clouds choose the same
+   pair of walls, and fails completely on the four rows where they do not. The sensor is fine;
+   the densest-plane heuristic is not — it is a raw histogram argmax, so where two parallel
+   surfaces 0.19–0.99 m apart have near-equal support the choice turns on a margin as small as
+   **2.2%**, and the two clouds can land differently.
+
+   Stated carefully, because an earlier version of this list over-claimed here: it is **not**
+   established that fixing the heuristic would move the gate to most of 12. An "outermost
+   supported plane" rule is stable on all the flipped rows, but it changes the measurand — on
+   41069046 it spans a doorway into the next room rather than a room width — and it was only
+   identified by inspecting the rows that had already failed. Some of the ambiguity is in the
+   scene (a full-height recess, a doorway on the axis), not only in the heuristic.
 3. **Replace the global `door_max_m`** with a split that adapts to local room scale. Two
    parameter attempts have failed; §5 is clear that this is not a parameter problem.
 4. **Pose estimation for the video tier**, so it works on a bare clip rather than needing a pose

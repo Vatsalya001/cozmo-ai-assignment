@@ -72,26 +72,48 @@ def _intrinsics_from_exif(image_path: Path, width: int, height: int) -> Intrinsi
     return Intrinsics(fx, fx, (width - 1) / 2, (height - 1) / 2, width, height)
 
 
+FLOOR_SIDE_FRACTION = 0.80      # a floor has at least this share of the room on one side of it
+FLOOR_BAND_M = 0.05             # inlier distance to the plane
+
+
 def _level_to_floor(points: np.ndarray) -> np.ndarray | None:
     """Rotate a single-view cloud so the floor is horizontal and at y = 0.
 
-    Without a pose there is no gravity, so it is recovered from the scene: the floor is the
-    largest plane whose normal is roughly opposite the camera's up. Fitting it gives both the
-    levelling rotation and the camera height in one step.
+    Without a pose there is no gravity, so it is recovered from the scene. The previous version
+    assumed the camera was held upright -- it required the plane normal to lie within 32 degrees
+    of camera-y (`abs(n[1]) >= 0.85`) and drew candidates from the lowest slab of camera-y.
+
+    **That assumption is false whenever the phone is rotated, and it failed silently.** On the
+    frames this project's own photo set is cut from, camera-down is 92.8 to 93.8 degrees away
+    from world-down -- the phone was held turned, so camera -y points sideways. The gate then
+    accepted a plane normal to camera-y, which is a WALL, and the tier levelled the room against
+    it and reported the extent of a wall patch as the room. That is the whole of the 3-4x
+    under-report in G-WALL-PHOTO, and the published diagnosis blaming the depth model was wrong:
+    the inferred depth runs about 1.26x LONG on these frames, not short.
+
+    A landscape photograph of a room is a perfectly ordinary thing to hand this tier, so the
+    orientation assumption had to go rather than be documented.
+
+    ## What replaces it, without assuming an axis
+
+    A floor is identifiable by geometry alone: it is a large plane with essentially the whole
+    room on ONE side of it. Walls fail that test -- a room straddles a wall plane, with material
+    on both sides -- and so do table tops, which are large but have the floor beneath them.
+    So the fit searches every orientation and keeps the plane that maximises inliers subject to
+    at least FLOOR_SIDE_FRACTION of all points lying on one side.
     """
     if len(points) < 500:
         return None
 
-    # Candidate floor points: the lowest slab in the camera's own frame (camera y is down).
-    y = points[:, 1]
-    lo = np.percentile(y, 70)
-    cand = points[y > lo]
+    # Every point is a candidate now: restricting to a slab of camera-y was the orientation
+    # assumption in its other guise, and it biased the search toward wall planes.
+    cand = points
     if len(cand) < 200:
         return None
 
     best, best_inliers = None, 0
     rng = np.random.default_rng(0)
-    for _ in range(80):
+    for _ in range(400):                     # a wider search, since the normal is unconstrained
         idx = rng.choice(len(cand), 3, replace=False)
         a, b, c = cand[idx]
         n = np.cross(b - a, c - a)
@@ -99,9 +121,13 @@ def _level_to_floor(points: np.ndarray) -> np.ndarray | None:
         if norm < 1e-9:
             continue
         n = n / norm
-        if abs(n[1]) < 0.85:                 # a floor is roughly perpendicular to camera-down
+        d0 = -float(n @ a)
+        # The floor test, replacing the axis gate: nearly everything on one side.
+        signed = points @ n + d0
+        side = max((signed > FLOOR_BAND_M).mean(), (signed < -FLOOR_BAND_M).mean())
+        if side < FLOOR_SIDE_FRACTION:
             continue
-        d = -float(n @ a)
+        d = d0
         inliers = int((np.abs(cand @ n + d) < 0.05).sum())
         if inliers > best_inliers:
             best, best_inliers = (n, d), inliers
@@ -110,7 +136,11 @@ def _level_to_floor(points: np.ndarray) -> np.ndarray | None:
         return None
 
     n, d = best
-    if n[1] < 0:
+    # Orient the normal by WHICH SIDE THE ROOM IS ON, not by camera-y -- that was the same
+    # orientation assumption in its last hiding place. The rotation below maps n onto world
+    # -y (down), so n has to point away from the room: the room must end up on the -n side,
+    # or the whole cloud is levelled upside down and the floor becomes the ceiling.
+    if (points @ n + d > 0).mean() > 0.5:
         n, d = -n, -d
 
     # Rotation taking the floor normal onto world -y (world y up, floor below the camera).

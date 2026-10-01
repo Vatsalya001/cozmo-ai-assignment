@@ -94,17 +94,38 @@ def two_strongest(coord: np.ndarray) -> tuple[float, float, int, int] | None:
     return min(a, b), max(a, b), int(counts[first]), int(counts[second])
 
 
-def wall_distances(points: np.ndarray, cam_y: np.ndarray) -> dict | None:
-    """Opposing-wall separations along both horizontal axes, after yaw alignment."""
+def estimate_yaw(points: np.ndarray, cam_y: np.ndarray) -> float | None:
+    """The dominant wall direction, from the walls themselves."""
+    floor, _ = planes.floor_and_ceiling(points, cam_y)
+    if floor is None:
+        return None
+    probe = walls.density(points, floor.height_m)
+    orientations = walls.dominant_orientations(walls.wall_mask(probe))
+    return orientations[0] if orientations else 0.0
+
+
+def wall_distances(points: np.ndarray, cam_y: np.ndarray, yaw: float | None = None) -> dict | None:
+    """Opposing-wall separations along both horizontal axes, after yaw alignment.
+
+    `yaw` MUST be supplied by the caller when two clouds are being compared. The first version
+    estimated it inside, independently per cloud -- so "the distance along x" meant a different
+    direction in the device cloud than in the laser cloud, and the difference between them was
+    not a distance error at all. `walls.dominant_orientations` quantises to 1 degree bins, and a
+    one-bin disagreement was measured between the two clouds of 41069050 (0.50 vs 1.50 degrees).
+    At a metre of along-wall offset that is ~17 mm of apparent plane shift, the same order as the
+    20 mm gate.
+
+    The shared frame comes from the cloud UNDER TEST, never from the laser: taking the frame from
+    the truth would let the reference choose how the measurement is oriented.
+    """
     floor, ceiling = planes.floor_and_ceiling(points, cam_y)
     if floor is None:
         return None
 
-    # Yaw-align on the walls themselves, as pipeline.run does -- otherwise the axes cut every
-    # wall diagonally and a histogram along x mixes two different surfaces.
-    probe = walls.density(points, floor.height_m)
-    orientations = walls.dominant_orientations(walls.wall_mask(probe))
-    yaw = orientations[0] if orientations else 0.0
+    if yaw is None:
+        probe = walls.density(points, floor.height_m)
+        orientations = walls.dominant_orientations(walls.wall_mask(probe))
+        yaw = orientations[0] if orientations else 0.0
     P = regularize.rotate_about_y(points, yaw)
 
     top = (ceiling.height_m - WALL_BAND[1]) if ceiling else (floor.height_m + 2.2)
@@ -156,7 +177,11 @@ def main() -> int:
             rows.append({"video_id": vid, "visit_id": visit, "rejected": "no usable cloud"})
             continue
 
-        wd, wl = wall_distances(dev_pts, dev_cam), wall_distances(las_pts, las_cam)
+        # One frame for both clouds, taken from the DEVICE cloud -- the one under test.
+        shared_yaw = estimate_yaw(dev_pts, dev_cam)
+        laser_yaw = estimate_yaw(las_pts, las_cam)      # recorded only, to keep the gap visible
+        wd = wall_distances(dev_pts, dev_cam, yaw=shared_yaw)
+        wl = wall_distances(las_pts, las_cam, yaw=shared_yaw)
         if wd is None or wl is None:
             rows.append({"video_id": vid, "visit_id": visit,
                          "rejected": f"no opposing wall pair (device {'ok' if wd else 'no'}, "
@@ -183,6 +208,11 @@ def main() -> int:
                 # cannot tell a sensor error from a correspondence failure, and the two call
                 # for completely different fixes.
                 "device_at": wd[name]["at"], "laser_at": wl[name]["at"],
+                # Both clouds are now measured in the device's frame. The laser cloud's own
+                # independent estimate is recorded so a reader can see how far apart the two
+                # frames would have been -- that disagreement used to land in the error.
+                "shared_yaw_deg": None if shared_yaw is None else round(float(np.degrees(shared_yaw)), 2),
+                "laser_own_yaw_deg": None if laser_yaw is None else round(float(np.degrees(laser_yaw)), 2),
                 "same_walls": bool(
                     abs(wd[name]["at"][0] - wl[name]["at"][0]) < 0.10
                     and abs(wd[name]["at"][1] - wl[name]["at"][1]) < 0.10),
@@ -195,9 +225,15 @@ def main() -> int:
     result = {
         "gate": "A-WALL-LIDAR: wall-to-wall distance within max(2 cm, 1%) -- our gate, not the "
                 "brief's; the brief loosens walls to +-3% for video so LiDAR must be tighter",
-        "method": "two strongest opposing vertical planes along each horizontal axis after "
-                  "yaw-aligning on the walls, device cloud against laser cloud on the same "
-                  "frames and poses, both through our own fitting",
+        "method": "two strongest opposing vertical planes along each horizontal axis, both "
+                  "clouds rotated into ONE frame estimated from the DEVICE cloud (never the "
+                  "laser), on the same frames and poses, both through our own fitting",
+        "known_limitation": "plane selection is a raw histogram argmax, so where two parallel "
+                            "surfaces 0.19-0.99 m apart have near-equal support the choice is "
+                            "decided on a margin as small as 2.2% and the two clouds can pick "
+                            "differently. That is the mechanism behind the catastrophic rows, "
+                            "and it is reported rather than filtered: dropping those rows would "
+                            "convert a failure into a pass by discarding the failures",
         "bias_correction": "none" if args.no_bias_correction else "leave-one-venue-out",
         "does_not_measure": "our layout's wall segments. This measures the sensor and the "
                             "fusion through our plane fitting on a room-scale distance; the "

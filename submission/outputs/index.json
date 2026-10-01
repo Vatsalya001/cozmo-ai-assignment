@@ -1,0 +1,70 @@
+{
+  "what": "every tier's output for every capture, so a reviewer who will not install anything can still see what the pipeline produces",
+  "why_committed": "a file-sharing link rots, is not versioned and cannot be diffed",
+  "regenerate": "python scripts/build_submission_bundle.py",
+  "note": "report.png is not included; it duplicates report.pdf and is the largest file. A tier that FAILED on a capture is listed with its error rather than omitted, because an absent row reads as 'not attempted'",
+  "rows": [
+    {
+      "tier": "lidar",
+      "capture": "c00a170fe1",
+      "status": "ok",
+      "rooms": 2,
+      "footprint_m2": 15.11,
+      "footprint_ci": [
+        14.11,
+        16.1
+      ],
+      "interval_widening": 1.0,
+      "warnings": 5,
+      "files": [
+        "plan.svg",
+        "report.pdf",
+        "result.json",
+        "summary.md"
+      ],
+      "seconds": 13.3
+    },
+    {
+      "tier": "lidar",
+      "capture": "1a8384c3f6",
+      "status": "ok",
+      "rooms": 5,
+      "footprint_m2": 48.04,
+      "footprint_ci": [
+        44.88,
+        51.2
+      ],
+      "interval_widening": 1.0,
+      "warnings": 4,
+      "files": [
+        "plan.svg",
+        "report.pdf",
+        "result.json",
+        "summary.md"
+      ],
+      "seconds": 31.5
+    },
+    {
+      "tier": "lidar",
+      "capture": "c7d28f72c6",
+      "status": "ok",
+      "rooms": 5,
+      "footprint_m2": 49.65,
+      "footprint_ci": [
+        46.38,
+        52.91
+      ],
+      "interval_widening": 1.0,
+      "warnings": 2,
+      "files": [
+        "plan.svg",
+        "report.pdf",
+        "result.json",
+        "summary.md"
+      ],
+      "seconds": 82.3
+    }
+  ],
+  "ok": 3,
+  "failed": 0
+}

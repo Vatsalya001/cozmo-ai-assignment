@@ -11,6 +11,15 @@ One side measures depth with a sensor. The other infers it from six photographs.
 is what inference costs when it replaces measurement, which is the number this tier exists to
 report.
 
+**What the difference turned out NOT to be.** This file's first result was read as "the inferred
+depth under-estimates scale by 3-4x". Measured per-pixel against the LiDAR depth on the same
+twelve stills, the inferred depth runs about **1.26x LONG**. Chasing the real cause found a
+genuine bug -- `_level_to_floor` assumed an upright camera and was fitting a WALL as the floor on
+these rotated frames -- and fixing it moved the gate from 76.8% to 75.5%. A real bug whose repair
+does not move the number is evidence about where the constraint is: with no poses the tier cannot
+merge views, so its box is bounded by one viewpoint's reach (2.2-2.9 m) while the posed reference
+spans 4.2-4.7 m. That is the structural limit photos.py has always declared, now quantified.
+
 ## Why this is a reference and not truth
 
 The LiDAR side is not ground truth -- nobody has taped this property. It is the best available
