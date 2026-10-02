@@ -511,11 +511,20 @@ def test_a_missing_damage_extra_names_the_install_command(dmg):
         assert "SystemExit" in src
         assert ".[damage]" in src, f"{path.name} must name the install command it needs"
 
+    # Anchored on the .[dev] line rather than on a heading: this assertion used to split the
+    # README on the literal "## Install and run" and raised IndexError the moment that heading
+    # was renamed to "## Quick start" -- failing for a reason that had nothing to do with what
+    # it is checking. What matters is that the two install lines sit together, so a reader who
+    # follows the first also sees the second.
     readme = (ROOT / "README.md").read_text()
-    install = readme.split("## Install and run")[1].split("### One command per capture")[0]
-    assert 'pip install -e ".[damage]"' in install, (
-        "the [damage] extra must be documented beside the .[dev] instruction, not only in a "
-        "benchmark table row")
+    assert 'pip install -e ".[dev]"' in readme, "the base install line is gone"
+    dev_at = readme.index('pip install -e ".[dev]"')
+    dmg_at = readme.find('pip install -e ".[damage]"')
+    assert dmg_at > 0, (
+        "the [damage] extra must be documented in the README, not only in a benchmark table row")
+    assert 0 < dmg_at - dev_at < 4000, (
+        "the [damage] install line must sit near the .[dev] one, so a reader following the "
+        f"install instructions meets it; they are {dmg_at - dev_at} characters apart")
 
 
 def test_the_declined_changes_page_records_the_reversal(dmg):
