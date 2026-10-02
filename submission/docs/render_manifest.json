@@ -8,9 +8,9 @@
       "pdf": "submission/docs/technical_report.pdf",
       "pages": 6,
       "cap": 6,
-      "markdown_sha256": "9df341d55028db72501983532739c86f18e3e3fbc6ae2a9f0ff89b3a26cf85dc",
-      "pdf_sha256": "850b085bf57f26f2b16078fb8eaedae805e951ac20483bb52d7745782b81356f",
-      "pdf_bytes": 217746
+      "markdown_sha256": "66cd8006ee8b89da052d8e5cb2b2323026315dd68ab64ea7dcbeec32acb48b1d",
+      "pdf_sha256": "010332ee81c04bbcf68b1a24cb8976e3fd4f1e645eca7a4e88c4fd9c7b274467",
+      "pdf_bytes": 218888
     },
     "docs/capture_protocol.md": {
       "pdf": "submission/docs/capture_protocol.pdf",
@@ -24,9 +24,9 @@
       "pdf": "submission/docs/compliance_matrix.pdf",
       "pages": 7,
       "cap": null,
-      "markdown_sha256": "c1a31a6d2036d5a8cfb95b024bc1e4f958b78211cf8000da79d80f717fbd22a6",
-      "pdf_sha256": "31dee61f77f6e8dfb5478d32349d13d83665230b1af596c0cd0c961da0fad996",
-      "pdf_bytes": 185319
+      "markdown_sha256": "02f14dab4f83016f6ebed030491992535092faf03afdbfe1b4f0c97296c41928",
+      "pdf_sha256": "e2a3450997113b9e6b269196837dc21fad6d7059dc6059c1d4f83fd447feb84c",
+      "pdf_bytes": 191045
     },
     "docs/fix_loop_declaration.md": {
       "pdf": "submission/docs/fix_loop_declaration.pdf",
@@ -46,11 +46,11 @@
     },
     "docs/declined_changes.md": {
       "pdf": "submission/docs/declined_changes.pdf",
-      "pages": 3,
+      "pages": 5,
       "cap": null,
-      "markdown_sha256": "ecc5163a10549fdc5cc723b5cfbdceeb858b1dd875c0a9c73b33eaec5c3f9ea6",
-      "pdf_sha256": "863f7c415178e6cfe10cb1fbb84ff0ad1c87a24c3e2ab10f125c7e05d3396444",
-      "pdf_bytes": 122626
+      "markdown_sha256": "ab279e8c5e06d59b8b6987206e37b0a585827d4d394a3db6e17e5f7710d53c2f",
+      "pdf_sha256": "c99f94eaae3ecd66fe3a3d7bf8a48c8bd91f35068e3da6e079885b84700422b8",
+      "pdf_bytes": 190184
     }
   }
 }

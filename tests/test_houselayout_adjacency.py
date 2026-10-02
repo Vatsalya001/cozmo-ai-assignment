@@ -238,3 +238,38 @@ def test_every_constant_in_the_construction_comes_from_our_side(adj):
     assert ours["cell_m"] == CELL_M
     assert ours["margin_m"] == MARGIN_M
     assert ours["room_min_area_m2"] == ROOM_MIN_AREA_M2
+
+
+def test_the_section_4_retraction_stays_on_the_page():
+    """Section 4 asserted that the layout geometry separates only 119 of 240 truth rooms, and
+    used it to argue that a coverage-based splitter has a data ceiling -- which bounded the
+    opponent's room-count lead in our favour. This benchmark measures 255 of 292 on the same
+    buildings, so the figure and the conclusion were withdrawn.
+
+    A retraction that can be quietly dropped by a later edit is not a retraction. The precedent
+    is tests/test_same_flat.py, which pins the superseded rank-pairing block for the same reason:
+    keeping the wrong answer visible is the point of recording it.
+
+    This test deliberately asserts the WITHDRAWAL, not the new number. If the new measurement is
+    ever itself superseded, the honest move is another retraction, not deleting this one.
+    """
+    root = Path(__file__).resolve().parents[1]
+    page = (root / "docs" / "declined_changes.md").read_text()
+
+    assert "119" in page and "240" in page, (
+        "the retracted figure must stay quoted on the page -- a reader cannot check a withdrawal "
+        "whose subject has been deleted")
+    assert "withdrawn" in page.lower(), "the withdrawal itself must be stated in words"
+    assert "255" in page and "292" in page, "the replacement measurement must be named beside it"
+
+    # The against-our-interest consequence is the part most likely to be softened later.
+    assert "more architectural" in page, (
+        "the retraction must keep the consequence that runs against us: with the ceiling gone, "
+        "the opponent's room-count lead is more architectural than this project had claimed")
+    assert "not a draw" in page.lower(), (
+        "the page must keep refusing the draw framing; that refusal is the whole point")
+
+    # And the specific failure mode: a retraction rewritten to look like a prediction.
+    assert "does not pretend it did" in page or "did not predict" in page, (
+        "section 4b must keep stating that section 4 argued the opposite rather than being "
+        "edited so it reads as though it anticipated the result")

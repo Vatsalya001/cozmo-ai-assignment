@@ -244,9 +244,13 @@ true positives.
 **What recall is, and what it is not.** Recall is 139 of 141 and it must not be read as
 detection. `fill_nearest` grows each room's label through free space, so wherever the annotated
 floor joins two rooms their labels *must* come into contact, and `openings()` reports a pair on
-contact. Of the 141 live truth pairs, 138 have their two rooms joined by walkable floor and all
-138 were predicted; the 2 misses are pairs the rasterisation left in different free-space
-components. The only part of `openings()` that can refuse a pair it already has contact for is
+contact. The 141 live truth pairs decompose exactly: **138** have their two rooms joined by
+walkable floor and all 138 were predicted; **2** are misses, pairs the rasterisation left in
+different free-space components; and **1** — `JmbYfDe2QKZ` storey 2, pair 1–2 — was predicted
+with *no* walkable floor between the rooms at all. That last one is a true positive obtained by
+bridging a wall, the same artefact the negative control exists to measure, and it is the only
+reason the count reads 139 rather than 138. It flatters us, so it is named rather than left as
+the gap between 138 + 2 and 141. The only part of `openings()` that can refuse a pair it already has contact for is
 the width filter — wider than 2.5 × `DOOR_MAX_M` is discarded as a whole open side — and it
 fired on **zero** truth pairs. Recall therefore measures the annotation's own floor
 connectivity, not any discrimination by `openings()`. Precision 0.69 is the number that measures
