@@ -1,0 +1,59 @@
+# TAPE MEASUREMENTS — all values in CENTIMETRES
+#
+# Open data/own/dimensions.png beside this file. Every letter below is a circle on that drawing.
+# Write the number after the "=". Leave a line blank if you could not measure it.
+#
+# Then run:   python scripts/tape_to_csv.py
+#
+# DO NOT open data/own/magicplan_results.md first. Your tape is the ground truth that scores
+# both magicplan and this pipeline; if it drifts toward magicplan's numbers the comparison is
+# scoring magicplan against a copy of itself.
+#
+# A second reading is optional and goes after a comma:   a = 362, 362.5
+# If two readings differ by more than 0.5 cm, take a third and put it in the note after a #.
+
+# ============================ BEDROOM ============================
+# --- walls, corner to corner (cm) ---
+a =          # left wall
+b =          # cupboard FRONT (its doors) — built in, counts as wall
+c =          # cupboard END (where it stops)
+d =          # top wall, from the cupboard end to the main doorway
+e =          # right wall
+f =          # bottom wall, corner to corner STRAIGHT THROUGH the bathroom door
+
+# --- openings (cm) ---
+g =          # bathroom doorway, CLEAR WIDTH (inner frame face to inner frame face)
+h =          # bathroom doorway, HEIGHT (floor to underside of the frame)
+i =          # main doorway, CLEAR WIDTH
+j =          # main doorway, HEIGHT
+
+# --- diagonals, inside corner to inside corner, across the floor (cm) ---
+k =          # bottom-left corner  ->  top-right corner
+l =          # bottom-right corner ->  top-left corner (at the cupboard front)
+
+# --- ceiling, TWO PARTS per spot. Do not add them up. (cm) ---
+m =          # spot 1: floor to top of chair seat
+n =          # spot 1: chair seat to ceiling
+o =          # spot 2 (at least 1 m from spot 1): floor to seat
+p =          # spot 2: seat to ceiling
+
+# ============================ BATHROOM ============================
+# Stand in the doorway facing in. q is on your LEFT, r is AHEAD, s is on your RIGHT,
+# t is the wall the door is in (behind you).
+# --- walls, corner to corner (cm) ---
+q =          # wall on your left
+r =          # wall straight ahead
+s =          # wall on your right
+t =          # the door wall, corner to corner STRAIGHT THROUGH the opening
+
+# --- opening (cm) ---
+u =          # doorway CLEAR WIDTH
+v =          # doorway HEIGHT
+
+# --- diagonals (cm) ---
+w =          # top-left corner  -> bottom-right corner
+x =          # top-right corner -> bottom-left corner
+
+# --- ceiling, two parts (cm) ---
+y =          # floor to top of chair seat
+z =          # chair seat to ceiling

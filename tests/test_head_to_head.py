@@ -290,3 +290,37 @@ def test_the_committed_result_declares_the_deviation_and_what_is_missing():
     assert res["dimensions_scored"] == 0
     assert len(res["missing_inputs"]) == 2
     assert "LiDAR tier" in res["declared_deviation"], "the tier deviation must be declared"
+
+
+def test_the_centimetre_sheet_maps_onto_names_head_to_head_actually_understands():
+    """`scripts/tape_to_csv.py` converts the operator's letter-keyed cm sheet into the CSV this
+    benchmark reads. The letters are a convenience for someone holding a tape; the ELEMENT names
+    they produce are load-bearing, and a name this file does not recognise scores zero while
+    looking like a measurement that simply disagreed.
+
+    This is the defect that already bit once: the element-id map was validated against a file
+    that is not in the repository, and `R1.W-left` never matched `left wall`.
+    """
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import tape_to_csv
+    from head_to_head import CEILING_PARTS, ELEMENT_TO_DIMENSION
+
+    named = {el for el, kind in
+             ((v[1], v[2]) for v in tape_to_csv.MAP.values())
+             if kind in ("wall", "opening_width")}
+    # Every named dimension the head-to-head knows must be reachable from some letter.
+    for el in ELEMENT_TO_DIMENSION:
+        assert el in named, (
+            f"{el} is a dimension this benchmark compares, but no letter in the cm sheet "
+            f"produces it -- that dimension would be silently absent from the comparison")
+
+    # Ceiling parts must group to a spot by stripping the last character, as read_tape does.
+    ceil = [v[1] for v in tape_to_csv.MAP.values() if v[2] in CEILING_PARTS]
+    assert ceil, "the sheet must produce ceiling parts"
+    for el in ceil:
+        assert el[-1] in "ab", f"{el} must end 'a' or 'b' so el[:-1] groups the two parts"
+        assert el[:-1].count(".") == 1, f"{el[:-1]} is not a spot id read_tape can group"
+
+    # And no two letters may collide on the same (element, type), which would silently drop one.
+    pairs = [(v[1], v[2]) for v in tape_to_csv.MAP.values()]
+    assert len(pairs) == len(set(pairs)), "two letters write the same row; one would be lost"
