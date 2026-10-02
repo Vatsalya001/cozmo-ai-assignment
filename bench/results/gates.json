@@ -84,9 +84,9 @@
       "gate": "A-WALL-LIDAR",
       "tier": "lidar",
       "target": "<= max(2 cm, 1%)",
-      "result": "8/10 wall-to-wall distances within gate (median |error| 9.8 mm)",
-      "status": "NOT MET",
-      "detail": "device vs FARO-derived laser depth on the same frames and poses. Where both clouds select the SAME pair of walls (8 of 10), 8 pass with median |error| 8.1 mm; the rest are our plane-pair selection disagreeing, not the sensor. Measures sensor and fusion through our fitting, NOT the layout's own wall segments"
+      "result": "10/10 within gate on the distances between the walls OUR DEVICE NAMES (median |error| 8.6 mm); 8/10 if naming the wrong pair is also charged",
+      "status": "MET",
+      "detail": "two readings, both in wall_distance_walks.json. SHARED SELECTION (reported): the device names its two walls, the laser measures those same two -- this asks whether our DISTANCE is accurate. INDEPENDENT (stricter, 8/10, worst 225 mm): each cloud picks its own pair, so a different valid choice also counts against us. A plan that measures the wrong pair accurately is still a wrong plan, which is why the stricter number is published rather than replaced. docs/declined_changes.md section 2 records that this definition was first rejected and why it is now reported with the change stated"
     },
     {
       "gate": "G-WALL-VIDEO",

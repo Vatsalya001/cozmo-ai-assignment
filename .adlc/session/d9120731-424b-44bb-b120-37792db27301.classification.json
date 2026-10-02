@@ -1,17 +1,17 @@
 {
   "tier": "0",
-  "mode": "design_review_only",
+  "mode": "bug_fix",
   "confidence": 0.7,
   "source": "classifier-rules.json",
-  "timestamp": "2026-10-02T01:08:35Z",
-  "classification_id": "cls_1790903315_2d59c830",
-  "active_task_id": "cls_1790903315_2d59c830",
-  "prompt_hash": "2d59c830",
-  "task_origin_prompt_hash": "2d59c830",
-  "last_prompt_hash": "2d59c830",
+  "timestamp": "2026-10-02T02:13:40Z",
+  "classification_id": "cls_1790907220_acf870a0",
+  "active_task_id": "cls_1790907220_acf870a0",
+  "prompt_hash": "acf870a0",
+  "task_origin_prompt_hash": "acf870a0",
+  "last_prompt_hash": "acf870a0",
   "last_prompt_event": "task",
-  "last_prompt_ts": "2026-10-02T01:08:35Z",
+  "last_prompt_ts": "2026-10-02T02:13:40Z",
   "reasoning": [
-    "no mode keyword matched — defaulted to design_review_only per workflow rule"
+    "matched bug_fix mode keyword"
   ]
 }

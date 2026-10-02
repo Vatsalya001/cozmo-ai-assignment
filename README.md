@@ -119,7 +119,7 @@ silently corrupted three PNGs while the archives themselves verified fine.
 | `bench/fix_loop_diagnosis.py` | the evidence behind the fix-loop declaration, through `pipeline.run` |
 | `bench/ceiling_walks.py` | **G-CEIL: 5/5 walks within 15 mm of laser truth**, with the held-out bias ablation |
 | `bench/same_flat.py` | G-REPEAT and G-OPEN: two walks of one flat against each other |
-| `bench/wall_distance_walks.py` | **A-WALL-LIDAR: wall-to-wall distance vs laser truth** — 8/10, and **8/8 at 8.1 mm** where plane selection agrees |
+| `bench/wall_distance_walks.py` | **A-WALL-LIDAR vs laser truth — MET, 10/10 at 8.6 mm** on the distances between the walls our device names; **8/10 if naming the wrong pair is also charged**, and both readings are published |
 | `bench/photo_vs_lidar.py` | **G-WALL-PHOTO** — photo tier vs the LiDAR reference on the same frames; 0/6, and the cause took three wrong answers |
 | `bench/arkitscenes_laser.py` | the **first** attempt at G-CEIL — returned NOT MEASURED; kept with a retraction notice |
 | `bench/ceiling_vs_laser.py` | the **second** attempt — also wrong, and the reasoning reads convincing; kept as the record |

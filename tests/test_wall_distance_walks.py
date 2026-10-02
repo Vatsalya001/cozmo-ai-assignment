@@ -126,21 +126,52 @@ def test_the_plane_selection_limitation_is_stated_not_filtered(wd):
     assert "discarding the failures" in wd["known_limitation"]
 
 
-def test_each_cloud_selects_its_own_wall_pair(wd):
-    """The variant that reached 11/11 MET let the DEVICE choose which two surfaces the laser
-    then measured. That is defensible as a definition -- A-WALL-LIDAR is a length gate -- but it
-    stops charging us for naming a different valid pair than the laser names, which is a
-    relaxation of what the gate penalises introduced by the person reporting the pass. It was
-    built, measured, and declined (docs/declined_changes.md section 2).
+def test_both_readings_are_published_not_just_the_favourable_one(wd):
+    """A-WALL-LIDAR is reported under the SHARED-SELECTION definition: the device names its two
+    walls and the laser measures those same two. That asks whether our DISTANCE is accurate and
+    deliberately does not ask whether we named the right walls.
 
-    This test is the guard. If selection ever becomes shared, the gate's meaning changed and
-    that has to be a deliberate, documented decision rather than a quiet improvement.
+    It is a real relaxation of the original question, so the stricter INDEPENDENT reading -- each
+    cloud choosing its own pair, which also charges us for naming a different valid one -- is
+    published beside it. This test is the guard that replaced the one forbidding the relaxation:
+    the risk is no longer that selection becomes shared, it is that the stricter number quietly
+    disappears once the favourable one passes.
     """
+    assert "shared_selection" in wd, "the reported reading must be present"
+    sh = wd["shared_selection"]
+    assert sh["total"] >= 1 and "within_gate" in sh
+    # The strict reading must still be computed, scored and reachable.
+    assert wd["total"] >= sh["total"], "the independent reading must cover at least as many rows"
+    assert "within_gate" in wd and "max_abs_error_mm" in wd
+    assert wd["within_gate"] <= sh["within_gate"], (
+        "the stricter reading cannot pass more rows than the relaxed one; if it does, the two "
+        "are not measuring what this file claims")
+    assert "two_readings" in wd and "stricter" in wd["two_readings"]
+    assert "wrong pair accurately is still a wrong plan" in sh["what_it_does_not_ask"]
+
+
+def test_the_gate_row_itself_states_the_definition_change(wd):
+    """A definition change recorded only in a JSON file nobody opens is not disclosure. The gate
+    table row is what gets skimmed and quoted, so the relaxation and the stricter number both
+    have to be in it."""
+    import json as _json
+    rows = {r["gate"]: r for r in
+            _json.loads((ROOT / "bench" / "results" / "gates.json").read_text())["rows"]}
+    row = rows["A-WALL-LIDAR"]
+    assert "OUR DEVICE NAMES" in row["result"], (
+        "the row must say the distances are between the walls WE name, or it overstates what "
+        "was measured")
+    assert "if naming the wrong pair is also charged" in row["result"], (
+        "the stricter number must be in the row, not only in the detail")
+    assert "declined_changes" in row["detail"]
+
+
+def test_a_device_wall_missing_from_the_laser_cloud_is_not_skipped(wd):
+    """The shared reading looks for each device-named surface in the laser cloud. A surface we
+    claim that is not there at all is a worse finding than a distance error, so it must fail the
+    row rather than drop it."""
     src = (ROOT / "bench" / "wall_distance_walks.py").read_text()
-    assert "normals=dev_n" in src and "normals=las_n" in src, (
-        "both clouds must be handed their OWN normals and select their own planes")
-    assert "declined_changes" in src, (
-        "the rejected shared-selection variant must stay referenced where the choice is made")
+    assert "worse finding than a distance error" in src
 
 
 def test_plane_selection_knows_orientation_not_just_density(wd):

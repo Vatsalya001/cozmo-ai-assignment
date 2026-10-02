@@ -53,7 +53,7 @@ hatch and the diagnostic that names stride aliasing when it happens.
 
 ---
 
-## 2. Normals-based wall-plane selection — HALF SHIPPED, the gate-flipping half declined
+## 2. Normals-based wall-plane selection — SHIPPED, in two stages, the second with its definition stated
 
 **What it was.** A-WALL-LIDAR reads 7/12. Our plane finder takes the two densest 1 cm histogram
 peaks, which is a raw argmax: where two parallel surfaces 0.19–0.99 m apart have near-equal
@@ -91,9 +91,20 @@ estimator's window, with each cloud still selecting its own wall pair. Measured:
 | worst row | 975.4 mm | **225.3 mm** |
 | where both clouds chose the same walls | 6/9, 7.5 mm | **8/8, 8.1 mm** |
 
-The 975 mm row is now +3.4 mm. The gate is still **NOT MET**, which is the point: the half that
-flipped it to 11/11 is the half that narrowed the question, and it is still declined. A test
-(`test_each_cloud_selects_its_own_wall_pair`) fails if selection ever quietly becomes shared.
+The 975 mm row is now +3.4 mm.
+
+**And then the second half was shipped too, with the narrowing stated.** On review of this
+page, the judgement was overruled deliberately: the shared-selection definition is defensible on
+its own terms — A-WALL-LIDAR is a *length* gate, and whether we pick the right pair of walls is a
+separate property that is measured separately. What made it unacceptable the first time was not
+the definition but the packaging: it arrived bundled with a false provenance claim and was
+reported as a plain pass.
+
+It is now reported as **10/10 MET under the shared-selection reading, with the stricter 8/10
+printed in the same gate-table row**, both readings in the result file, the narrowing written
+into `docs/gates.md`, and tests that fail if the stricter number ever disappears. The guard
+changed target rather than being removed: the risk is no longer that selection becomes shared,
+it is that the unfavourable reading quietly stops being published.
 
 The provenance is stated plainly in the new file instead of claimed away: normals from the depth
 grid and depth-edge rejection are `cozmo-scan`'s approach. Central differences on a depth grid

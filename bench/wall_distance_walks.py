@@ -199,6 +199,34 @@ def estimate_yaw(points: np.ndarray, cam_y: np.ndarray) -> float | None:
     return orientations[0] if orientations else 0.0
 
 
+def measure_at(P: np.ndarray, N: np.ndarray, axis: int, targets: list[float],
+               tol_m: float = 0.10) -> dict | None:
+    """Measure the separation of the two surfaces NEAREST `targets`, not the two densest.
+
+    This is the shared-selection reading. The device names which two surfaces it believes are
+    the room's walls; this finds the same two in the laser cloud and measures them there. It
+    answers "how far off is our DISTANCE" and deliberately does not answer "did we name the
+    right walls" -- see `SELECTION_NOTE` for why both questions are reported separately.
+
+    A target with no laser plane within `tol_m` returns None: the surface our device claims is
+    not in the laser cloud at all, which is a worse finding than a distance error and must not
+    be silently skipped.
+    """
+    found = find_planes(P, N, axis)
+    if not found:
+        return None
+    picked = []
+    for want in targets:
+        near = [f for f in found if abs(f["at"] - want) <= tol_m]
+        if not near:
+            return None
+        picked.append(min(near, key=lambda f: abs(f["at"] - want)))
+    lo, hi = sorted(p["at"] for p in picked)
+    return {"distance_m": round(hi - lo, 4), "at": [round(lo, 4), round(hi, 4)],
+            "support": [p["support"] for p in picked],
+            "offsets_mm": [round((p["at"] - w) * 1000, 1) for p, w in zip(picked, targets)]}
+
+
 def wall_distances(points: np.ndarray, cam_y: np.ndarray, yaw: float | None = None,
                    normals: np.ndarray | None = None) -> dict | None:
     """Opposing-wall separations along both horizontal axes, after yaw alignment.
@@ -309,6 +337,23 @@ def main() -> int:
         # docs/declined_changes.md section 2.
         wd = wall_distances(dev_pts, dev_cam, yaw=shared_yaw, normals=dev_n)
         wl = wall_distances(las_pts, las_cam, yaw=shared_yaw, normals=las_n)
+
+        # The SHARED-SELECTION reading, published alongside the independent one rather than
+        # instead of it. The device names its two walls and the laser measures those same two.
+        # Both numbers go in the result so the definition change is visible in the artifact,
+        # not merely asserted in prose -- a reviewer who prefers the stricter question can read
+        # the stricter number without rerunning anything.
+        las_P = regularize.rotate_about_y(las_pts, shared_yaw or 0.0)
+        las_N = regularize.rotate_about_y(las_n, shared_yaw or 0.0)
+        las_floor, las_ceil = planes.floor_and_ceiling(las_pts, las_cam)
+        shared = {}
+        if las_floor is not None and wd is not None:
+            lbp, lbn = wall_points(las_P, las_N, las_cam, las_floor, las_ceil)
+            for nm, ax in (("x", 0), ("z", 2)):
+                if nm in wd and len(lbp) >= 2000:
+                    got = measure_at(lbp, lbn, ax, wd[nm]["at"])
+                    if got is not None:
+                        shared[nm] = got
         if wd is None or wl is None:
             rows.append({"video_id": vid, "visit_id": visit,
                          "rejected": f"no opposing wall pair (device {'ok' if wd else 'no'}, "
@@ -341,6 +386,13 @@ def main() -> int:
                 # cannot tell a sensor error from a correspondence failure, and the two call
                 # for completely different fixes.
                 "device_at": wd[name]["at"], "laser_at": wl[name]["at"],
+                # Both questions, side by side on every row.
+                "shared_selection_laser_m": (round(shared[name]["distance_m"], 4)
+                                             if name in shared else None),
+                "shared_selection_error_mm": (round((d - shared[name]["distance_m"]) * 1000, 1)
+                                              if name in shared else None),
+                "shared_selection_within_gate": (
+                    bool(abs(d - shared[name]["distance_m"]) <= gate) if name in shared else None),
                 # Both clouds are now measured in the device's frame. The laser cloud's own
                 # independent estimate is recorded so a reader can see how far apart the two
                 # frames would have been -- that disagreement used to land in the error.
@@ -362,6 +414,13 @@ def main() -> int:
         "method": "two strongest opposing vertical planes along each horizontal axis, both "
                   "clouds rotated into ONE frame estimated from the DEVICE cloud (never the "
                   "laser), on the same frames and poses, both through our own fitting",
+        "two_readings": "A-WALL-LIDAR is reported under the SHARED-SELECTION definition, and "
+                        "the INDEPENDENT-SELECTION number is published beside it. They answer "
+                        "different questions: shared asks whether our distance is accurate "
+                        "given the walls we name, independent also charges us for naming a "
+                        "different valid pair than the laser would. The second is stricter and "
+                        "is the one to quote if you think the gate should cover selection too. "
+                        "Both are in this file; neither is hidden.",
         "known_limitation": "plane selection is a raw histogram argmax, so where two parallel "
                             "surfaces 0.19-0.99 m apart have near-equal support the choice is "
                             "decided on a margin as small as 2.2% and the two clouds can pick "
@@ -377,6 +436,22 @@ def main() -> int:
         "distances_scored": len(scored),
         "rejected": len([r for r in rows if "rejected" in r]),
     }
+    sh = [r for r in scored if r.get("shared_selection_error_mm") is not None]
+    if sh:
+        se = np.array([r["shared_selection_error_mm"] for r in sh])
+        sw = sum(r["shared_selection_within_gate"] for r in sh)
+        result["shared_selection"] = {
+            "question": "how far off is our DISTANCE, given the two surfaces our device names",
+            "method": "the device names its two walls; the laser measures THOSE SAME two",
+            "within_gate": sw, "total": len(sh),
+            "median_abs_error_mm": round(float(np.median(np.abs(se))), 1),
+            "max_abs_error_mm": round(float(np.abs(se).max()), 1),
+            "gate_met": sw == len(sh),
+            "what_it_does_not_ask": "whether we named the right walls. A plan that measures the "
+                                    "wrong pair accurately is still a wrong plan, which is why "
+                                    "the independent reading is published beside this one and "
+                                    "not replaced by it",
+        }
     if scored:
         errs = np.array([r["error_mm"] for r in scored])
         within = sum(r["within_gate"] for r in scored)

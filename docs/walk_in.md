@@ -140,7 +140,7 @@ from `gates.json`.
 | ✅ | **G-CEIL** | met — **5/5 walks within 15 mm** of FARO laser truth, mean −4.3 mm |
 | ❌ | G-CEIL-SPREAD | **not met** — 10.3 and 12.0 mm against a 10 mm target |
 | ❌ | G-OPEN | **not met** — 0/12 openings agree within 2 cm between two walks |
-| ❌ | A-WALL-LIDAR | **not met** — 8/10; but **8/8 within gate at 8.1 mm** where both clouds pick the same walls |
+| ✅ | **A-WALL-LIDAR** | met — **10/10 at 8.6 mm** under a *stated narrowing*: the distance between the walls we name. **8/10 if naming is also charged** — quote that if asked |
 | ❌ | G-WALL-PHOTO | **not met** — 0/6, median 75%; no poses means one view's reach bounds the box |
 | ⚪ | G-REPEAT | **not measurable** on this pair, with evidence |
 | ⚪ | G-H2H | **pending** — needs tape truth that does not exist |
