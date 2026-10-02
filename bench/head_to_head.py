@@ -76,37 +76,53 @@ def read_tape(path: Path) -> dict:
     """
     if not path.is_file():
         return {}
-    raw: dict[str, dict[str, float]] = {}
-    kinds: dict[str, dict[str, str]] = {}
+    # Keyed by (element, TYPE), not element alone. The committed template files a door's clear
+    # WIDTH and its HEIGHT under the same element id -- `R1.O-bottom` appears twice, once as
+    # opening_width and once as opening_height. Keyed by element only, the height silently
+    # overwrote the width, so a 0.78 m doorway would have been compared against magicplan as
+    # ~2.0 m. The fieldwork would have been done correctly and the comparison would have been
+    # nonsense.
+    raw: dict[str, dict[tuple[str, str], float]] = {}
     with path.open() as f:
         for row in csv.DictReader(r for r in f if not r.lstrip().startswith("#")):
             room = (row.get("room") or "").strip()
             el = (row.get("element") or "").strip()
+            kind = (row.get("type") or "").strip()
             if not room or not el:
                 continue
             vals = [float(row[k]) for k in ("reading1_m", "reading2_m")
                     if row.get(k) and row[k].strip()]
             if not vals:
                 continue
-            raw.setdefault(room, {})[el] = sum(vals) / len(vals)
-            kinds.setdefault(room, {})[el] = (row.get("type") or "").strip()
+            raw.setdefault(room, {})[(el, kind)] = sum(vals) / len(vals)
 
     truth: dict[str, dict] = {}
     for room, items in raw.items():
         out: dict[str, float] = {}
-        walls, doors, ceiling_parts = [], [], []
-        for el, v in items.items():
-            kind = kinds[room].get(el, "")
+        walls, doors = [], []
+        # Ceiling parts are grouped by SPOT, because the template asks for the height at two
+        # places at least a metre apart (C1a+C1b, then C2a+C2b). Summing every ceiling_part row
+        # together added the two spots into one 5.7 m ceiling. The parts of one spot are summed;
+        # the spots are then averaged, which is what two readings of one quantity are for.
+        spots: dict[str, list[float]] = {}
+        for (el, kind), v in items.items():
             if kind in CEILING_PARTS:
-                ceiling_parts.append(v)
+                spots.setdefault(el[:-1], []).append(v)      # 'R1.C1a' -> spot 'R1.C1'
             elif kind == "wall":
                 walls.append(v)
             elif kind == "opening_width":
                 doors.append(v)
-            if el in ELEMENT_TO_DIMENSION:
+            # opening_height and diagonal are read but not yet used: heights are not a magicplan
+            # dimension, and the diagonals are for squaring the room rather than for comparison.
+            # They are deliberately NOT silently folded into anything.
+            if kind in ("wall", "opening_width") and el in ELEMENT_TO_DIMENSION:
                 out[ELEMENT_TO_DIMENSION[el]] = v
-        if ceiling_parts:
-            out["ceiling height"] = sum(ceiling_parts)
+        if spots:
+            heights = [sum(parts) for parts in spots.values()]
+            out["ceiling height"] = sum(heights) / len(heights)
+            if len(heights) > 1:
+                out["_ceiling_spots_m"] = [round(h, 3) for h in heights]
+                out["_ceiling_spread_m"] = round(max(heights) - min(heights), 3)
         out["_walls"] = sorted(walls, reverse=True)
         out["_doors"] = sorted(doors, reverse=True)
 
@@ -208,13 +224,24 @@ def pair_by_rank(theirs: dict, ours: list[float]) -> dict[str, float | None]:
 
 
 def main() -> int:
-    tape = read_tape(OWN / "measurements.csv")
+    # The FILLED sheet is gitignored (it is fieldwork, not source), so a clean clone has only
+    # the blank template. Reading one name and shipping the other is how the element-id map
+    # came to be validated against a file that is not in the repository -- the map was correct
+    # for `measurements.csv` on one machine and the template a reviewer actually receives,
+    # `measurements_to_fill.csv`, carries extra row types it had never been tested against.
+    tape_path = OWN / "measurements.csv"
+    if not tape_path.is_file():
+        tape_path = OWN / "measurements_to_fill.csv"
+    tape = read_tape(tape_path)
     ours = read_ours()
 
     missing = []
     if not tape:
-        missing.append("tape ground truth (data/own/measurements.csv) — the reference both "
-                       "sides are scored against")
+        # Name the file actually being read. Pointing a reviewer at a gitignored path they do
+        # not have is how this whole chain of defects started.
+        missing.append(f"tape ground truth — fill in "
+                       f"{tape_path.relative_to(ROOT)}, the reference both sides are scored "
+                       f"against")
     if not ours:
         missing.append("our own output for these rooms (no capture of data/own has been "
                        "processed into out/)")

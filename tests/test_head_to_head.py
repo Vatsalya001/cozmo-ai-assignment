@@ -108,8 +108,14 @@ def test_the_template_element_ids_all_join_to_a_dimension():
     `left wall`, so the fieldwork would have been done and every row would still have scored
     zero. This asserts the join exists for every wall and opening the template asks for."""
     import csv as _csv
+    # The TRACKED template, not the filled sheet. The filled one is gitignored fieldwork, so
+    # asserting against it validated a file no reviewer receives -- and the tracked template
+    # turned out to carry two row types the code had never seen (a door height sharing its
+    # element id with the door width, and a second ceiling spot).
+    template = ROOT / "data" / "own" / "measurements_to_fill.csv"
+    assert template.is_file(), "the blank template must be committed; it is the deliverable"
     rows = [r for r in _csv.DictReader(
-        l for l in (ROOT / "data" / "own" / "measurements.csv").read_text().splitlines()
+        l for l in template.read_text().splitlines()
         if not l.lstrip().startswith("#") and l.strip())]
     measured = [r for r in rows if (r.get("type") or "").strip() in ("wall", "opening_width")]
     assert measured, "the template must ask for walls and openings"
@@ -119,6 +125,53 @@ def test_the_template_element_ids_all_join_to_a_dimension():
     # dimensions, so they feed the derived area and perimeter rather than a named comparison.
     assert all(e.startswith("R2.W") for e in unjoined), (
         f"these template rows join to nothing: {unjoined}")
+
+
+def test_a_door_height_cannot_overwrite_its_width(tmp_path):
+    """The committed template files a door's clear WIDTH and its HEIGHT under the same element
+    id. Keyed by element alone, the height overwrote the width: a 0.78 m doorway would have been
+    compared against magicplan as 2.03 m, after the fieldwork was done correctly."""
+    p = tmp_path / "m.csv"
+    p.write_text("room,element,type,reading1_m,reading2_m,note\n"
+                 "R1,R1.O-bottom,opening_width,0.780,0.780,\n"
+                 "R1,R1.O-bottom,opening_height,2.030,2.030,\n")
+    got = h2h.read_tape(p)["R1"]
+    assert got["bottom door width"] == pytest.approx(0.780), (
+        "the door WIDTH must survive a height row sharing its element id")
+    assert got["_doors"] == [0.780], "only the width counts as a door opening"
+
+
+def test_two_ceiling_spots_are_averaged_not_added(tmp_path):
+    """The template asks for ceiling height at two places at least a metre apart, each in two
+    parts. Summing every ceiling_part row added the spots together: 0.45+2.38+0.45+2.38 gave a
+    5.66 m ceiling. The parts of one spot are summed; the spots are then averaged."""
+    p = tmp_path / "m.csv"
+    p.write_text("room,element,type,reading1_m,reading2_m,note\n"
+                 "R1,R1.C1a,ceiling_part1,0.450,0.450,\n"
+                 "R1,R1.C1b,ceiling_part2,2.380,2.380,\n"
+                 "R1,R1.C2a,ceiling_part1,0.450,0.450,\n"
+                 "R1,R1.C2b,ceiling_part2,2.400,2.400,\n")
+    got = h2h.read_tape(p)["R1"]
+    assert got["ceiling height"] == pytest.approx((2.830 + 2.850) / 2, abs=1e-6)
+    assert got["_ceiling_spread_m"] == pytest.approx(0.020, abs=1e-6), (
+        "two spots disagreeing is information about the ceiling, not noise to hide")
+
+
+def test_the_tracked_template_is_what_the_benchmark_reads(tmp_path, monkeypatch):
+    """A clean clone has only the blank template, because the filled sheet is gitignored
+    fieldwork. The benchmark must fall back to it rather than silently finding nothing."""
+    (tmp_path / "measurements_to_fill.csv").write_text(
+        "room,element,type,reading1_m,reading2_m,note\n"
+        "R1,R1.W-left,wall,3.600,3.600,\n")
+    monkeypatch.setattr(h2h, "OWN", tmp_path)
+    monkeypatch.setattr(h2h, "OUT", tmp_path / "out.json")
+    monkeypatch.setattr(h2h, "read_ours", lambda: {})
+    assert h2h.main() == 0
+    res = json.loads((tmp_path / "out.json").read_text())
+    row = [r for r in res["rows"] if r["dimension"] == "left wall"][0]
+    assert row["truth_m"] == pytest.approx(3.600), (
+        "the blank-template path must be read; otherwise a reviewer who fills in the committed "
+        "file gets a comparison that silently found no truth")
 
 
 def test_ceiling_height_is_summed_from_its_two_taped_parts(tmp_path):
