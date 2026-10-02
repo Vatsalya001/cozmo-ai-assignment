@@ -211,3 +211,100 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+# --- The dimension sheet -------------------------------------------------------------------
+# A second drawing, kept separate from the capture plan so neither is cluttered: this one marks
+# every quantity to be taped with a single letter, so the operator writes "a = 362" instead of
+# matching prose row names to physical walls. a-z covers it exactly.
+DIM_BEDROOM = [
+    ("a", (-2.27, -2.38), (-2.27, 1.24)),      # W-left
+    ("b", (-2.27, 1.24),  (-0.49, 1.24)),      # W-topleft  = cupboard front
+    ("c", (-0.49, 1.24),  (-0.49, 1.73)),      # W-notch    = cupboard end
+    ("d", (-0.49, 1.73),  (0.26, 1.73)),       # W-topright
+    ("e", (1.16, 1.73),   (1.16, -2.38)),      # W-right
+    ("f", (-2.27, -2.38), (1.16, -2.38)),      # W-bottom, corner to corner THROUGH the door
+]
+DIM_BEDROOM_OPEN = [("g", (-0.31, -2.38), (0.46, -2.38)),   # bathroom door width
+                    ("i", (0.26, 1.73),   (1.16, 1.73))]    # main doorway width
+DIM_BEDROOM_DIAG = [("k", (-2.27, -2.38), (1.16, 1.73)),
+                    ("l", (1.16, -2.38),  (-2.27, 1.24))]
+
+DIM_BATHROOM = [
+    ("q", (4.09, 0.46),  (2.32, 0.46)),        # W1
+    ("r", (2.32, 0.46),  (2.32, -1.11)),       # W2
+    ("s", (2.32, -1.11), (4.09, -1.11)),       # W3
+    ("t", (4.09, -1.11), (4.09, 0.46)),        # W4, corner to corner THROUGH the door
+]
+DIM_BATHROOM_OPEN = [("u", (4.09, -0.32), (4.09, 0.46))]
+DIM_BATHROOM_DIAG = [("w", (2.32, 0.46), (4.09, -1.11)),
+                     ("x", (4.09, 0.46), (2.32, -1.11))]
+
+
+def draw_dims(ax, segments, openings, diagonals, title):
+    for _lbl, a, b in segments:
+        ax.plot([a[0], b[0]], [a[1], b[1]], color=WALL, lw=5, solid_capstyle="butt", zorder=2)
+    for _lbl, a, b in openings:
+        ax.plot([a[0], b[0]], [a[1], b[1]], color=OPENING, lw=5, solid_capstyle="butt", zorder=3)
+    for _lbl, a, b in diagonals:
+        ax.plot([a[0], b[0]], [a[1], b[1]], color=TAPE, lw=1.4, ls=(0, (6, 4)), zorder=4)
+
+    def badge(lbl, a, b, fc, nudge=(0.0, 0.0), frac=0.5):
+        mx = a[0] + (b[0] - a[0]) * frac + nudge[0]
+        my = a[1] + (b[1] - a[1]) * frac + nudge[1]
+        ax.annotate(lbl, (mx, my), color="white", fontsize=12, weight="bold", ha="center",
+                    va="center", zorder=9,
+                    bbox=dict(boxstyle="circle,pad=0.30", fc=fc, ec="white", lw=1.6))
+
+    nudges = {"a": (0.30, 0), "b": (0, -0.26), "c": (0.30, 0.16), "d": (0, -0.26),
+              "e": (-0.30, 0), "f": (-1.40, 0.26), "q": (0, -0.24), "r": (0.26, 0),
+              "s": (0, 0.24), "t": (-0.26, 0)}
+    for lbl, a, b in segments:
+        badge(lbl, a, b, WALL, nudges.get(lbl, (0.0, 0.0)))
+    for lbl, a, b in openings:
+        badge(lbl, a, b, OPENING)
+    for n, (lbl, a, b) in enumerate(diagonals):
+        badge(lbl, a, b, TAPE, frac=0.30 if n == 0 else 0.70)
+
+    ax.set_title(title, fontsize=12, weight="bold", color=WALL, pad=14)
+    ax.set_aspect("equal")
+    ax.margins(0.20)
+    ax.axis("off")
+
+
+def main_dims() -> int:
+    fig, axes = plt.subplots(1, 2, figsize=(14.0, 8.6),
+                             gridspec_kw={"width_ratios": [1.0, 0.82]})
+    draw_dims(axes[0], DIM_BEDROOM, DIM_BEDROOM_OPEN, DIM_BEDROOM_DIAG,
+              "BEDROOM — write each length in cm")
+    draw_dims(axes[1], DIM_BATHROOM, DIM_BATHROOM_OPEN, DIM_BATHROOM_DIAG,
+              "BATHROOM — write each length in cm")
+
+    axes[0].annotate("BUILT-IN CUPBOARD\nb = front,  c = end", (-1.55, 1.49),
+                     color=WALL, fontsize=8, style="italic", ha="center", va="center", zorder=6,
+                     bbox=dict(boxstyle="round,pad=0.3", fc="#eef1f4", ec=WALL, lw=0.8))
+    axes[0].annotate("g → BATHROOM", (0.08, -2.58), color=OPENING, fontsize=8.5, weight="bold",
+                     ha="center", va="top")
+    axes[0].annotate("i — MAIN DOORWAY", (0.71, 1.95), color=OPENING, fontsize=9, weight="bold",
+                     ha="center", va="bottom")
+
+    legend = (
+        "dark circle = wall, corner to corner      red circle = opening, CLEAR WIDTH\n"
+        "gold dashed = diagonal, inside corner to inside corner\n"
+        "f and t run corner to corner STRAIGHT THROUGH the doorway in that wall.\n"
+        "Not on the drawing, measure anyway:  h = height of g   j = height of i   v = height of u\n"
+        "  m + n = ceiling spot 1 (floor-to-seat, then seat-to-ceiling)   o + p = ceiling spot 2\n"
+        "  y + z = bathroom ceiling, same two parts.   ALL VALUES IN CENTIMETRES."
+    )
+    fig.text(0.5, 0.165, legend, ha="center", va="top", fontsize=8.8, color=WALL,
+             family="monospace",
+             bbox=dict(boxstyle="round,pad=0.6", fc="#f6f7f9", ec=WALL, lw=0.8))
+    fig.suptitle("Dimension sheet — one letter per measurement, all in cm",
+                 fontsize=13, weight="bold", color=WALL, y=0.97)
+    fig.subplots_adjust(left=0.03, right=0.97, top=0.90, bottom=0.235, wspace=0.05)
+    out_png = ROOT / "data" / "own" / "dimensions.png"
+    fig.savefig(out_png, dpi=170)
+    fig.savefig(ROOT / "data" / "own" / "dimensions.pdf")
+    plt.close(fig)
+    print(f"wrote {out_png.relative_to(ROOT)}")
+    return 0
