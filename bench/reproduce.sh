@@ -33,6 +33,14 @@ step "photo tier room boxes and stitch grouping" "$PY" bench/photo_tier.py
 step "G-WALL-PHOTO: photo tier against the LiDAR reference, same frames" \
      "$PY" bench/photo_vs_lidar.py
 step "two walks of one flat: G-REPEAT and G-OPEN" "$PY" bench/same_flat.py
+if [ -d data/external/houselayout3d/doors ]; then
+  step "A-ADJ at the unit level: openings() against HouseLayout3D's door graph" \
+       "$PY" bench/houselayout_adjacency.py
+else
+  echo ""
+  echo "=== A-ADJ at the unit level: SKIPPED ==="
+  echo "  data/external/houselayout3d is absent; run scripts/fetch_houselayout3d.py (~56 MB)"
+fi
 step "head-to-head vs magicplan" "$PY" bench/head_to_head.py
 step "head-to-head vs an independent implementation, on exact synthetic truth" \
      "$PY" bench/head_to_head_engineer.py
