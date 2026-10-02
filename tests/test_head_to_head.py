@@ -364,3 +364,15 @@ def test_the_head_to_head_reads_a_committed_capture_not_a_gitignored_one():
     assert "submission" in src and "outputs" in src, (
         "read_ours no longer falls back to the committed outputs; a clean clone would score "
         "nothing and the artifact would silently revert to 'cannot score'")
+
+    # The capture is only half of it. data/own/ is gitignored wholesale, so the TAPE CSV -- the
+    # ground truth both sides are scored against -- was also absent from a clean clone, and
+    # read_tape fell back to the blank template. Committing the capture alone left the file
+    # still reporting DIFFERS. Both inputs have to be tracked or neither is reproducible.
+    tape = root / "data" / "own" / "measurements.csv"
+    assert tape.is_file(), "the tape ground truth is missing"
+    assert subprocess.run(["git", "ls-files", "data/own/measurements.csv"], cwd=root,
+                          capture_output=True, text=True).stdout.strip(), (
+        "data/own/measurements.csv is not tracked. data/own/ is gitignored, so it needs an "
+        "explicit `git add -f`; without it a clean clone has no tape truth and the head-to-head "
+        "regenerates as 'cannot score'")

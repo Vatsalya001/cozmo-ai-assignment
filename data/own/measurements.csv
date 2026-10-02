@@ -1,0 +1,19 @@
+room,element,type,reading1_m,reading2_m,note
+R1,R1.W-left,wall,3.6680,,[a]
+R1,R1.W-topleft,wall,1.8160,,"cupboard face, built-in, treated as wall [b]"
+R1,R1.W-notch,wall,0.5020,,"cupboard end, built-in, treated as wall [c]"
+R1,R1.W-topright,wall,0.8940,,[d]
+R1,R1.W-right,wall,4.1700,,[e]
+R1,R1.W-bottom,wall,3.4660,,corner to corner through the bathroom doorway [f]
+R1,R1.O-bottom,opening_width,0.6510,,bathroom doorway [g]
+R1,R1.O-bottom,opening_height,1.9340,,bathroom doorway [h]
+R1,R1.O-right,opening_width,0.7560,,main doorway [i]
+R1,R1.O-right,opening_height,1.9960,,main doorway [j]
+R1,R1.C1a,ceiling_part1,2.7880,,"full floor-to-ceiling span, measured in one go rather than in two parts [m]"
+R2,R2.W1,wall,1.7680,,left as you enter [q]
+R2,R2.W2,wall,1.6420,,ahead as you enter [r]
+R2,R2.W3,wall,1.7680,,right as you enter [s]
+R2,R2.W4,wall,1.6420,,"door wall, corner to corner through the opening [t]"
+R2,R2.O1,opening_width,0.6510,,[u]
+R2,R2.O1,opening_height,1.9340,,[v]
+R2,R2.C1a,ceiling_part1,2.7880,,"full floor-to-ceiling span, measured in one go rather than in two parts [y]"
