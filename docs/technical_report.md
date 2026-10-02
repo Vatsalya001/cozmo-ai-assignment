@@ -349,7 +349,10 @@ number from a string is not the same as removing it from a decision.
 tests, regenerates the benchmarks and diffs committed against regenerated. It classifies every
 result file rather than counting files it never recomputed: an earlier version reported "8
 identical" when seven of those had merely been copied by the clone and compared with themselves,
-which is a pass that cannot fail. It has caught three real defects — a bare `ModuleNotFoundError`
+which is a pass that cannot fail. "Every" is now enforced rather than asserted — the script
+compares its own list against `bench/results/` and fails on a file it does not classify, because
+the hand-maintained list had twice fallen behind the directory while still printing a total that
+added up. It has caught three real defects — a bare `ModuleNotFoundError`
 on the default install, wall-clock seconds embedded in a gate *result*, and the fix-loop harness
 measuring an unshipped pipeline.
 

@@ -36,6 +36,22 @@ step "two walks of one flat: G-REPEAT and G-OPEN" "$PY" bench/same_flat.py
 step "head-to-head vs magicplan" "$PY" bench/head_to_head.py
 step "head-to-head vs an independent implementation, on exact synthetic truth" \
      "$PY" bench/head_to_head_engineer.py
+# The BD3 appearance benchmark is NOT a gate result, and its input is a gitignored ~800 MB
+# fetch of licence-unknown images that this repo will not redistribute. So it is conditional
+# rather than absent: absent is how bench/results/damage_appearance.json ended up outside both
+# this script and clean_clone_check.sh's PLAN while three documents claimed every result file
+# was accounted for. If the data is there it runs; if not, the step prints how to get it.
+if [ -d data/external/bd3/data ]; then
+  step "BD3 appearance benchmark (NOT a gate; needs the [damage] extra)" \
+       "$PY" bench/damage_appearance.py
+else
+  echo ""
+  echo "=== BD3 appearance benchmark (NOT a gate) ==="
+  echo "  SKIPPED: data/external/bd3 is absent. It is ~800 MB of licence-unknown images that"
+  echo "  this repo does not redistribute. bench/results/damage_appearance.json is committed;"
+  echo "  to regenerate it:  pip install -e '.[damage]' && python scripts/fetch_bd3.py"
+fi
+
 step "sync the compliance matrix gate table to the regenerated gates" \
      "$PY" scripts/sync_compliance_matrix.py
 

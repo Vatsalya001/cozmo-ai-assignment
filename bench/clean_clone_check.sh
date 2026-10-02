@@ -26,7 +26,11 @@
 #   fix_loop_after_gates.json   its pair, captured by the same harness at the same moment.
 #                               Kept together so the comparison stays like-for-like.
 #
-# and one varies by design: timing.json is wall-clock seconds, a property of the machine.
+# one varies by design: timing.json is wall-clock seconds, a property of the machine.
+#
+# and one needs inputs a clone cannot have: damage_appearance.json is the BD3 appearance
+# benchmark, which needs the optional [damage] extra and a gitignored ~800 MB image fetch whose
+# licence position forbids redistributing it. The row names the two commands that regenerate it.
 #
 # head_to_head.json IS regenerated, although the comparison it describes cannot be scored yet.
 # The artifact is deterministic without its missing inputs -- magicplan's side plus a precise
@@ -41,7 +45,7 @@ trap 'rm -rf "$TMP"' EXIT
 WITH_MODELS=0
 [ "${1:-}" = "--with-models" ] && WITH_MODELS=1
 
-# name | script | data it needs | why it is skipped (empty = it is run)
+# name | script [args] | data it needs | why it is skipped (empty = it is run)
 PLAN=(
   "gates.json|gates|supplied|"
   "depth_bias.json|depth_bias|arkitscenes_up|"
@@ -50,6 +54,7 @@ PLAN=(
   "fix_loop_diagnosis.json|fix_loop_diagnosis|supplied|"
   "same_flat.json|same_flat|supplied|"
   "ceiling_walks.json|ceiling_walks|arkitscenes_walks|"
+  "ceiling_walks_uncorrected.json|ceiling_walks --no-bias-correction|arkitscenes_walks|"
   "wall_distance_walks.json|wall_distance_walks|arkitscenes_walks|"
   "head_to_head.json|head_to_head|own|"
   "head_to_head_engineer.json|head_to_head_engineer|supplied|"
@@ -59,7 +64,37 @@ PLAN=(
   "fix_loop_before_gates.json|-|-|snapshot of the code BEFORE the fix; not derivable from HEAD"
   "fix_loop_after_gates.json|-|-|its pair, captured by the same harness at the same moment"
   "timing.json|-|-|wall-clock seconds; a property of the machine, not of the pipeline"
+  "damage_appearance.json|-|-|needs the [damage] extra and the gitignored ~800 MB BD3 fetch; run: python scripts/fetch_bd3.py && python bench/damage_appearance.py"
 )
+
+# ## Why the list above is now CHECKED against the directory
+#
+# PLAN is hand-maintained, and it has drifted twice. `ceiling_walks_uncorrected.json` was
+# written by an ablation flag nobody added a row for, and `damage_appearance.json` arrived
+# later and was added to neither this list nor bench/reproduce.sh. The symptom was a summary
+# line that added up -- "13 regenerated, 3 not regenerated" -- while the directory held 17
+# tracked result files. A count that is internally consistent and still short is worse than a
+# visibly wrong one, because it reads as a complete accounting.
+#
+# So the list is no longer trusted: every *.json in bench/results/ must appear in PLAN, and an
+# unlisted one FAILS the check rather than being silently passed over. Adding a result file now
+# forces a decision about whether a fresh clone can regenerate it.
+plan_covers_every_result_file () {
+  local listed missing=() f
+  listed="$(printf '%s\n' "${PLAN[@]}" | cut -d'|' -f1)"
+  for f in "$SRC"/bench/results/*.json; do
+    [ -e "$f" ] || continue
+    grep -qxF "$(basename "$f")" <<< "$listed" || missing+=("$(basename "$f")")
+  done
+  if [ "${#missing[@]}" -ne 0 ]; then
+    echo "  PLAN IS INCOMPLETE: bench/results/ holds files this script does not classify:"
+    printf '    %s\n' "${missing[@]}"
+    echo "  Add a PLAN row for each (script name, or '-' plus the reason it cannot be"
+    echo "  regenerated from a fresh clone). Every committed result file must be accounted for."
+    return 1
+  fi
+  echo "  PLAN classifies all $(ls -1 "$SRC"/bench/results/*.json | wc -l) committed result files"
+}
 
 # Show what pip actually said. The first version discarded stderr and printed "install failed",
 # which turned a one-line pip diagnostic into a debugging session.
@@ -120,24 +155,34 @@ echo "=== tests ==="
 ./.venv/bin/pytest -q 2>&1 | grep -E '^(FAILED|ERROR)' | sed 's/^/  /' || true
 
 echo ""
+echo "=== checking the plan is complete before trusting its counts ==="
+plan_covers_every_result_file || exit 1
+
+echo ""
 echo "=== regenerating, then diffing committed against regenerated ==="
 same=0; differ=0; failed=0; skipped=0
 for row in "${PLAN[@]}"; do
   IFS='|' read -r name script needs why <<< "$row"
+  # The script field may carry arguments: ceiling_walks.py writes a SECOND result file under
+  # --no-bias-correction, and that file is committed, so it needs its own row.
+  read -r -a cmd <<< "$script"
+  script="${cmd[0]}"
+  script_args=("${cmd[@]:1}")
 
   if [ "$WITH_MODELS" = 1 ] && [[ "$why" == needs\ the\ models\ extra* ]]; then why=""; fi
   if [ -n "$why" ]; then
-    printf '  %-12s %-28s %s\n' "SKIPPED" "$name" "$why"
+    printf '  %-12s %-30s %s\n' "SKIPPED" "$name" "$why"
     skipped=$((skipped+1)); continue
   fi
   if [ "$needs" != "-" ] && [ ! -e "data/$needs" ]; then
-    printf '  %-12s %-28s %s\n' "SKIPPED" "$name" "data/$needs is not present on this machine"
+    printf '  %-12s %-30s %s\n' "SKIPPED" "$name" "data/$needs is not present on this machine"
     skipped=$((skipped+1)); continue
   fi
 
   rm -f "bench/results/$name"
-  if ! ./.venv/bin/python "bench/$script.py" >/dev/null 2>&1 || [ ! -f "bench/results/$name" ]; then
-    printf '  %-12s %-28s %s\n' "FAILED" "$name" "bench/$script.py did not produce it"
+  if ! ./.venv/bin/python "bench/$script.py" "${script_args[@]+"${script_args[@]}"}" \
+       >/dev/null 2>&1 || [ ! -f "bench/results/$name" ]; then
+    printf '  %-12s %-30s %s\n' "FAILED" "$name" "bench/$script.py ${script_args[*]-} did not produce it"
     failed=$((failed+1)); continue
   fi
 
@@ -158,8 +203,8 @@ def strip(o):
     return o
 sys.exit(0 if strip(a) == strip(b) else 1)
 PY
-  then printf '  %-12s %-28s %s\n' "REGENERATED" "$name" "matches the committed copy"; same=$((same+1))
-  else printf '  %-12s %-28s %s\n' "DIFFERS" "$name" "committed copy does NOT match a fresh run"; differ=$((differ+1)); fi
+  then printf '  %-12s %-30s %s\n' "REGENERATED" "$name" "matches the committed copy"; same=$((same+1))
+  else printf '  %-12s %-30s %s\n' "DIFFERS" "$name" "committed copy does NOT match a fresh run"; differ=$((differ+1)); fi
 done
 
 echo ""

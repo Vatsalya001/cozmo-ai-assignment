@@ -113,7 +113,7 @@ asserting an independence it cannot demonstrate.
 
 ---
 
-## 3. Public defect data for A-DMG-DETECT — DECLINED
+## 3. Public defect data for A-DMG-DETECT — DECLINED as a gate validation; the appearance question was then MEASURED separately
 
 **What it was.** A-DMG-DETECT reads NOT BUILT. `cozmo-scan` validated damage *classes* on 793
 real defect photographs. The candidate staged synthetic protrusions at 14/20/25/30/50 mm — sizes
@@ -129,8 +129,48 @@ making this close to a deadline.
 **The honest position.** Our detector is *geometric* — it finds departures from the wall plane
 and infers class from shape, reporting `class_source: "shape"` with confidence ≤ 0.5. An
 appearance dataset of photographs cannot validate that; it would validate an appearance
-classifier we do not have. Building one to use the dataset would be adding a capability and
-calling it a validation. A-DMG-DETECT stays NOT BUILT, which is what it is.
+classifier we do not have. A-DMG-DETECT stays NOT BUILT, which is what it is.
+
+**And then the appearance half was built — as a benchmark, and the earlier reasoning here was
+part wrong.** On review of this page, the judgement was split rather than upheld. One half of
+the sentence above stands and one half does not, and this file said both as one thing.
+
+What **stands**: an appearance dataset cannot validate the geometric detector, and calling it a
+validation would be dishonest. Nothing does call it that. `bench/damage_appearance.py` reports
+`gate_status: "NOT a gate result"`, A-DMG-DETECT's row in the matrix is **untouched at NOT
+BUILT / NOT MEASURED**, and `bench/results/damage_appearance.json` lists under
+`what_this_does_not_close` that it does not validate that detector and that nothing here
+transfers to its accuracy. A test fails if those statements disappear.
+
+What **was wrong**: "building one to use the dataset would be adding a capability and calling it
+a validation." Those are two separate acts, and only the second was ever the objection.
+Measuring whether a defect class can be named from appearance is a real question with a
+measurable answer, and declining to measure it does not make the submission more honest — it
+makes it quieter. The reversal is recorded rather than smoothed over: the position above was
+stated as the project's, the tree now contains the classifier, and that would have been a
+self-contradiction left unamended.
+
+Measured: **86.4% over six classes against a 29.0% majority-class baseline** on BD3's publisher
+held-out split, from hand-rolled OpenCV colour/edge/gradient/texture features and a
+`scikit-learn` classifier. Published as an **upper bound**, not a cross-building estimate: the
+parquet carries no building id, so the split cannot be grouped by building, and 20 of 793 test
+rows are byte-identical to train (86.0% with those dropped). That narrowing travels with the
+number in the result file's own `answer` field and in the README row, not only in a footnote.
+
+What makes this a benchmark rather than a shipped capability, and what therefore keeps the gate
+honest:
+
+- **it does not ship.** The pipeline gains no runtime appearance classifier. `scikit-learn` is
+  in an optional `[damage]` extra and nothing under `scanplan/` imports it — asserted by a test.
+- **no weights are committed.** The licence chain behind BD3 terminates nowhere (the
+  HuggingFace `cc-by-4.0` tag is contradicted by the card's own prose, and upstream has no
+  licence file), so the images are treated as licence-unknown, are not redistributed, and
+  `--save-model` does not exist. It trains at run time and publishes only measured numbers.
+- **the gate row did not move.** A-DMG-DETECT still needs a staged room and a geometric
+  detection, and this file has neither.
+
+The guard changed target rather than being removed, as in section 2: the risk is no longer that
+an appearance dataset gets used, it is that the benchmark quietly starts being read as the gate.
 
 ---
 

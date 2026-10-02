@@ -1,0 +1,287 @@
+{
+  "question": "can a building-defect class be NAMED from appearance alone, with OpenCV/NumPy features and a scikit-learn classifier trained at run time?",
+  "answer": "yes, 86.4% over 6 classes on the publisher's held-out test split, against a 29.0% majority-class baseline on the same split. Read it as an UPPER BOUND, not a cross-building estimate: the split carries no building id so it CANNOT be grouped by building, and 20 of 793 test rows are byte-identical to train (86.0% with those dropped)",
+  "gate_status": "NOT a gate result. A-DMG-DETECT is NOT satisfied by this file -- see what_this_does_not_close",
+  "dataset": {
+    "name": "BD3 (Building Defect Detection Dataset), HuggingFace parquet re-release",
+    "local_path": "data/external/bd3/data (gitignored, fetched by scripts/fetch_bd3.py)",
+    "images": 3965,
+    "image_size": "512x512 JPEG, features computed at 256x256",
+    "question_column": "constant across all rows; carries no information and is unused",
+    "raw_labels": {
+      "algae": 620,
+      "major_crack": 580,
+      "minor_crack": 624,
+      "peeling": 520,
+      "plain": 600,
+      "spalling": 500,
+      "stain": 521
+    },
+    "label_map_to_schema_enum": {
+      "major_crack": "crack",
+      "minor_crack": "crack",
+      "stain": "water_stain",
+      "algae": "mould",
+      "peeling": "peeling_paint",
+      "spalling": "hole",
+      "plain": "plain"
+    },
+    "negative_class": "'plain' is not a damage class -- it is the reject class, kept in the problem because a classifier that cannot say 'nothing here' would report damage on every clean wall"
+  },
+  "split": {
+    "kind": "the publisher's own train/test parquet split, used verbatim",
+    "train_images": 3172,
+    "train_images_available": 3172,
+    "test_images": 793,
+    "subsampled": false,
+    "held_out": "the 793 rows of test-00000-of-00001.parquet. The model never sees them during feature selection, model selection or fitting; model choice was made on a 25% slice of TRAIN only.",
+    "leakage_cannot_be_ruled_out": "BD3's images come from 50+ buildings, but the published parquet carries only image/question/answer -- NO building id, NO defect id, NO filename, NO timestamp. The split therefore CANNOT be grouped by building or by physical defect, and two photographs of the SAME crack on the SAME wall may sit on opposite sides of it. This cannot be ruled out from the data available and it would inflate the accuracy below by an unknown amount. The honest reading is 'at most this good on unseen buildings', not 'this good'.",
+    "exact_duplicate_check": {
+      "method": "MD5 over the stored JPEG bytes, train vs test",
+      "duplicate_digests": 18,
+      "test_rows_affected": 20,
+      "found": true,
+      "accuracy_excluding_duplicate_test_rows": 0.8603,
+      "accuracy_on_the_duplicate_rows_alone": 1.0,
+      "reading": "byte-identical images DO cross the publisher's split: 20 of 793 test rows (2.5%) are byte-for-byte present in train. Dropping them moves overall accuracy from 0.8638 to 0.8603, so this detectable slice of the leakage is small. Two things make it worth reporting anyway. The model scores 100% on exactly those rows versus 86.0% elsewhere, which is what memorisation looks like and confirms the mechanism is real rather than theoretical. And it is proof the publisher's split was never deduplicated, which makes the UNDETECTABLE same-defect/same-building overlap more likely, not less -- there is no evidence anyone tried to prevent it.",
+      "why_this_is_weak": "byte identity catches only re-uploads of the same file. Re-encoding, cropping, or a second exposure of one defect all defeat it, so this count is a lower bound on overlap and a clean result here would NOT have been evidence of a clean split."
+    }
+  },
+  "features": {
+    "libraries": [
+      "opencv-python",
+      "numpy"
+    ],
+    "no_deep_features": "no torch, no pretrained backbone, no learned embedding",
+    "dimension": 231,
+    "groups": [
+      "per-channel distribution stats (mean/std/p5/p25/p50/p75/p95) in BGR, HSV, Lab",
+      "3x3 grid means on L/a/b (patchy vs uniform discoloration)",
+      "coarse 8x4 hue-saturation 2D histogram",
+      "dark/bright area fractions on V and L",
+      "Canny edge density at two thresholds, global and on a 4x4 grid",
+      "morphological line-opening survival in 4 directions (elongation, for cracks)",
+      "Sobel gradient-magnitude stats and a 12-bin orientation histogram (+entropy, peakedness)",
+      "structure-tensor coherence, global and per 4x4 block",
+      "Laplacian variance and mean absolute response",
+      "hand-rolled rotation-invariant uniform LBP, 10 bins, at radius 1 and 3 on grey and radius 1 on the Lab a channel"
+    ],
+    "why_primitive": "these features give a FLOOR, not a ceiling. They show the classes are appearance-separable; they say nothing about how much better a pretrained backbone would be."
+  },
+  "model": {
+    "chosen": "HistGradientBoostingClassifier",
+    "library": "scikit-learn",
+    "dependency_position": "scikit-learn is in a NEW optional extra [damage] in pyproject.toml, NOT in the default dependencies, because the LiDAR tier must stay lean and offline",
+    "selection": "chosen by accuracy on a 25% stratified slice of TRAIN, before the test split was touched",
+    "inner_validation_accuracy": {
+      "HistGradientBoostingClassifier": 0.8663,
+      "LogisticRegression": 0.8096
+    },
+    "seed": 0,
+    "determinism": "SEED=0 on numpy, the stratified inner split and the estimator; OMP/BLAS/OpenCV pinned to one thread; features involve no randomness. Verified by re-running: every measured field in this file is identical across runs. The `timing` block is the sole exception -- it is wall clock, and it is not a measurement of the model."
+  },
+  "accuracy_overall": 0.8638,
+  "baseline_majority_class": {
+    "binding": {
+      "accuracy": 0.29,
+      "class": "crack",
+      "count": 230,
+      "of": 793,
+      "note": "majority class AFTER mapping to the schema enum -- the problem the model actually solves, and the harder bar because major_crack and minor_crack merge into one class"
+    },
+    "raw_labels": {
+      "accuracy": 0.1551,
+      "class": "plain",
+      "count": 123,
+      "of": 793,
+      "note": "majority class over BD3's 7 raw labels, reported for comparability with the dataset's own literature"
+    }
+  },
+  "beats_baseline": true,
+  "margin_over_binding_baseline": 0.5738,
+  "per_class": {
+    "crack": {
+      "precision": 0.8611,
+      "recall": 0.9435,
+      "f1": 0.9004,
+      "support": 230,
+      "predicted": 252
+    },
+    "hole": {
+      "precision": 0.8878,
+      "recall": 0.87,
+      "f1": 0.8788,
+      "support": 100,
+      "predicted": 98
+    },
+    "mould": {
+      "precision": 0.8992,
+      "recall": 0.9431,
+      "f1": 0.9206,
+      "support": 123,
+      "predicted": 129
+    },
+    "peeling_paint": {
+      "precision": 0.7551,
+      "recall": 0.7048,
+      "f1": 0.7291,
+      "support": 105,
+      "predicted": 98
+    },
+    "plain": {
+      "precision": 0.9835,
+      "recall": 0.9675,
+      "f1": 0.9754,
+      "support": 123,
+      "predicted": 121
+    },
+    "water_stain": {
+      "precision": 0.7579,
+      "recall": 0.6429,
+      "f1": 0.6957,
+      "support": 112,
+      "predicted": 95
+    }
+  },
+  "confusion_matrix": {
+    "labels": [
+      "crack",
+      "hole",
+      "mould",
+      "peeling_paint",
+      "plain",
+      "water_stain"
+    ],
+    "rows_are_true_cols_are_predicted": [
+      [
+        217,
+        3,
+        3,
+        4,
+        0,
+        3
+      ],
+      [
+        2,
+        87,
+        3,
+        7,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        116,
+        3,
+        0,
+        4
+      ],
+      [
+        11,
+        4,
+        2,
+        74,
+        0,
+        14
+      ],
+      [
+        2,
+        0,
+        1,
+        0,
+        119,
+        1
+      ],
+      [
+        20,
+        4,
+        4,
+        10,
+        2,
+        72
+      ]
+    ]
+  },
+  "biggest_confusions": [
+    {
+      "true": "water_stain",
+      "predicted": "crack",
+      "n": 20,
+      "share_of_true_class": 0.1786
+    },
+    {
+      "true": "peeling_paint",
+      "predicted": "water_stain",
+      "n": 14,
+      "share_of_true_class": 0.1333
+    },
+    {
+      "true": "peeling_paint",
+      "predicted": "crack",
+      "n": 11,
+      "share_of_true_class": 0.1048
+    },
+    {
+      "true": "water_stain",
+      "predicted": "peeling_paint",
+      "n": 10,
+      "share_of_true_class": 0.0893
+    },
+    {
+      "true": "hole",
+      "predicted": "peeling_paint",
+      "n": 7,
+      "share_of_true_class": 0.07
+    }
+  ],
+  "where_it_fails": "the errors are concentrated, not spread: water_stain and peeling_paint are the two weak classes and they bleed into each other and into crack. That is the expected failure for this feature set -- a stain and a peeled patch are both irregular discoloured regions, and the colour/texture statistics that separate green algae from grey concrete have much less to work with between two shades of brown. Meanwhile 'plain' is the strongest class, which matters more than it looks: the easiest thing to get right is 'nothing is wrong here'.",
+  "reject_class_behaviour": {
+    "plain_precision": 0.9835,
+    "plain_recall": 0.9675,
+    "false_alarm_rate_on_plain": 0.0325,
+    "missed_damage_rate": 0.003,
+    "accuracy_on_damage_rows_only": 0.8448,
+    "wrong_damage_class_rate": 0.1522,
+    "the_three_rates_partition_damage_rows": "accuracy_on_damage_rows_only + missed_damage_rate + wrong_damage_class_rate = 1 over the damage rows, by construction. wrong_damage_class_rate is the RESIDUAL, not 1 - accuracy_on_damage_rows_only: that subtraction is total damage-row error and double-counts the called-clean rows.",
+    "reading": "false_alarm_rate_on_plain is the share of clean walls called damaged (3.3%); missed_damage_rate is the share of real defects called clean (0.3%). On a survey round the second costs more -- a missed defect leaves the report -- and it is the SMALLER of the two here. What is left is 15.2% of damage rows given the WRONG damage class, which is a scoping error rather than a missed defect: the wall gets surveyed, the line item is mislabelled."
+  },
+  "licence_position": {
+    "verdict": "licence-unknown",
+    "source": "BD3 (Kottari & Arjunan, 2024), re-released as the HuggingFace VQA dataset chandrabhuma/building_defect_vqa, revision 520fef082f3b2bf42d5301f885079f74bac839de",
+    "huggingface_tag": "tagged license: cc-by-4.0 in the card's YAML",
+    "why_the_tag_does_not_hold": [
+      "the card's own prose contradicts its tag: under 'License' it says the dataset 'follows the same license as the original BD3 dataset' and that 'all image rights and original credit belong to the original authors' -- that is a deferral upstream, not a CC-BY grant",
+      "upstream github.com/Praveenkottari/BD3-Dataset has NO licence: the GitHub API reports license: null and the /license endpoint returns 404 (checked, not assumed)",
+      "so the deferral terminates nowhere, and a permissive tag applied downstream cannot create rights the upstream never granted"
+    ],
+    "consequences_applied": [
+      "the images are NOT redistributed -- data/external/ is gitignored",
+      "NO trained weight file is committed: weights fitted on these images are arguably a derivative work of images whose licence is unknown",
+      "the benchmark TRAINS AT RUN TIME from the locally fetched dataset and publishes only measured numbers, which are facts about the data, not copies of it"
+    ],
+    "weights_shipped": false
+  },
+  "what_this_closes": "it puts a measured number on one capability the submission previously only asserted: a defect class can be named from appearance alone at 86.4% over 6 classes (29.0% baseline) using nothing but OpenCV colour/edge/gradient/texture statistics and a scikit-learn classifier -- no deep model, no weights download, ~41 s to fit and ~2.7 min end to end cold (see the timing block, which says which of its figures are measured and which estimated). It also quantifies which classes are confusable, and shows the reject class is learnable, so 'clean wall' is a prediction the approach can make rather than a case it ignores.",
+  "what_this_does_not_close": [
+    "A-DMG-DETECT ('staged damage found with the right class') is NOT satisfied. There is no staged room in this submission, so there is nothing to find; this file classifies cropped photographs that are handed to it already centred on a defect.",
+    "it does not validate scanplan's own damage detector, which is GEOMETRIC -- it finds departures from a fitted wall plane. That is a different thing entirely: a bulge and a mould patch are identical to it, and mould on a flat wall is invisible to it. Nothing here transfers to that detector's accuracy.",
+    "no detection and no localisation: no bounding box, no outline, no 'is there a defect in this wall image', only 'which of 6 classes is this crop'.",
+    "no size, so nothing feeds width_m/height_m/area_m2 in the output schema, which is where the damage scope actually comes from.",
+    "it does not ship. The pipeline gains NO runtime appearance classifier -- the licence position forbids committing weights and the extra is optional. What ships is this measurement.",
+    "the split cannot be grouped by building, so the number is an upper bound on cross-building performance, not an estimate of it."
+  ],
+  "timing": {
+    "note": "wall clock, the only block in this file that is not reproducible run to run. Every field says whether it is from a COLD run (features recomputed from the 3,965 JPEGs) or a WARM one (features read from the gitignored cache), because the two differ by ~80 s and the block previously printed a warm total NEXT TO a larger cold figure, which cannot both be true.",
+    "run_was_cold": false,
+    "feature_extraction_s": 0.1,
+    "feature_extraction_cold_estimate_s": 80.0,
+    "feature_extraction_note": "feature_extraction_s is measured by THIS run and run_was_cold says which kind of run it was. feature_extraction_cold_estimate_s is an ESTIMATE, not a measurement by the run that writes this file: 3,965 images at ~20 ms each, single-threaded. --no-cache forces a real cold pass, and then feature_extraction_s is the measured cold figure and run_was_cold is true. No subsampling was needed to stay inside budget.",
+    "fit_s": 40.82,
+    "total_s": 81.6,
+    "total_s_kind": "warm",
+    "cold_total_estimate_s": 161.5,
+    "not_in_the_pipeline": "this benchmark is not on the A-RUNTIME path; it runs offline and adds 0 s to the capture pipeline"
+  },
+  "reproduce": "python scripts/fetch_bd3.py && python bench/damage_appearance.py"
+}
