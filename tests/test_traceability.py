@@ -124,3 +124,34 @@ def test_no_committed_result_carries_an_absolute_path():
             if marker in text:
                 offenders.append(f"{path.name} contains {marker!r}")
     assert not offenders, "\n".join(offenders)
+
+
+def test_the_capture_protocol_does_not_ask_for_an_input_the_code_rejects():
+    """The protocol told reviewers to record the video tier with the stock Camera app, while
+    `scanplan/ingest/video.py` raises CaptureError on a bare clip because the tier needs the
+    phone's pose track. A one-page protocol that produces an unusable capture is worse than no
+    protocol: the reviewer follows it, the run fails, and the failure looks like our bug.
+
+    Found when a reviewer with a non-LiDAR iPhone asked what to capture, which is exactly the
+    reader the page is written for.
+    """
+    root = Path(__file__).resolve().parents[1]
+    protocol = (root / "docs" / "capture_protocol.md").read_text()
+    video_src = (root / "scanplan" / "ingest" / "video.py").read_text()
+
+    # The code's requirement, asserted rather than assumed: if this stops being true the test
+    # below is measuring nothing.
+    assert "odometry.csv" in video_src, (
+        "video.py no longer mentions odometry.csv; re-derive what the video tier needs before "
+        "trusting the protocol check below")
+
+    tier2 = protocol.split("## Tier 2")[1].split("## Tier 3")[0]
+    assert "odometry.csv" in tier2, (
+        "Tier 2 of the protocol must name the file the tier actually needs, or a reviewer "
+        "cannot tell a usable capture from an unusable one")
+    assert "Camera app" not in tier2 or "not the Camera app" in tier2, (
+        "Tier 2 must not send the reviewer to the stock Camera app: a bare .mov carries no "
+        "poses and scanplan run refuses it")
+    assert "export the walkthrough video as" not in protocol, (
+        "the hand-off section must not ask for a camera-roll video export; it drops the pose "
+        "track that Tier 2 depends on")

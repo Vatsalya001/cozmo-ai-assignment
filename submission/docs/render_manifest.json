@@ -16,9 +16,9 @@
       "pdf": "submission/docs/capture_protocol.pdf",
       "pages": 1,
       "cap": 1,
-      "markdown_sha256": "1a52d25113bdb575deaf43f033cbd3100d57eac4f5bfcc67756d73319c0a48e1",
-      "pdf_sha256": "6b9824a6140f1b7db04f8ea63ec57ae5a4554ba5de4addb0b7f3ee3f696107d6",
-      "pdf_bytes": 61071
+      "markdown_sha256": "5501fa29c6f23f49d5f979d9bdfceb0c3d4b7f830632c654c7093887e70f85d8",
+      "pdf_sha256": "dfad9808cade7cbfb0cbb8f6820d2a23158ac5f705323b33bbceab4a29eca0f1",
+      "pdf_bytes": 63297
     },
     "docs/compliance_matrix.md": {
       "pdf": "submission/docs/compliance_matrix.pdf",

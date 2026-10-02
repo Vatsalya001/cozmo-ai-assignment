@@ -6,7 +6,7 @@ Follow this page exactly. No engineering knowledge needed. Total time per proper
 
 | | |
 |---|---|
-| **Phone** | iPhone Pro (LiDAR tier) · iPhone 15 or newer (video and photo tiers) |
+| **Phone** | **Tier 1 needs an iPhone Pro** — it is the only tier that uses the LiDAR sensor. Tiers 2 and 3 need no LiDAR and work on any iPhone 15 or newer |
 | **Install** | **Stray Scanner** from the App Store (free). Nothing else. |
 | **Settings** | Camera app → Formats → **Most Compatible**. Video → **1080p at 30 fps**. **HDR off.** |
 | **Room prep** | Turn on every light. Open blinds. Open all internal doors fully. Do not move furniture. |
@@ -23,7 +23,7 @@ Follow this page exactly. No engineering knowledge needed. Total time per proper
 
 ## Tier 2 — Video walk (about 2 minutes)
 
-Same route, same pace, using the stock **Camera app** in video mode. Hold the phone upright. Do not zoom. Keep it **under 2 minutes**.
+Same route, same pace, **recorded in Stray Scanner — not the Camera app**. Upright, no zoom, **under 2 minutes**. This tier infers depth but still needs the phone's pose track: a bare `.mov` carries none and `scanplan run` refuses it. Stray Scanner writes `odometry.csv` beside the clip, which is what the tier reads.
 
 ## Tier 3 — Photos (about 6 minutes)
 
@@ -35,17 +35,16 @@ For **each room**, standing in the doorway and then in two opposite corners:
 
 ## What to avoid
 
-- **Mirrors and glass** — do not point straight at them. Approach at an angle.
-- **Fast motion** — never whip the phone round a corner. Turn your whole body slowly.
-- **Low light** — if a room looks dim on screen, turn on more light before recording.
+- **Mirrors and glass** — approach at an angle, never point straight at them.
+- **Fast motion** — turn your whole body slowly; never whip the phone round a corner.
+- **Low light** — if a room looks dim on screen, add light before recording.
 - **Wet or glossy floors** — dry them, or note it on the hand-off sheet.
-- Do not stop and restart a recording partway through a walk.
+- Never stop and restart a recording partway through a walk.
 
 ## Handing the files over
 
-1. Stray Scanner → **Share** → export the capture folder (keep the folder name).
-2. Camera roll → export the walkthrough video as **.mov**.
-3. Photos → **one folder per room**, named after the room: `kitchen/`, `bedroom 1/`, `hallway/`.
+1. Stray Scanner → **Share** → export each capture folder, keeping its name and its `odometry.csv`. Never re-export the clip from the camera roll: that drops the pose track.
+2. Photos → **one folder per room**, named after the room: `kitchen/`, `bedroom 1/`, `hallway/`.
 
 Put all of it in one folder and copy it to the machine running the pipeline. Then run **one command per capture**:
 
