@@ -118,7 +118,10 @@ def main() -> int:
                 f"'{letter}': two readings differ by {abs(readings[0] - readings[1]):.1f} cm "
                 f"(> 0.5 cm). Take a third.")
 
-    missing = [k for k in MAP if k not in values]
+    # Read-but-unused by head_to_head, so their absence is a decision rather than a gap.
+    NOT_SCORED = {"k", "l", "w", "x", "h", "j", "v"}
+    missing = [k for k in MAP if k not in values and k not in NOT_SCORED]
+    missing_unscored = [k for k in MAP if k not in values and k in NOT_SCORED]
     if problems:
         print("REFUSING TO CONVERT:\n")
         for p in problems:
@@ -151,9 +154,14 @@ def main() -> int:
     for room, n in sorted(by_room.items()):
         print(f"  {room}: {n}")
     if missing:
-        print(f"\n  NOT MEASURED ({len(missing)}): {', '.join(sorted(missing))}")
-        print("  Those dimensions are simply absent from the comparison; nothing is invented "
-              "for them. Fill them in and re-run if you can.")
+        print(f"\n  MISSING AND SCORED ({len(missing)}): {', '.join(sorted(missing))}")
+        print("  These are compared, so each one absent is a dimension the head-to-head simply "
+              "cannot score. Nothing is invented for them. Fill them in and re-run.")
+    if missing_unscored:
+        print(f"\n  not measured, not scored: {', '.join(sorted(missing_unscored))}")
+        print("  head_to_head reads these and does not compare them (door heights are not a "
+              "magicplan dimension; diagonals test squareness rather than agreement). Their "
+              "absence costs nothing.")
     return 0
 
 

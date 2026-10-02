@@ -227,8 +227,7 @@ DIM_BEDROOM = [
 ]
 DIM_BEDROOM_OPEN = [("g", (-0.31, -2.38), (0.46, -2.38)),   # bathroom door width
                     ("i", (0.26, 1.73),   (1.16, 1.73))]    # main doorway width
-DIM_BEDROOM_DIAG = [("k", (-2.27, -2.38), (1.16, 1.73)),
-                    ("l", (1.16, -2.38),  (-2.27, 1.24))]
+DIM_BEDROOM_DIAG: list = []   # diagonals dropped: head_to_head reads and ignores them
 
 DIM_BATHROOM = [
     ("q", (4.09, 0.46),  (2.32, 0.46)),        # W1
@@ -237,8 +236,7 @@ DIM_BATHROOM = [
     ("t", (4.09, -1.11), (4.09, 0.46)),        # W4, corner to corner THROUGH the door
 ]
 DIM_BATHROOM_OPEN = [("u", (4.09, -0.32), (4.09, 0.46))]
-DIM_BATHROOM_DIAG = [("w", (2.32, 0.46), (4.09, -1.11)),
-                     ("x", (4.09, 0.46), (2.32, -1.11))]
+DIM_BATHROOM_DIAG: list = []  # same
 
 
 def draw_dims(ax, segments, openings, diagonals, title):
@@ -290,11 +288,14 @@ def main_dims() -> int:
 
     legend = (
         "dark circle = wall, corner to corner      red circle = opening, CLEAR WIDTH\n"
-        "gold dashed = diagonal, inside corner to inside corner\n"
         "f and t run corner to corner STRAIGHT THROUGH the doorway in that wall.\n"
-        "Not on the drawing, measure anyway:  h = height of g   j = height of i   v = height of u\n"
-        "  m + n = ceiling spot 1 (floor-to-seat, then seat-to-ceiling)   o + p = ceiling spot 2\n"
-        "  y + z = bathroom ceiling, same two parts.   ALL VALUES IN CENTIMETRES."
+        "\n"
+        "NOT on the drawing, and still needed -- the ceiling, in TWO PARTS per spot:\n"
+        "  m + n = bedroom spot 1 (floor-to-seat, then seat-to-ceiling)\n"
+        "  o + p = bedroom spot 2, at least 1 m away      y + z = bathroom\n"
+        "\n"
+        "No diagonals: head_to_head reads them and does not use them.\n"
+        "ALL VALUES IN CENTIMETRES."
     )
     fig.text(0.5, 0.165, legend, ha="center", va="top", fontsize=8.8, color=WALL,
              family="monospace",
