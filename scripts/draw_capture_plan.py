@@ -254,7 +254,7 @@ def draw_dims(ax, segments, openings, diagonals, title):
                     va="center", zorder=9,
                     bbox=dict(boxstyle="circle,pad=0.30", fc=fc, ec="white", lw=1.6))
 
-    nudges = {"a": (0.30, 0), "b": (0, -0.26), "c": (0.30, 0.16), "d": (0, -0.26),
+    nudges = {"a": (0.30, 0), "b": (0, -0.26), "c": (-0.42, 0.00), "d": (0.06, -0.46),
               "e": (-0.30, 0), "f": (-1.40, 0.26), "q": (0, -0.24), "r": (0.26, 0),
               "s": (0, 0.24), "t": (-0.26, 0)}
     for lbl, a, b in segments:
@@ -278,7 +278,7 @@ def main_dims() -> int:
     draw_dims(axes[1], DIM_BATHROOM, DIM_BATHROOM_OPEN, DIM_BATHROOM_DIAG,
               "BATHROOM — write each length in cm")
 
-    axes[0].annotate("BUILT-IN CUPBOARD\nb = front,  c = end", (-1.55, 1.49),
+    axes[0].annotate("BUILT-IN CUPBOARD\nb = front,  c = end", (-1.78, 1.49),
                      color=WALL, fontsize=8, style="italic", ha="center", va="center", zorder=6,
                      bbox=dict(boxstyle="round,pad=0.3", fc="#eef1f4", ec=WALL, lw=0.8))
     axes[0].annotate("g → BATHROOM", (0.08, -2.58), color=OPENING, fontsize=8.5, weight="bold",
