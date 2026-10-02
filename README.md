@@ -121,6 +121,8 @@ silently corrupted three PNGs while the archives themselves verified fine.
 | `bench/same_flat.py` | G-REPEAT and G-OPEN: two walks of one flat against each other |
 | `bench/wall_distance_walks.py` | **A-WALL-LIDAR vs laser truth — MET, 10/10 at 8.6 mm** on the distances between the walls our device names; **8/10 if naming the wrong pair is also charged**, and both readings are published |
 | `bench/photo_vs_lidar.py` | **G-WALL-PHOTO** — photo tier vs the LiDAR reference on the same frames; 0/6, and the cause took three wrong answers |
+| `bench/houselayout_adjacency.py` | **A-ADJ at the unit level — `openings()` scores precision 0.69 on 62 false positives**, with the **exact door graph on 25 of 28 storeys** once the openings the dataset draws but names no door on are set aside and **6 of 28 if they are charged** (3 of 28 before the negative control); all three readings are published. Its recall, 139 of 141 pairs, is **not** a detection rate — the rasterised annotated floor guarantees label contact wherever it joins two rooms. Fed the annotated floor of 16 HouseLayout3D buildings, not a capture. Scope, negative control and a no-skill baseline in the result file |
+| `scripts/fetch_houselayout3d.py` | fetches those 16 buildings (~56 MB, MIT), at a pinned revision |
 | `bench/arkitscenes_laser.py` | the **first** attempt at G-CEIL — returned NOT MEASURED; kept with a retraction notice |
 | `bench/ceiling_vs_laser.py` | the **second** attempt — also wrong, and the reasoning reads convincing; kept as the record |
 | `bench/clean_clone_check.sh` | **clone, install, regenerate, diff** — reproduction from scratch |

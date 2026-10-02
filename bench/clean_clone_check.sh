@@ -53,6 +53,7 @@ PLAN=(
   "wall_distance_walks.json|wall_distance_walks|arkitscenes_walks|"
   "head_to_head.json|head_to_head|own|"
   "head_to_head_engineer.json|head_to_head_engineer|supplied|"
+  "houselayout_adjacency.json|houselayout_adjacency|external/houselayout3d|"
   "video_vs_lidar.json|video_vs_lidar|supplied|needs the models extra (torch + weights); pass --with-models"
   "photo_tier.json|photo_tier|supplied|needs the models extra (torch + weights); pass --with-models"
   "photo_vs_lidar.json|photo_vs_lidar|supplied|needs the models extra (torch + weights); pass --with-models"
@@ -85,7 +86,7 @@ mkdir -p data
 # head_to_head.json had been generated from a filled measurements sheet that is gitignored, so
 # a reviewer's clone produced a different file. Reading the tracked template is CORRECT here,
 # so the directory is left exactly as the clone made it.
-for d in supplied arkitscenes arkitscenes_up arkitscenes_walks; do
+for d in supplied arkitscenes arkitscenes_up arkitscenes_walks external; do
   if [ -e "$SRC/data/$d" ]; then
     rm -rf "data/$d"
     ln -sfn "$(readlink -f "$SRC/data/$d")" "data/$d"

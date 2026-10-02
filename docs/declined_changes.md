@@ -15,6 +15,13 @@ shipped (`9078b86`), while the half that actually flipped its gate stayed declin
 shape this page is really about — not "reject the change" but "separate the part that is correct
 from the part that is only favourable".
 
+§4 then moved in both directions at once. Its decline stands — the dataset still ships buildings
+and not captures — but the narrower target it never tried was built and **adopted** (§4a), and
+the one finding this page chose to keep from it is wrong by nearly a factor of two and is
+**retracted** (§4b). That retraction removes an argument we had been using about the opponent's
+room count. It is written up anyway: a page about declining favourable changes is worth nothing
+if it will not also withdraw a favourable finding.
+
 Every number below was measured in a worktree. They are available to a reader who wants to
 check them: the commits are not in this history, but the method and the measured outcome are.
 
@@ -134,7 +141,7 @@ calling it a validation. A-DMG-DETECT stays NOT BUILT, which is what it is.
 
 ---
 
-## 4. HouseLayout3D for adjacency — DECLINED by its own author, with a finding worth keeping
+## 4. HouseLayout3D for adjacency — DECLINED end to end, later ADOPTED at the unit level, and this section's headline finding RETRACTED
 
 **What it was.** Our `plan.adjacency` has never been checked against anything — the compliance
 matrix says so at 2.2. `cozmo-scan` validates its stitch solver on HouseLayout3D. The candidate
@@ -150,6 +157,10 @@ corner lists and nerfstudio poses with no images and no depth behind them. There
 pipeline can ingest, so the comparison requires synthesising a capture from the mesh — and then
 the result measures the synthesiser as much as the pipeline. The low scores above are partly an
 artifact of that, which makes them unusable as a validation of our adjacency.
+
+> **The finding below is RETRACTED by §4b.** It was wrong, the number that replaced it is
+> nearly twice as large, and the conclusion this section drew from it does not survive. The
+> paragraphs are kept unedited because the retraction is only legible next to what was claimed.
 
 **The finding worth keeping.** The same investigation produced a diagnostic that explains
 something this project has been documenting as a failure for days. Across those buildings there
@@ -169,6 +180,125 @@ from floor coverage has a ceiling imposed by the data, and this is roughly where
 *(This diagnostic was measured by the investigation and is reported as its finding; unlike the
 numbers in the shipped commits, I have not independently re-derived it.)*
 
+### 4a. The narrower target on the same dataset — ADOPTED
+
+**What changed.** The decline above is about feeding the dataset to the *pipeline*. It stands:
+there is no capture here. What was not tried was feeding it to the *unit* — `openings()`, which
+takes a room label image and returns the opening list that becomes `plan.adjacency`. That needs
+no capture at all, because its input is a raster of the floor, and a drawn floor polygon
+rasterises directly. `bench/houselayout_adjacency.py` does that, and
+`bench/results/houselayout_adjacency.json` carries the result with its own scope section. The
+snapshot is pinned by revision in `scripts/fetch_houselayout3d.py`: the result file is 16k lines
+that `bench/clean_clone_check.sh` regenerates from a clean clone and compares field by field
+against the committed copy, so on an unpinned reference an upstream re-upload — one re-exported
+mesh — would read as a failure in our code rather than as a moved dataset.
+
+**The number, in the two readings the A-WALL-LIDAR row already uses.** Over 28 storeys of 16
+buildings: **precision 0.6915 on 62 false positives**, exact door graph on **25 of 28 storeys**
+once the openings the dataset draws but names no door on are set aside, **6 of 28 if those are
+charged**, and **3 of 28 before the negative control is subtracted**. Precision is a lower
+bound: 60 of the 62 false positives are pairs whose labels meet only inside a floor patch the
+annotation draws inside a wall and names no door on, and that same flag fires on 0 of the 139
+true positives.
+
+**What recall is, and what it is not.** Recall is 139 of 141 and it must not be read as
+detection. `fill_nearest` grows each room's label through free space, so wherever the annotated
+floor joins two rooms their labels *must* come into contact, and `openings()` reports a pair on
+contact. Of the 141 live truth pairs, 138 have their two rooms joined by walkable floor and all
+138 were predicted; the 2 misses are pairs the rasterisation left in different free-space
+components. The only part of `openings()` that can refuse a pair it already has contact for is
+the width filter — wider than 2.5 × `DOOR_MAX_M` is discarded as a whole open side — and it
+fired on **zero** truth pairs. Recall therefore measures the annotation's own floor
+connectivity, not any discrimination by `openings()`. Precision 0.69 is the number that measures
+our code, and it is the number to quote.
+
+**It is still not tautological, and here is the evidence rather than the assertion.** A
+predictor that never runs `openings()` — call two annotated rooms adjacent when their drawn floor
+polygons come within *d* metres — scores f1 0.1181 / 0.3486 / 0.5113 / 0.5470 at *d* = 0.04 /
+0.08 / 0.12 / 0.20 m, against `openings()`' 0.7338 on the same unsubtracted truth. That margin
+over doing nothing is published in the result file under `summary.no_skill_baseline`.
+
+**The negative control made the result better, not worse.** Running `openings()` on the same
+storeys with every doorway deleted from the floor still produces 101 pairs, 36 of them real door
+pairs. Subtracting all 101 from both sides **raised** precision 0.5833 → 0.6915, **raised** f1
+0.7338 → 0.8129 and **raised** exact-graph storeys 3 → 6 of 28. Only recall fell, 0.9887 →
+0.9858. That is the opposite of how a negative control usually reads, and it is said plainly here
+because the natural way to describe a control — a handicap the result survived — would have been
+false. It was not a handicap. It was a correction, and it corrected upward.
+
+**What the control found about our own code.** The 5×5 contact dilation in `openings()` reaches
+4 cm from each label, so on a 2 cm grid it bridges any partition thinner than about 8 cm of
+unobserved floor — and because the function has no minimum width, the invented pair is published
+with a width near zero. Nothing in the shipped code rejects it. That is measured here, not fixed
+here.
+
+**What it says about our splitter, which is not flattering.** `split_rooms()` on the same perfect
+floor scores recall **0.0284** — 4 of 141 pairs — and recovers **47 of the 292** annotated rooms,
+rising to **170** when the erosion is widened from `DOOR_MAX_M` = 0.70 m to 0.90 m. The **273**
+doors annotated on these storeys run **0.53 to 1.88 m, median 0.80 m, with 90.5% of them wider
+than 0.70 m and 26 at or below it**, so an erosion sized for 0.70 m never pinches most of them
+off and most storeys come back as one room. (An earlier draft of this paragraph called these
+doors "0.78–0.81 m wide". That band holds 19% of them and was presented as the population. The
+conclusion is unchanged — the 47 → 170 ablation is what carries it — but the characterisation was
+wrong, and the distribution is now computed into the result file rather than written as a
+sentence.) It is **not** a reason to change the constant, which was set on our own captures and
+would need its own measurement to move.
+
+### 4b. RETRACTION — the half-the-rooms-are-not-separable finding, and the ceiling drawn from it
+
+**What is withdrawn.** §4 states, as this project's position, that across these 16 buildings
+there are 240 truth rooms but the layout geometry separates only **119 floor regions**, so "half
+the truth's rooms are not separated by any geometric boundary at all" — and concludes from it
+that "a method that works from floor coverage has a ceiling imposed by the data, and this is
+roughly where it sits", which §4 then uses to bound the opponent's room-count advantage. **The
+figure and the conclusion are both withdrawn.**
+
+**The replacement number.** On the same 16 buildings, 28 storeys,
+`bench/houselayout_adjacency.py` counts **292 annotated rooms and 255 separate floor regions**
+once every doorway reveal is deleted from the floor — **87.3% separable**, not about half. It is
+not the case that half the rooms have no geometric boundary. Roughly an eighth do.
+
+**Which construction was better, and why that is not a matter of taste here.** §4's figure came
+out of the end-to-end comparison that same section declines, which required synthesising a
+capture from the mesh — §4 itself names that synthesiser as the reason the run's scores are
+unusable, and then keeps one figure out of the same run anyway. Its author also recorded, in the
+parenthetical above, that the figure had never been independently re-derived. The replacement
+reads the per-entity floor polygons straight out of the annotation, rasterises them onto
+scanplan's own 2 cm grid and counts 4-connected components; there is no synthesiser anywhere in
+it, and an independent verifier re-ran the whole benchmark to a byte-identical result file. A
+never-re-derived number measured through a synthesiser loses to a byte-reproducible number
+measured without one.
+
+The two runs also count rooms differently — ours keeps every floor patch of at least
+`ROOM_MIN_AREA_M2`, giving 292 where §4 counted 240 — and that does not rescue the claim. The
+disagreement is a factor of 1.8 on the *share*, and no room-counting convention moves a share
+that far. I have not re-derived §4's 119 and cannot: the commit is not in this history. What is
+true is that the number replacing it is reproducible and the number it replaces never was.
+
+**§4 did not predict this, and this section does not pretend it did.** §4 argued the opposite,
+confidently, and used it to explain a failure we already had. It was the wrong explanation. The
+paragraphs are left standing with a retraction notice above them, the same way §2 records being
+shipped in two stages rather than being rewritten as though the first judgement had been right.
+
+**What this costs us, stated against our own interest.** The retracted ceiling was load-bearing:
+it bounded the opponent's room-count lead — they report 3/8/9 rooms where we report 2/5/5 — by
+saying the data would not let a coverage method do better. The data does let it. And on the
+measurement that replaced the claim, our splitter scores almost nothing: `split_rooms()` reaches
+recall **0.0284** on this benchmark and recovers 47 of 292 rooms where the drawn geometry
+separates 255. So the opponent's room-count lead is **more architectural than this project has
+been claiming, not less.** Their wall-run approach reads structure our coverage approach does
+not, and we no longer have a data-side reason why ours could not. This is not a draw and should
+not be written up as one.
+
+**What still stands, and on what.** The decline of the third room-splitting attempt stands on its
+own evidence, measured in its own worktree like everything else on this page: it halved the
+one-to-one room pairing in `bench/same_flat.py`, 2 of 5 down to 1 of 5, which is a regression on
+our own captures and owes nothing to this dataset. `docs/fix_loop.md`'s conclusion that room
+splitting here "is not a parameter problem" also stands, because it rests on two failed attempts
+on our own captures rather than on §4. What does **not** stand is the reason §4 gave for either
+— that the information is not in the floor plan. On this dataset the information is in the floor
+plan, and we do not get it out.
+
 ---
 
 ## What this page is for
@@ -181,3 +311,8 @@ Two of six survived that. The four here would each have improved a headline numb
 the four would have done it by narrowing a question, copying an implementation while claiming
 otherwise, or choosing a constant for its effect on the gates. The fourth was declined by the
 person who built it.
+
+The other cheap way to produce confident garbage is to keep a *finding* because it is
+convenient, after declining the change that produced it. §4 did that, and §4b withdraws it. The
+cost is recorded there rather than absorbed: the opponent's room-count lead is now worse for us
+than this project had been saying.

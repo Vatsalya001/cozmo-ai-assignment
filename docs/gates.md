@@ -117,7 +117,8 @@ Stated so that an absent row is not read as a quiet pass. None of these is score
 | G-CONTRACT | Not numeric. Mapped item by item to files in `docs/compliance_matrix.md` Part 2 |
 | G-INSTALL | `bench/clean_clone_check.sh` — clone, install and first result from scratch |
 | A-FLAG, A-SCOPE | Asserted by unit tests rather than a benchmark; both are properties of the logic, not measurements |
-| A-AREA, A-ADJ | **Need ground truth that does not exist.** Equivalent to the NOT MEASURED rows |
+| A-AREA | **Needs ground truth that does not exist.** Equivalent to the NOT MEASURED rows |
+| A-ADJ | **No truth exists on our own captures**, so `bench/gates.py` still reports nothing. The graph-building step alone is measured on external truth by `bench/houselayout_adjacency.py`: precision 0.6915 on 62 false positives, exact door graph on 25 of 28 HouseLayout3D storeys under the reading stated in `docs/compliance_matrix.md` row 2.2. Its recall is not a detection rate — see the result file. That is `openings()` given perfect room geometry, not a check on a plan built from a real walk |
 | A-DMG | Superseded by the A-DMG-DETECT row above |
 | A-CALIB | Realised as A-CALIB-VIDEO above; the LiDAR tier has no truth to be calibrated against |
 
