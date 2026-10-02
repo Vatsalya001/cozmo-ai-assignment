@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import csv
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -337,3 +338,29 @@ def test_the_centimetre_sheet_maps_onto_names_head_to_head_actually_understands(
     # And no two letters may collide on the same (element, type), which would silently drop one.
     pairs = [(v[1], v[2]) for v in tape_to_csv.MAP.values()]
     assert len(pairs) == len(set(pairs)), "two letters write the same row; one would be lost"
+
+
+def test_the_head_to_head_reads_a_committed_capture_not_a_gitignored_one():
+    """`out/` is gitignored -- it is where a run writes, not where evidence lives.
+
+    read_ours() looked only there, so from a clean clone there was no capture to compare and
+    head_to_head.json regenerated as "cannot score". The clean-clone check caught it as the one
+    DIFFERS among twelve files: the result was real on this machine and unreproducible anywhere
+    else, which is worth less than no result at all.
+
+    The capture is now committed under submission/outputs/photo/myflat/ and that path is
+    searched as a fallback, so the number reproduces from a fresh clone.
+    """
+    root = Path(__file__).resolve().parents[1]
+    committed = root / "submission" / "outputs" / "photo" / "myflat" / "result.json"
+    assert committed.is_file(), (
+        "the own-rooms capture must be committed, or the head-to-head cannot be reproduced")
+
+    tracked = subprocess.run(["git", "ls-files", str(committed.relative_to(root))],
+                             cwd=root, capture_output=True, text=True).stdout.strip()
+    assert tracked, f"{committed.relative_to(root)} exists but is not tracked by git"
+
+    src = (root / "bench" / "head_to_head.py").read_text()
+    assert "submission" in src and "outputs" in src, (
+        "read_ours no longer falls back to the committed outputs; a clean clone would score "
+        "nothing and the artifact would silently revert to 'cannot score'")

@@ -57,7 +57,7 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
 # 3. check the install
-pytest -q                                  # expect: 209 passed
+pytest -q                                  # expect: 210 passed
 
 # 4. measure a capture — the tier is detected from the input
 scanplan run path/to/StrayScannerExport

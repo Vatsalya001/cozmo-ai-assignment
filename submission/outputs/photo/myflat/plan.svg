@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="714" height="327" viewBox="0 0 714 327">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g font-family="Helvetica,Arial,sans-serif">
+<polygon points="70.0,257.5 268.8,257.5 268.8,70.0 70.0,70.0" fill="#f2f4f7" stroke="#111111" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="448.8,257.5 643.8,257.5 643.8,111.0 448.8,111.0" fill="#f2f4f7" stroke="#111111" stroke-width="3" stroke-linejoin="round"/>
+<text x="169.4" y="252.5" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(0.0 169.4 257.5)">2.21</text>
+<text x="268.8" y="158.7" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-90.0 268.8 163.7)">2.08</text>
+<text x="169.4" y="65.0" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(360.0 169.4 70.0)">2.21</text>
+<text x="70.0" y="158.7" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(90.0 70.0 163.7)">2.08</text>
+<text x="169.4" y="163.7" font-size="15" font-weight="bold" text-anchor="middle" fill="#111111">R1</text>
+<text x="169.4" y="181.7" font-size="12" text-anchor="middle" fill="#444444">4.60 m²</text>
+<text x="169.4" y="197.7" font-size="11" text-anchor="middle" fill="#777777">h 2.10 m</text>
+<text x="546.3" y="252.5" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(0.0 546.3 257.5)">2.17</text>
+<text x="643.8" y="179.2" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(-90.0 643.8 184.2)">1.63</text>
+<text x="546.3" y="106.0" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(360.0 546.3 111.0)">2.17</text>
+<text x="448.8" y="179.2" font-size="12" fill="#1a56db" text-anchor="middle" transform="rotate(90.0 448.8 184.2)">1.63</text>
+<text x="546.3" y="184.2" font-size="15" font-weight="bold" text-anchor="middle" fill="#111111">R2</text>
+<text x="546.3" y="202.2" font-size="12" text-anchor="middle" fill="#444444">3.53 m²</text>
+<text x="546.3" y="218.2" font-size="11" text-anchor="middle" fill="#777777">h 2.55 m (not seen)</text>
+<text x="70" y="303" font-size="12" fill="#111111">myflat · photo tier · 2 rooms · 8.13 m² [2.24, 14.01]</text>
+<text x="70" y="319" font-size="10" fill="#777777">every dimension in metres; intervals are nominal 90%</text>
+</g>
+</svg>

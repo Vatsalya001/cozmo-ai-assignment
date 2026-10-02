@@ -1,0 +1,301 @@
+{
+  "schema_version": "0.1.0",
+  "units": "m",
+  "capture": {
+    "id": "myflat",
+    "tier": "photo",
+    "source_path": "data/own/myflat",
+    "frames": 16,
+    "pipeline_version": "0.1.0",
+    "runtime_s": 18.97,
+    "drift_correction": false
+  },
+  "rooms": [
+    {
+      "id": "R1",
+      "label": "1-bedroom",
+      "polygon": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          2.209,
+          0.0
+        ],
+        [
+          2.209,
+          2.083
+        ],
+        [
+          0.0,
+          2.083
+        ]
+      ],
+      "floor_area_m2": {
+        "value": 4.6013,
+        "ci_low": 1.2709,
+        "ci_high": 7.9317,
+        "confidence": 0.9,
+        "method": "measured floor coverage"
+      },
+      "perimeter_m": {
+        "value": 8.584,
+        "ci_low": 7.6793,
+        "ci_high": 9.4888,
+        "confidence": 0.9,
+        "method": "sum of wall lengths"
+      },
+      "ceiling_height_m": {
+        "value": 2.1015,
+        "ci_low": -2.4222,
+        "ci_high": 6.6253,
+        "confidence": 0.9,
+        "method": "ceiling plane minus floor plane"
+      },
+      "walls": [
+        {
+          "id": "R1.W1",
+          "surface_id": "R1.W1",
+          "start": [
+            0.0,
+            0.0
+          ],
+          "end": [
+            2.209,
+            0.0
+          ],
+          "length_m": {
+            "value": 2.2095,
+            "ci_low": 1.7571,
+            "ci_high": 2.6619,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W2",
+          "surface_id": "R1.W2",
+          "start": [
+            2.209,
+            0.0
+          ],
+          "end": [
+            2.209,
+            2.083
+          ],
+          "length_m": {
+            "value": 2.0825,
+            "ci_low": 1.6301,
+            "ci_high": 2.5349,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W3",
+          "surface_id": "R1.W3",
+          "start": [
+            2.209,
+            2.083
+          ],
+          "end": [
+            0.0,
+            2.083
+          ],
+          "length_m": {
+            "value": 2.2095,
+            "ci_low": 1.7571,
+            "ci_high": 2.6619,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R1.W4",
+          "surface_id": "R1.W4",
+          "start": [
+            0.0,
+            2.083
+          ],
+          "end": [
+            0.0,
+            0.0
+          ],
+          "length_m": {
+            "value": 2.0825,
+            "ci_low": 1.6301,
+            "ci_high": 2.5349,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        }
+      ],
+      "openings": []
+    },
+    {
+      "id": "R2",
+      "label": "2-bathroom",
+      "polygon": [
+        [
+          4.209,
+          0.0
+        ],
+        [
+          6.375,
+          0.0
+        ],
+        [
+          6.375,
+          1.628
+        ],
+        [
+          4.209,
+          1.628
+        ]
+      ],
+      "floor_area_m2": {
+        "value": 3.5255,
+        "ci_low": 0.9737,
+        "ci_high": 6.0772,
+        "confidence": 0.9,
+        "method": "measured floor coverage"
+      },
+      "perimeter_m": {
+        "value": 7.5868,
+        "ci_low": 6.6821,
+        "ci_high": 8.4916,
+        "confidence": 0.9,
+        "method": "sum of wall lengths"
+      },
+      "ceiling_height_m": {
+        "value": 2.55,
+        "ci_low": 2.04,
+        "ci_high": 3.1875,
+        "confidence": 0.9,
+        "method": "not seen; population typical",
+        "observed": false
+      },
+      "walls": [
+        {
+          "id": "R2.W1",
+          "surface_id": "R2.W1",
+          "start": [
+            4.209,
+            0.0
+          ],
+          "end": [
+            6.375,
+            0.0
+          ],
+          "length_m": {
+            "value": 2.1651,
+            "ci_low": 1.7127,
+            "ci_high": 2.6175,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R2.W2",
+          "surface_id": "R2.W2",
+          "start": [
+            6.375,
+            0.0
+          ],
+          "end": [
+            6.375,
+            1.628
+          ],
+          "length_m": {
+            "value": 1.6283,
+            "ci_low": 1.176,
+            "ci_high": 2.0807,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R2.W3",
+          "surface_id": "R2.W3",
+          "start": [
+            6.375,
+            1.628
+          ],
+          "end": [
+            4.209,
+            1.628
+          ],
+          "length_m": {
+            "value": 2.1651,
+            "ci_low": 1.7127,
+            "ci_high": 2.6175,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        },
+        {
+          "id": "R2.W4",
+          "surface_id": "R2.W4",
+          "start": [
+            4.209,
+            1.628
+          ],
+          "end": [
+            4.209,
+            0.0
+          ],
+          "length_m": {
+            "value": 1.6283,
+            "ci_low": 1.176,
+            "ci_high": 2.0807,
+            "confidence": 0.9,
+            "method": "corner to corner, inside faces"
+          }
+        }
+      ],
+      "openings": []
+    }
+  ],
+  "plan": {
+    "footprint_m2": {
+      "value": 8.1268,
+      "ci_low": 2.2446,
+      "ci_high": 14.0089,
+      "confidence": 0.9,
+      "method": "sum of per-room boxes from unposed views"
+    },
+    "adjacency": [],
+    "groups": 2,
+    "overlap_m2": 0.0,
+    "drift": {
+      "method": "not applicable: stills carry no trajectory",
+      "loop_closures": 0,
+      "applied": false
+    }
+  },
+  "damage": [],
+  "concealed_flags": [],
+  "scope": [],
+  "quality": {
+    "warnings": [
+      {
+        "code": "GEOMETRY_WARNING",
+        "severity": "warning",
+        "message": "photo tier: 16 stills across 2 room folder(s). Depth is INFERRED, and there are NO camera poses -- each photo is levelled against the floor it can see but never located. Rooms are therefore NOT stitched: they are placed side by side, and the whole-property stitch gate fails by construction. An L-shaped room returns as its bounding box"
+      },
+      {
+        "code": "PHOTO_TIER_NOT_STITCHED",
+        "severity": "error",
+        "message": "2 room(s) are reported as separate rectangles, laid out side by side and joined to nothing. With no camera poses there is nothing in the input that says how the rooms relate, so the whole-property stitch gate fails by construction rather than by accident. Each room is the bounding box of what one view could see: an L-shaped room returns as a rectangle"
+      }
+    ],
+    "scene_conditions": {
+      "mirror": false,
+      "glass": false,
+      "wet_floor": false,
+      "low_light": false
+    },
+    "interval_widening_factor": 11.0
+  }
+}

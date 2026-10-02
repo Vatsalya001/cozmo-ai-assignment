@@ -170,8 +170,20 @@ def read_ours(out_dir: Path | None = None) -> dict:
     "left wall". Nothing in either output says which of ours is theirs.
     """
     out = {}
-    base = out_dir if out_dir is not None else (ROOT / "out")
-    for d in sorted(base.glob("*")) if base.is_dir() else []:
+    # `out/` is gitignored -- it is where a run writes, not where evidence lives. Reading only
+    # there made this benchmark unreproducible: a clean clone has no out/, so head_to_head.json
+    # regenerated as "cannot score" and the clean-clone check reported it as DIFFERS. The
+    # committed outputs under submission/outputs/ are the reproducible copy, so both are searched
+    # and the committed one is the fallback.
+    bases = [out_dir] if out_dir is not None else [ROOT / "out",
+                                                  ROOT / "submission" / "outputs" / "photo",
+                                                  ROOT / "submission" / "outputs" / "lidar",
+                                                  ROOT / "submission" / "outputs" / "video"]
+    dirs = []
+    for base in bases:
+        if base and base.is_dir():
+            dirs.extend(sorted(base.glob("*")))
+    for d in dirs:
         j = d / "result.json"
         if not j.is_file():
             continue
@@ -179,6 +191,8 @@ def read_ours(out_dir: Path | None = None) -> dict:
         if "own" not in str(doc["capture"].get("source_path", "")):
             continue
         for room in doc["rooms"]:
+            if room["id"] in out:            # first base wins; out/ shadows the committed copy
+                continue
             # Our perimeter_m is the CLOSED polygon; magicplan's excludes door openings
             # (see read_tape). Both sides must use one convention or the comparison charges us
             # the door widths as error, so ours has its own openings subtracted.
