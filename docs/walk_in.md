@@ -46,10 +46,19 @@ examiners chose, stop and sort out the folder before running.
 3. ```bash
    scanplan run /path/to/export
    ```
-4. Expect **roughly 10–50 s** depending on walk length, against a 60 s budget. Exact seconds
-   vary with the machine and live in `bench/results/timing.json` — which is precisely why they
-   are kept out of `gates.json`. Read the room table off `summary.md`, or open `plan.svg` to
-   show the plan. `result.json` is the contract document.
+4. Expect **roughly 12–57 s** depending on walk length, against a 60 s budget. Read the room
+   table off `summary.md`, or open `plan.svg` to show the plan. `result.json` is the contract
+   document.
+
+   **Know this before the day: the margin is thin.** The longest capture measured 56.5 s of a
+   60 s budget on an idle 12-core machine. A slower laptop will blow it. If that happens, say so
+   plainly rather than hiding it — and `--stride 4` roughly halves the time at a small accuracy
+   cost, which is a legitimate thing to do in front of examiners if you announce it.
+
+   The honest footnote: adaptive keyframe selection would have brought the worst capture to
+   40.8 s with real headroom. It was declined because its threshold turned out to be the only
+   value in the swept space that cleared three gates at once (`docs/declined_changes.md` §1).
+   This thin margin is the price of that decision, and it is the right price to have paid.
 
 This is the strongest tier and the one to steer towards if given a choice. It is also the only
 tier with a metric scale that was *measured* rather than inferred.

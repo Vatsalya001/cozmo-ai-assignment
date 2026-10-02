@@ -107,7 +107,10 @@ else
 fi
 
 echo "=== tests ==="
+# Name the failures. `tail -1` printed "1 failed, 142 passed" and hid WHICH test, which made a
+# clone-only failure invisible -- exactly the case this check exists to surface.
 ./.venv/bin/pytest -q 2>&1 | tail -1
+./.venv/bin/pytest -q 2>&1 | grep -E '^(FAILED|ERROR)' | sed 's/^/  /' || true
 
 echo ""
 echo "=== regenerating, then diffing committed against regenerated ==="

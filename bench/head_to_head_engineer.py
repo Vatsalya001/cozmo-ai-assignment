@@ -263,12 +263,17 @@ def main() -> int:
                 f"{name}: cozmo-scan reports {theirs['rooms']} rooms, we report "
                 f"{mine['rooms']}. We are documented as under-splitting and this is that, "
                 f"measured against an independent implementation rather than asserted")
+        # Both pipelines now fit ceiling height PER ROOM, so a difference in the number of
+        # distinct heights is a difference in room COUNT, not in the ceiling model. Saying
+        # otherwise was true when written and became false when the per-room fit shipped -- the
+        # kind of stale comparison that outlives the gap it described.
         if len(theirs["ceilings_m"]) > len(mine["ceilings_m"]):
             opponent_better.append(
                 f"{name}: cozmo-scan reports {len(theirs['ceilings_m'])} distinct ceiling "
-                f"heights ({theirs['ceilings_m']}) where we report "
-                f"{mine['ceilings_m']} for every room. We fit one storey height per capture; "
-                f"they fit per room, which models a real property more closely")
+                f"heights ({theirs['ceilings_m']}) against our {len(mine['ceilings_m'])} "
+                f"({mine['ceilings_m']}). Both fit per room now, so this follows from their "
+                f"splitting into more rooms rather than from a better ceiling model -- it is "
+                f"the room-count gap above, counted a second way, not an independent one")
 
     scored = [r for r in rows if "we_beat_or_tie" in r]
     won = sum(r["we_beat_or_tie"] for r in scored)

@@ -28,9 +28,9 @@
       "models": "the device as MEASURED: reads 18 mm short of laser truth",
       "dimension": "ceiling height",
       "truth": 2.5,
-      "scanplan": 2.4969,
+      "scanplan": 2.4972,
       "cozmo_scan": 2.489,
-      "scanplan_error_m": 0.0031,
+      "scanplan_error_m": 0.0028,
       "cozmo_scan_error_m": 0.011,
       "we_beat_or_tie": true
     },
@@ -83,9 +83,9 @@
       "models": "an ideal sensor with no bias",
       "dimension": "ceiling height",
       "truth": 2.5,
-      "scanplan": 2.5277,
+      "scanplan": 2.5279,
       "cozmo_scan": 2.519,
-      "scanplan_error_m": 0.0277,
+      "scanplan_error_m": 0.0279,
       "cozmo_scan_error_m": 0.019,
       "we_beat_or_tie": false
     },
@@ -169,7 +169,11 @@
         "rooms": 5,
         "footprint_m2": 49.645,
         "ceilings_m": [
-          3.087
+          2.278,
+          2.365,
+          2.965,
+          3.087,
+          3.096
         ]
       },
       "cozmo_scan": {
@@ -194,7 +198,7 @@
     "c00a170fe1: cozmo-scan reports 3 rooms, we report 2. We are documented as under-splitting and this is that, measured against an independent implementation rather than asserted",
     "1a8384c3f6: cozmo-scan reports 8 rooms, we report 5. We are documented as under-splitting and this is that, measured against an independent implementation rather than asserted",
     "c7d28f72c6: cozmo-scan reports 9 rooms, we report 5. We are documented as under-splitting and this is that, measured against an independent implementation rather than asserted",
-    "c7d28f72c6: cozmo-scan reports 9 distinct ceiling heights ([2.289, 2.365, 2.435, 2.449, 2.973, 2.982, 3.083, 3.097, 3.104]) where we report [3.087] for every room. We fit one storey height per capture; they fit per room, which models a real property more closely"
+    "c7d28f72c6: cozmo-scan reports 9 distinct ceiling heights ([2.289, 2.365, 2.435, 2.449, 2.973, 2.982, 3.083, 3.097, 3.104]) against our 5 ([2.278, 2.365, 2.965, 3.087, 3.096]). Both fit per room now, so this follows from their splitting into more rooms rather than from a better ceiling model -- it is the room-count gap above, counted a second way, not an independent one"
   ],
   "notes": [],
   "beat_or_tie": 9,

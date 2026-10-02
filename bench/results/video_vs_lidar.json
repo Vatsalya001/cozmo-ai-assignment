@@ -8,7 +8,7 @@
       "footprint_error_pct": 59.74160069894893,
       "lidar_rooms": 2,
       "video_rooms": 2,
-      "video_runtime_s": 106.5,
+      "video_runtime_s": 107.7,
       "video_ci": [
         6.6659,
         41.6029
@@ -22,7 +22,7 @@
       "footprint_error_pct": -26.72700175676689,
       "lidar_rooms": 5,
       "video_rooms": 1,
-      "video_runtime_s": 90.9,
+      "video_runtime_s": 109.3,
       "video_ci": [
         9.7229,
         60.6819
@@ -31,10 +31,10 @@
     },
     {
       "capture": "c7d28f72c6",
-      "video_failed": "CaptureError: c7d28f72c6: no floor found; the capture must show the floor. 639586 of 1131844 points are below the camera, which is too few to fit a floor plane -- ask for a re-walk with the floor sweep in the capture protocol",
+      "video_failed": "CaptureError: c7d28f72c6: no floor found. 639586 of 1131844 points below the camera: 57% of points ARE below the camera, but no single height holds enough of them to be a surface. That is what depth looks like when it is inconsistent between frames rather than when the floor was unseen, and on the video tier it is the inferred depth rather than the capture",
       "lidar_footprint_m2": 49.6452,
       "lidar_rooms": 5,
-      "video_runtime_s": 85.0
+      "video_runtime_s": 95.0
     }
   ],
   "shipped_widening_factor": 11.0,

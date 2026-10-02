@@ -3,14 +3,14 @@
   "mode": "bug_fix",
   "confidence": 0.7,
   "source": "classifier-rules.json",
-  "timestamp": "2026-10-01T23:24:23Z",
-  "classification_id": "cls_1790897063_798aa3dd",
-  "active_task_id": "cls_1790897063_798aa3dd",
-  "prompt_hash": "798aa3dd",
-  "task_origin_prompt_hash": "798aa3dd",
-  "last_prompt_hash": "798aa3dd",
+  "timestamp": "2026-10-02T00:11:08Z",
+  "classification_id": "cls_1790899868_66eefe40",
+  "active_task_id": "cls_1790899868_66eefe40",
+  "prompt_hash": "66eefe40",
+  "task_origin_prompt_hash": "66eefe40",
+  "last_prompt_hash": "66eefe40",
   "last_prompt_event": "task",
-  "last_prompt_ts": "2026-10-01T23:24:23Z",
+  "last_prompt_ts": "2026-10-02T00:11:08Z",
   "reasoning": [
     "matched bug_fix mode keyword"
   ]

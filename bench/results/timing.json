@@ -1,10 +1,10 @@
 {
   "budget_s": 60.0,
-  "worst_s": 55.2,
+  "worst_s": 56.5,
   "per_capture_s": {
-    "c00a170fe1": 11.4,
-    "1a8384c3f6": 31.2,
-    "c7d28f72c6": 55.2
+    "c00a170fe1": 11.5,
+    "1a8384c3f6": 31.9,
+    "c7d28f72c6": 56.5
   },
   "load_1min_when_measured": 5.35,
   "cores": 12,

@@ -28,7 +28,7 @@ reported rather than omitted, because an absent row reads as a pass.
 
 ## Detail
 
-- **A-RUNTIME** — measured seconds vary with the machine and are in timing.json, not here; 1-minute load was 5.4 on 12 cores when measured
+- **A-RUNTIME** — measured seconds vary with the machine and are in timing.json, not here; 1-minute load was 5.3 on 12 cores when measured
 - **A-DET** — c00a170fe1
 - **G-DRIFT** — c00a170fe1: 14.91 -> 15.11 m2, 5 loops; 1a8384c3f6: 47.50 -> 48.04 m2, 25 loops; c7d28f72c6: 47.87 -> 49.65 m2, 124 loops
 - **G-CEIL-SPREAD** — venues within the 10 mm target: 0/2. Repeated walks of the same venue, which is what 'spread' requires; the earlier row compared three unrelated captures and could not answer the question
