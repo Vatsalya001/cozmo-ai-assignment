@@ -144,6 +144,15 @@ seventh (video tier on `c7d28f72c6`) is recorded **with its error** rather than 
 an absent row reads as *not attempted*. Committed rather than linked: a sharing link rots, is not
 versioned and cannot be diffed.
 
+[`submission/docs/`](submission/docs/) holds the six key documents as A4 PDFs, for a reviewer
+reading on a tablet or printing the pack. Rendered by `python scripts/render_docs_pdf.py` —
+matplotlib and fontTools, both already dependencies, so there is no browser to install and
+nothing new in `pyproject.toml`. The script exists because two of those documents claim a page
+count, and it counts the pages rather than taking the claim: `docs/capture_protocol.md` is the
+one page its title says, and **`docs/technical_report.md` is 8 pages against the brief's cap of
+6** — a miss that nobody had measured, now carried as **Not met** in the compliance matrix and
+asserted by `tests/test_docs_pdf.py`.
+
 ### Reproduction from a clean clone
 
 ```bash
