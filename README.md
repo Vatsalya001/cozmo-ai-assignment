@@ -42,15 +42,50 @@ The device available for this work is an **iPhone 16 base, which has no LiDAR**,
 tier runs on the three captures Cozmo supplied and on ARKitScenes. Stated in full in
 [`docs/device_matrix.md`](docs/device_matrix.md).
 
-## Install and run — under 15 minutes on a clean machine
+## Quick start
 
-Needs Python 3.10–3.12. **No model weights and no network are required for the LiDAR tier.**
+Four commands, under 15 minutes on a clean machine. Needs Python 3.10–3.12.
+**The LiDAR tier needs no model weights and no network.**
 
 ```bash
-git clone https://github.com/Vatsalya001/cozmo-ai-assignment.git && cd cozmo-ai-assignment
+# 1. clone
+git clone https://github.com/Vatsalya001/cozmo-ai-assignment.git
+cd cozmo-ai-assignment
+
+# 2. install
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
-pytest -q                                  # expect: 98 passed
+
+# 3. check the install
+pytest -q                                  # expect: 209 passed
+
+# 4. measure a capture — the tier is detected from the input
+scanplan run path/to/StrayScannerExport
+```
+
+Step 4 writes `out/<name>/` containing `result.json`, `plan.svg`, `summary.md` and `report.pdf`.
+
+### The same command for all three tiers
+
+```bash
+scanplan run captures/c00a170fe1/              # LiDAR — a Stray Scanner export folder
+scanplan run captures/walkthrough/             # video — rgb.mp4 + odometry.csv in one folder
+scanplan run captures/myflat/                  # photos — one sub-folder per room
+```
+
+For the photo tier the input is a folder of **per-room folders**, and the folder names become
+the room names:
+
+```
+myflat/
+  1-bedroom/     5–8 landscape photos
+  2-bathroom/    5–8 landscape photos
+```
+
+The video and photo tiers infer depth with a model, so they need one more extra:
+
+```bash
+pip install -e ".[models]"                 # Depth-Anything-V2-Metric-Indoor-Small
 ```
 
 On a CPU-only Linux machine, install PyTorch from the CPU index **first** if you plan to add

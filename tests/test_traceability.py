@@ -14,6 +14,7 @@ must be updated deliberately rather than drifting apart in silence.
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -196,3 +197,30 @@ def test_the_fixed_grid_really_does_distort_portrait_by_the_factor_claimed():
         sx, sy = DEPTH_W / w, DEPTH_H / h
         assert abs(max(sx, sy) / min(sx, sy) - 1.7778) < 1e-3, (
             "portrait anisotropy is not the 1.78x the warning and the protocol both claim")
+
+
+def test_the_documented_test_count_matches_the_suite():
+    """README.md and docs/walk_in.md both print an expected `pytest -q` count. Both said
+    "98 passed" while the suite was at 208 -- and docs/walk_in.md is the DEFENCE-DAY runbook,
+    so that number would have been read out loud in front of examiners against a terminal
+    showing something else.
+
+    Counted by collection rather than by running the suite (which would recurse): a number in a
+    document that nothing checks is a number that drifts.
+    """
+    import subprocess
+    root = Path(__file__).resolve().parents[1]
+    out = subprocess.run([sys.executable, "-m", "pytest", "--collect-only", "-q"],
+                         cwd=root, capture_output=True, text=True, timeout=180).stdout
+    m = re.search(r"(\d+)\s+tests? collected", out)
+    assert m, f"could not read the collected count from pytest:\n{out[-400:]}"
+    collected = int(m.group(1))
+
+    for rel in ("README.md", "docs/walk_in.md"):
+        text = (root / rel).read_text()
+        found = re.findall(r"pytest -q\s*#\s*(?:expect:\s*)?(\d+)\s+passed", text)
+        assert found, f"{rel} no longer documents a pytest count; this guard is measuring nothing"
+        for claimed in found:
+            assert int(claimed) == collected, (
+                f"{rel} says 'pytest -q -> {claimed} passed' but the suite collects "
+                f"{collected}. Update the document, not this test.")

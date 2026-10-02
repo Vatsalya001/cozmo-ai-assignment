@@ -11,7 +11,7 @@ Everything below is current as of the latest commit. If a number here disagrees 
 
 ```bash
 cd cozmo-ai-assignment && source .venv/bin/activate
-pytest -q                 # 98 passed
+pytest -q                 # 209 passed
 scanplan --version        # scanplan 0.1.0
 ```
 

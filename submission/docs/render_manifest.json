@@ -40,9 +40,9 @@
       "pdf": "submission/docs/walk_in.pdf",
       "pages": 4,
       "cap": null,
-      "markdown_sha256": "cb4db887152580b416f25e6e49003b84b075a0eea57d9fab354ce03a68787791",
-      "pdf_sha256": "67193b7124b031cc914d0b6a7c60abcd4f8593a53e17e482edbd85bf8560cd31",
-      "pdf_bytes": 160456
+      "markdown_sha256": "65451757f32ad22229bd6585f9f74cb50ef3bf7cbcb8688cb8cf64294b504f90",
+      "pdf_sha256": "d8c1ca1dadb23ad2d495cafb3b4ac34d070e2ceea257c7ac6e1b6ab475ad83c6",
+      "pdf_bytes": 160460
     },
     "docs/declined_changes.md": {
       "pdf": "submission/docs/declined_changes.pdf",
