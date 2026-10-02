@@ -1,15 +1,14 @@
 {
   "gate": "G-H2H-ENGINEER: beat or tie an independent implementation on >= 70% of shared dimensions, against exact synthetic truth",
   "opponent": {
-    "name": "cozmo-scan",
-    "author": "Ashu Pal",
-    "repo": "https://github.com/ashupal22/cozmo-scan",
+    "name": "an independent submission to the same brief",
+    "author": "another engineer; identity withheld, credited by role",
     "commit": "a31d297",
     "note": "an independent submission to the same brief; NOT a consumer scanning app, so this supplements Part 3 rather than satisfying it"
   },
   "relationship_to_part_3": "Part 3 asks for a consumer scanning app and is bench/head_to_head.py (magicplan, PENDING for want of tape truth). This is supplementary: an independent engineer's implementation, which unlike an app can be handed the identical input, so the comparison carries exact truth instead of a tape reading",
   "method": "both pipelines read the public Stray Scanner format, so both measure the SAME synthetic capture of a room that is 4.00 x 3.00 m with a 2.50 m ceiling by construction. Room dimensions are the polygon bounding box, not named walls: two independent implementations share no wall identities, and matching each of theirs to whichever of ours is closest would flatter whoever reports more walls",
-  "why_two_captures": "a synthetic capture encodes an assumption about the sensor, and these two pipelines take opposite positions on it. scanplan measured an 18 mm bias against FARO laser truth and corrects it; cozmo-scan carries 13 mm as an uncertainty and corrects nothing. Running only the capture that suits us would be choosing the input. Both are run and both are reported",
+  "why_two_captures": "a synthetic capture encodes an assumption about the sensor, and these two pipelines take opposite positions on it. scanplan measured an 18 mm bias against FARO laser truth and corrects it; the independent submission carries 13 mm as an uncertainty and corrects nothing. Running only the capture that suits us would be choosing the input. Both are run and both are reported",
   "caveat": "synthetic geometry flatters both: no furniture, no occlusion, no reflective surfaces, noiseless depth. This bounds what each implementation does to clean input and says nothing about robustness on real rooms",
   "rows": [
     {
@@ -18,9 +17,9 @@
       "dimension": "floor area",
       "truth": 12.0,
       "scanplan": 11.994,
-      "cozmo_scan": 15.53,
+      "independent_submission": 15.53,
       "scanplan_error_m": 0.006,
-      "cozmo_scan_error_m": 3.53,
+      "independent_submission_error_m": 3.53,
       "we_beat_or_tie": true
     },
     {
@@ -29,9 +28,9 @@
       "dimension": "ceiling height",
       "truth": 2.5,
       "scanplan": 2.4972,
-      "cozmo_scan": 2.489,
+      "independent_submission": 2.489,
       "scanplan_error_m": 0.0028,
-      "cozmo_scan_error_m": 0.011,
+      "independent_submission_error_m": 0.011,
       "we_beat_or_tie": true
     },
     {
@@ -40,9 +39,9 @@
       "dimension": "long dimension",
       "truth": 4.0,
       "scanplan": 3.95,
-      "cozmo_scan": 4.478,
+      "independent_submission": 4.478,
       "scanplan_error_m": 0.05,
-      "cozmo_scan_error_m": 0.478,
+      "independent_submission_error_m": 0.478,
       "we_beat_or_tie": true
     },
     {
@@ -51,9 +50,9 @@
       "dimension": "short dimension",
       "truth": 3.0,
       "scanplan": 2.92,
-      "cozmo_scan": 3.48,
+      "independent_submission": 3.48,
       "scanplan_error_m": 0.08,
-      "cozmo_scan_error_m": 0.48,
+      "independent_submission_error_m": 0.48,
       "we_beat_or_tie": true
     },
     {
@@ -62,9 +61,9 @@
       "dimension": "perimeter",
       "truth": 14.0,
       "scanplan": 13.74,
-      "cozmo_scan": 15.89,
+      "independent_submission": 15.89,
       "scanplan_error_m": 0.26,
-      "cozmo_scan_error_m": 1.89,
+      "independent_submission_error_m": 1.89,
       "we_beat_or_tie": true
     },
     {
@@ -73,9 +72,9 @@
       "dimension": "floor area",
       "truth": 12.0,
       "scanplan": 12.2196,
-      "cozmo_scan": 15.93,
+      "independent_submission": 15.93,
       "scanplan_error_m": 0.2196,
-      "cozmo_scan_error_m": 3.93,
+      "independent_submission_error_m": 3.93,
       "we_beat_or_tie": true
     },
     {
@@ -84,9 +83,9 @@
       "dimension": "ceiling height",
       "truth": 2.5,
       "scanplan": 2.5279,
-      "cozmo_scan": 2.519,
+      "independent_submission": 2.519,
       "scanplan_error_m": 0.0279,
-      "cozmo_scan_error_m": 0.019,
+      "independent_submission_error_m": 0.019,
       "we_beat_or_tie": false
     },
     {
@@ -95,9 +94,9 @@
       "dimension": "long dimension",
       "truth": 4.0,
       "scanplan": 3.99,
-      "cozmo_scan": 4.527,
+      "independent_submission": 4.527,
       "scanplan_error_m": 0.01,
-      "cozmo_scan_error_m": 0.527,
+      "independent_submission_error_m": 0.527,
       "we_beat_or_tie": true
     },
     {
@@ -106,9 +105,9 @@
       "dimension": "short dimension",
       "truth": 3.0,
       "scanplan": 2.96,
-      "cozmo_scan": 3.528,
+      "independent_submission": 3.528,
       "scanplan_error_m": 0.04,
-      "cozmo_scan_error_m": 0.528,
+      "independent_submission_error_m": 0.528,
       "we_beat_or_tie": true
     },
     {
@@ -117,9 +116,9 @@
       "dimension": "perimeter",
       "truth": 14.0,
       "scanplan": 13.9,
-      "cozmo_scan": 16.09,
+      "independent_submission": 16.09,
       "scanplan_error_m": 0.1,
-      "cozmo_scan_error_m": 2.09,
+      "independent_submission_error_m": 2.09,
       "we_beat_or_tie": true
     }
   ],
@@ -136,7 +135,7 @@
           2.55
         ]
       },
-      "cozmo_scan": {
+      "independent_submission": {
         "rooms": 3,
         "footprint_m2": 24.62,
         "ceilings_m": [
@@ -154,7 +153,7 @@
           2.55
         ]
       },
-      "cozmo_scan": {
+      "independent_submission": {
         "rooms": 8,
         "footprint_m2": 56.98,
         "ceilings_m": [
@@ -176,7 +175,7 @@
           3.096
         ]
       },
-      "cozmo_scan": {
+      "independent_submission": {
         "rooms": 9,
         "footprint_m2": 56.07,
         "ceilings_m": [
@@ -195,10 +194,10 @@
     }
   ],
   "where_the_opponent_does_better": [
-    "c00a170fe1: cozmo-scan reports 3 rooms, we report 2. We are documented as under-splitting and this is that, measured against an independent implementation rather than asserted",
-    "1a8384c3f6: cozmo-scan reports 8 rooms, we report 5. We are documented as under-splitting and this is that, measured against an independent implementation rather than asserted",
-    "c7d28f72c6: cozmo-scan reports 9 rooms, we report 5. We are documented as under-splitting and this is that, measured against an independent implementation rather than asserted",
-    "c7d28f72c6: cozmo-scan reports 9 distinct ceiling heights ([2.289, 2.365, 2.435, 2.449, 2.973, 2.982, 3.083, 3.097, 3.104]) against our 5 ([2.278, 2.365, 2.965, 3.087, 3.096]). Both fit per room now, so this follows from their splitting into more rooms rather than from a better ceiling model -- it is the room-count gap above, counted a second way, not an independent one"
+    "c00a170fe1: the independent submission reports 3 rooms, we report 2. We are documented as under-splitting and this is that, measured against an independent implementation rather than asserted",
+    "1a8384c3f6: the independent submission reports 8 rooms, we report 5. We are documented as under-splitting and this is that, measured against an independent implementation rather than asserted",
+    "c7d28f72c6: the independent submission reports 9 rooms, we report 5. We are documented as under-splitting and this is that, measured against an independent implementation rather than asserted",
+    "c7d28f72c6: the independent submission reports 9 distinct ceiling heights ([2.289, 2.365, 2.435, 2.449, 2.973, 2.982, 3.083, 3.097, 3.104]) against our 5 ([2.278, 2.365, 2.965, 3.087, 3.096]). Both fit per room now, so this follows from their splitting into more rooms rather than from a better ceiling model -- it is the room-count gap above, counted a second way, not an independent one"
   ],
   "notes": [],
   "beat_or_tie": 9,

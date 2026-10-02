@@ -22,7 +22,7 @@ reported rather than omitted, because an absent row reads as a pass.
 | A-CALIB-VIDEO | video | nominal 90% interval contains the reference | 2/2 at the calibrated x11.0 | **MET** |
 | G-WALL-PHOTO | photo | within +-8% of reference | 0/6 within 8% (median |error| 76%) | **NOT MET** |
 | G-PHOTO-STITCH | photo | one stitched plan, correct adjacency | 2 disconnected group(s) | **NOT MET** |
-| G-H2H | lidar | beat or tie on >= 70% of shared dimensions | PENDING | **NOT MEASURED** |
+| G-H2H | lidar | beat or tie on >= 70% of shared dimensions | 0/6 = 0.0% | **NOT MET** |
 | G-H2H-ENGINEER | lidar | beat or tie an independent implementation on >= 70% | 9/10 = 90.0% | **MET** |
 | A-DMG-DETECT | all | staged damage found with right class | NOT BUILT | **NOT MEASURED** |
 
@@ -42,6 +42,6 @@ reported rather than omitted, because an absent row reads as a pass.
 - **A-CALIB-VIDEO** — widening factor measured from observed error, not inherited
 - **G-WALL-PHOTO** — LiDAR on the same frames as the stills is the reference, not truth. With the SAME six frames the reference gives 4.2-7.6 m where the tier reports 1.8-2.1 m, so this is inferred depth under-estimating scale 3-4x, NOT six photographs covering less of the room
 - **G-PHOTO-STITCH** — fails by construction: stills carry no poses, so nothing in the input says how the rooms relate. Reported as an error in every photo-tier run
-- **G-H2H** — magicplan captured; tape measurements outstanding
-- **G-H2H-ENGINEER** — cozmo-scan @ a31d297 on identical synthetic captures with exact truth; supplementary to Part 3, not a substitute
+- **G-H2H** — 6 of 14 magicplan dimensions are shared and scoreable; the other 8 have no counterpart in our output. Tape ground truth is the operator's own two rooms, measured blind of magicplan's figures. The capture is the PHOTO tier -- the weakest of the three and the only one available without a LiDAR phone -- so this scores our thinnest input, not our best
+- **G-H2H-ENGINEER** — an independent submission to the same brief @ a31d297 on identical synthetic captures with exact truth; supplementary to Part 3, not a substitute
 - **A-DMG-DETECT** — damage detection not implemented

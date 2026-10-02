@@ -2,7 +2,7 @@
   "gate": "G-CEIL: ceiling height within 1.5 cm of truth",
   "method": "device depth and FARO-derived laser depth fused with the SAME poses on the same frames, both run through OUR floor/ceiling fit; the difference is reported rather than either height alone",
   "bias_correction": "none",
-  "credit": "the full raw Validation walk carries laser depth across the trajectory, not just the 7-38 upsampling frames this project first looked at. Learned from github.com/ashupal22/cozmo-scan, which measures G-CEIL this way",
+  "credit": "the full raw Validation walk carries laser depth across the trajectory, not just the 7-38 upsampling frames this project first looked at. Learned from an independent submission to the same brief, which measures G-CEIL this way",
   "caveat": "the laser side goes through our fitting, not Apple's annotations, so a fitting weakness would partly cancel on both sides. This measures our geometry on device depth against our geometry on laser-grade depth",
   "per_walk_disparity_mm": {
     "41069048": -14.0,

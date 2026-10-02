@@ -118,4 +118,5 @@ def test_a_walk_that_fails_is_recorded_rather_than_dropped(corrected):
 def test_the_source_of_the_approach_is_credited(corrected):
     """The slice of the dataset that carries this truth was learned from another submission.
     Presenting it as independently found would be dishonest, and the credit costs nothing."""
-    assert "cozmo-scan" in corrected["credit"]
+    assert "independent submission to the same brief" in corrected["credit"]
+    assert "Learned from" in corrected["credit"]

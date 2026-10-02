@@ -44,7 +44,8 @@ INK = "#111111"
 MUTED = "#6b7280"
 HEAD_RULE = "#9aa1ac"
 GRID = "#b9bec7"
-# Lifted from `th { background: #eef0f3 }` in cozmo-scan's scripts/report_pdf.py print CSS,
+# Lifted from `th { background: #eef0f3 }` in the print CSS of an independent submission to the
+# same brief,
 # and it appears nowhere else in this repo. Cosmetic, credited anyway -- see the provenance
 # section in scripts/render_docs_pdf.py.
 HEAD_FILL = "#eef0f3"

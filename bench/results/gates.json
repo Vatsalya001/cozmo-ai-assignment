@@ -124,9 +124,9 @@
       "gate": "G-H2H",
       "tier": "lidar",
       "target": "beat or tie on >= 70% of shared dimensions",
-      "result": "PENDING",
-      "status": "NOT MEASURED",
-      "detail": "magicplan captured; tape measurements outstanding"
+      "result": "0/6 = 0.0%",
+      "status": "NOT MET",
+      "detail": "6 of 14 magicplan dimensions are shared and scoreable; the other 8 have no counterpart in our output. Tape ground truth is the operator's own two rooms, measured blind of magicplan's figures. The capture is the PHOTO tier -- the weakest of the three and the only one available without a LiDAR phone -- so this scores our thinnest input, not our best"
     },
     {
       "gate": "G-H2H-ENGINEER",
@@ -134,7 +134,7 @@
       "target": "beat or tie an independent implementation on >= 70%",
       "result": "9/10 = 90.0%",
       "status": "MET",
-      "detail": "cozmo-scan @ a31d297 on identical synthetic captures with exact truth; supplementary to Part 3, not a substitute"
+      "detail": "an independent submission to the same brief @ a31d297 on identical synthetic captures with exact truth; supplementary to Part 3, not a substitute"
     },
     {
       "gate": "A-DMG-DETECT",

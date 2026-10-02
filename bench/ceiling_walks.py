@@ -22,9 +22,8 @@ also exists as a full raw Validation walk, and *that* walk publishes laser depth
 trajectory. One download gives a complete walk and its truth. Nothing about the data changed;
 only which slice of it to ask for.
 
-**Credit:** that this slice exists was learned from `scripts/fetch_external.py` in
-https://github.com/ashupal22/cozmo-scan, an independent submission to the same brief which
-measures G-CEIL this way. The venues here are selected by a stated rule rather than copied
+**Credit:** that this slice exists was learned from the dataset-fetch script of an independent
+submission to the same brief, which measures G-CEIL this way. The venues here are selected by a stated rule rather than copied
 (see scripts/fetch_arkitscenes_walks.py), and the pipeline being measured is ours -- but the
 approach is theirs, and this project had already published the wrong conclusion that no such
 measurement was available.
@@ -97,8 +96,8 @@ def read_traj(path: Path):
        `-R_cw^-1 t`, not `t`.
     3. The ARKitScenes world is **z-up**, while this project and Stray Scanner are y-up.
 
-    Credit: all three are documented in cozmo/ingest/arkitscenes.py of
-    github.com/ashupal22/cozmo-scan. Guessing at them cost two benchmarks and a wrong published
+    Credit: all three are documented in the ARKitScenes ingest of an independent submission to
+    the same brief. Guessing at them cost two benchmarks and a wrong published
     conclusion, which is a fair price for not reading the format carefully the first time.
     """
     rows = [l.split() for l in path.read_text().splitlines() if len(l.split()) >= 7]
@@ -304,7 +303,8 @@ def main() -> int:
         "bias_correction": "none" if args.no_bias_correction else "leave-one-venue-out",
         "credit": "the full raw Validation walk carries laser depth across the trajectory, not "
                   "just the 7-38 upsampling frames this project first looked at. Learned from "
-                  "github.com/ashupal22/cozmo-scan, which measures G-CEIL this way",
+                  "an independent submission to the same brief, which measures G-CEIL this "
+                  "way",
         "caveat": "the laser side goes through our fitting, not Apple's annotations, so a "
                   "fitting weakness would partly cancel on both sides. This measures our "
                   "geometry on device depth against our geometry on laser-grade depth",

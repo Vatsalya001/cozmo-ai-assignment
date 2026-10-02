@@ -56,8 +56,8 @@ the catastrophic rows, and it is why `bench/wall_normals.py` adds three tests th
 not imply: **per-point normals**, a **facing test** (the two walls must face *each other* across
 the room) and **extent gates** (a wall is long and tall; furniture fails one or the other).
 Together they took the worst row from **975 mm to 3.4 mm** and the median |error| from 16.4 mm
-to 9.8 mm. Normals from the depth grid and depth-edge rejection are `cozmo-scan`'s approach,
-credited in that file's own header.
+to 9.8 mm. Normals from the depth grid and depth-edge rejection are the approach of an
+independent submission to the same brief, credited in that file's own header.
 
 So two readings are computed and **both are published** in
 `bench/results/wall_distance_walks.json`:
@@ -127,7 +127,7 @@ longest evidence chain in the submission and the report is capped at six pages.
 
 ### The corroboration, per height
 
-`cozmo-scan`, an independent submission to the same brief, reports nine distinct ceiling heights
+An independent submission to the same brief reports nine distinct ceiling heights
 on `c7d28f72c6` from a nine-room split. Against our five:
 
 | ours | 2.278 | 2.365 | 2.965 | 3.087 | 3.096 |

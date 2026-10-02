@@ -282,14 +282,27 @@ def test_unequal_wall_counts_are_reported_not_silently_dropped(tmp_path, monkeyp
     assert any("magicplan reports" in w for w in res["why_not_scored"])
 
 
-def test_the_committed_result_declares_the_deviation_and_what_is_missing():
-    """Until the inputs exist, the committed artifact must be explicit on both counts rather
-    than simply absent -- an absent head-to-head reads as one that was never attempted."""
+def test_the_committed_result_is_scored_and_declares_what_it_could_not_compare():
+    """The inputs now exist: two rooms taped by hand, blind of magicplan's figures, and captured.
+
+    This assertion used to require dimensions_scored == 0 and two missing inputs, which was right
+    while the comparison was unmeasurable and became a guard against ever measuring it. It now
+    asserts the opposite property -- that the artifact IS scored -- plus the two things that must
+    survive a result this unflattering: the tier deviation, and an honest count of the dimensions
+    that have no counterpart in our output rather than a denominator quietly shrunk to the ones
+    we could answer.
+    """
     res = json.loads((ROOT / "bench" / "results" / "head_to_head.json").read_text())
     assert res["dimensions_total"] == 14
-    assert res["dimensions_scored"] == 0
-    assert len(res["missing_inputs"]) == 2
+    assert res["dimensions_scored"] > 0, (
+        "the head-to-head is measured now; a zero here means the tape CSV or our own capture "
+        "went missing and the artifact silently reverted to 'cannot score'")
+    assert not res["missing_inputs"], f"inputs went missing again: {res['missing_inputs']}"
     assert "LiDAR tier" in res["declared_deviation"], "the tier deviation must be declared"
+    # The denominator must stay honest: scored + not-scored accounts for every magicplan dimension.
+    assert res["dimensions_scored"] + res["dimensions_not_scored"] == res["dimensions_total"]
+    assert res["dimensions_not_scored"] > 0 and res["why_not_scored"], (
+        "dimensions with no counterpart in our output must be counted and explained, not dropped")
 
 
 def test_the_centimetre_sheet_maps_onto_names_head_to_head_actually_understands():

@@ -12,8 +12,8 @@ the public Stray Scanner format, so both can be handed **the same synthetic capt
 whose size is known by construction** -- 4.00 x 3.00 m, 2.50 m ceiling, because an equation put
 them there. No tape, no fieldwork, and the truth is exact rather than +-5 mm.
 
-Opponent: **cozmo-scan** by Ashu Pal, an independent submission to the same brief. Not a
-consumer app, so this is supplementary evidence, not Part 3 compliance.
+Opponent: **an independent submission to the same brief** by another engineer, identified here
+by commit only. Not a consumer app, so this is supplementary evidence, not Part 3 compliance.
 
 ## The experiment is designed so it can lose
 
@@ -25,7 +25,8 @@ result. So the comparison runs on **two** captures that differ in exactly one wa
   ideal    depth written true, modelling a sensor with no bias
 
 These two pipelines take opposite positions on that question. scanplan measured the bias and
-corrects it at ingest. cozmo-scan carries it as an uncertainty of 13 mm and applies no
+corrects it at ingest. The independent submission carries it as an uncertainty of 13 mm and
+applies no
 correction (`depth_offset_m` defaults to 0.0 in its fusion stage). Both are defensible designs,
 and each is right on exactly one of these two captures.
 
@@ -42,9 +43,10 @@ clean input. They say nothing about robustness on real rooms, and a pipeline tun
 captures may well be penalised here for choices that pay off on real ones.
 
     python bench/head_to_head_engineer.py
-    python bench/head_to_head_engineer.py --refresh-opponent ~/Desktop/cozmo-scan
+    python bench/head_to_head_engineer.py --refresh-opponent ~/path/to/their/checkout
 
-Without --refresh-opponent the opponent's numbers are read from data/opponents/cozmo-scan.json,
+Without --refresh-opponent the opponent's numbers are read from
+data/opponents/independent-submission.json,
 committed so this runs, and can be audited, without their repository present.
 """
 from __future__ import annotations
@@ -65,7 +67,7 @@ from scanplan.synthetic import write_stray_capture                 # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "bench" / "results" / "head_to_head_engineer.json"
-OPPONENT_FILE = ROOT / "data" / "opponents" / "cozmo-scan.json"
+OPPONENT_FILE = ROOT / "data" / "opponents" / "independent-submission.json"
 
 # One capture per position on the sensor-bias question. See the module docstring.
 CAPTURES = {
@@ -136,7 +138,7 @@ def truth_of(t: dict) -> dict[str, float]:
 
 
 def run_opponent(repo: Path, capture: Path, out: Path) -> dict:
-    """Run cozmo-scan through its own CLI in its own virtualenv.
+    """Run the independent submission through its own CLI in its own virtualenv.
 
     Via subprocess on purpose: importing another project into this one would mix two sets of
     module-level constants, and the thing being compared is each project as it ships.
@@ -160,8 +162,8 @@ def opponent_version(repo: Path) -> dict:
                                   capture_output=True, text=True).stdout.strip()
         except Exception:                                      # noqa: BLE001
             return "unknown"
-    return {"name": "cozmo-scan", "author": "Ashu Pal",
-            "repo": "https://github.com/ashupal22/cozmo-scan",
+    return {"name": "an independent submission to the same brief",
+            "author": "another engineer; identity withheld, credited by role",
             "commit": git("rev-parse", "--short", "HEAD"),
             "note": "an independent submission to the same brief; NOT a consumer scanning app, "
                     "so this supplements Part 3 rather than satisfying it"}
@@ -223,21 +225,23 @@ def main() -> int:
 
         theirs = record["captures"].get(name, {})
         if "failed" in theirs:
-            notes.append(f"cozmo-scan failed on the {name} capture: {theirs['failed']}")
+            notes.append(f"the independent submission failed on the {name} capture: "
+                         f"{theirs['failed']}")
 
         for dim in DIMENSIONS:
             row = {"capture": name, "models": spec["models"], "dimension": dim,
                    "truth": round(truth[dim], 4)}
             o, p = ours.get(dim), theirs.get(dim)
             row["scanplan"] = None if o is None else round(o, 4)
-            row["cozmo_scan"] = None if p is None else round(p, 4)
+            row["independent_submission"] = None if p is None else round(p, 4)
             if o is not None:
                 row["scanplan_error_m"] = round(abs(o - truth[dim]), 4)
             if p is not None:
-                row["cozmo_scan_error_m"] = round(abs(p - truth[dim]), 4)
+                row["independent_submission_error_m"] = round(abs(p - truth[dim]), 4)
             if o is not None and p is not None:
                 # Beat or tie, with a 1 mm tolerance so a rounding difference is not a loss.
-                row["we_beat_or_tie"] = row["scanplan_error_m"] <= row["cozmo_scan_error_m"] + 0.001
+                row["we_beat_or_tie"] = (row["scanplan_error_m"]
+                                         <= row["independent_submission_error_m"] + 0.001)
             else:
                 row["not_scored_because"] = (
                     "one or both pipelines produced no value for this capture")
@@ -255,12 +259,13 @@ def main() -> int:
         except Exception as e:                                 # noqa: BLE001
             notes.append(f"scanplan failed on real capture {name}: {type(e).__name__}: {e}")
             continue
-        real_rows.append({"capture": name, "scanplan": mine, "cozmo_scan": theirs,
+        real_rows.append({"capture": name, "scanplan": mine,
+                          "independent_submission": theirs,
                           "footprint_difference_pct": round(
                               (theirs["footprint_m2"] / mine["footprint_m2"] - 1) * 100, 1)})
         if theirs["rooms"] > mine["rooms"]:
             opponent_better.append(
-                f"{name}: cozmo-scan reports {theirs['rooms']} rooms, we report "
+                f"{name}: the independent submission reports {theirs['rooms']} rooms, we report "
                 f"{mine['rooms']}. We are documented as under-splitting and this is that, "
                 f"measured against an independent implementation rather than asserted")
         # Both pipelines now fit ceiling height PER ROOM, so a difference in the number of
@@ -269,7 +274,8 @@ def main() -> int:
         # kind of stale comparison that outlives the gap it described.
         if len(theirs["ceilings_m"]) > len(mine["ceilings_m"]):
             opponent_better.append(
-                f"{name}: cozmo-scan reports {len(theirs['ceilings_m'])} distinct ceiling "
+                f"{name}: the independent submission reports {len(theirs['ceilings_m'])} "
+                f"distinct ceiling "
                 f"heights ({theirs['ceilings_m']}) against our {len(mine['ceilings_m'])} "
                 f"({mine['ceilings_m']}). Both fit per room now, so this follows from their "
                 f"splitting into more rooms rather than from a better ceiling model -- it is "
@@ -295,7 +301,8 @@ def main() -> int:
         "why_two_captures":
             "a synthetic capture encodes an assumption about the sensor, and these two "
             "pipelines take opposite positions on it. scanplan measured an 18 mm bias against "
-            "FARO laser truth and corrects it; cozmo-scan carries 13 mm as an uncertainty and "
+            "FARO laser truth and corrects it; the independent submission carries 13 mm as an "
+            "uncertainty and "
             "corrects nothing. Running only the capture that suits us would be choosing the "
             "input. Both are run and both are reported",
         "caveat":
@@ -324,21 +331,23 @@ def main() -> int:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(result, indent=2) + "\n")
 
-    print(f"\n{'capture':8} {'dimension':16} {'truth':>8} {'scanplan':>18} {'cozmo-scan':>18}  winner")
+    print(f"\n{'capture':8} {'dimension':16} {'truth':>8} {'scanplan':>18} "
+          f"{'independent':>18}  winner")
     for r in rows:
         o = f"{r['scanplan']:.3f} ({r.get('scanplan_error_m', float('nan'))*1000:+.0f}mm)" \
             if r["scanplan"] is not None else "-"
-        p = f"{r['cozmo_scan']:.3f} ({r.get('cozmo_scan_error_m', float('nan'))*1000:+.0f}mm)" \
-            if r["cozmo_scan"] is not None else "-"
-        w = ("scanplan" if r["we_beat_or_tie"] else "cozmo-scan") if "we_beat_or_tie" in r else "-"
+        p = (f"{r['independent_submission']:.3f} "
+             f"({r.get('independent_submission_error_m', float('nan'))*1000:+.0f}mm)") \
+            if r["independent_submission"] is not None else "-"
+        w = ("scanplan" if r["we_beat_or_tie"] else "independent") if "we_beat_or_tie" in r else "-"
         print(f"{r['capture']:8} {r['dimension']:16} {r['truth']:8.3f} {o:>18} {p:>18}  {w}")
     for n in notes:
         print(f"  note: {n}")
     if real_rows:
         print(f"\nreal captures (NO truth -- agreement only, nothing scored):")
-        print(f"{'capture':12} {'scanplan':>24} {'cozmo-scan':>24}")
+        print(f"{'capture':12} {'scanplan':>24} {'independent':>24}")
         for r in real_rows:
-            m, o = r["scanplan"], r["cozmo_scan"]
+            m, o = r["scanplan"], r["independent_submission"]
             mine = "{} rooms {:.2f} m2".format(m["rooms"], m["footprint_m2"])
             them = "{} rooms {:.2f} m2".format(o["rooms"], o["footprint_m2"])
             print(f"{r['capture']:12} {mine:>24} {them:>24}")

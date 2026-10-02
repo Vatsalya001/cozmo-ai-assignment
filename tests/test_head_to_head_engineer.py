@@ -24,7 +24,7 @@ sys.path.insert(0, str(ROOT))
 import head_to_head_engineer as h2he                                         # noqa: E402
 
 RESULT = ROOT / "bench" / "results" / "head_to_head_engineer.json"
-OPPONENT = ROOT / "data" / "opponents" / "cozmo-scan.json"
+OPPONENT = ROOT / "data" / "opponents" / "independent-submission.json"
 
 
 def _doc(area, ceiling, perimeter, poly, rooms=1):
@@ -87,10 +87,16 @@ def test_the_measured_bias_capture_matches_what_the_benchmark_measured():
 
 
 def test_the_opponent_is_recorded_with_enough_detail_to_be_checked():
+    """The other submission is credited by role rather than by name, so the pinned commit is
+    what makes the record checkable: it says WHICH build of theirs produced these numbers."""
     rec = json.loads(OPPONENT.read_text())
     opp = rec["opponent"]
-    for field in ("name", "author", "repo", "commit"):
+    for field in ("name", "author", "commit"):
         assert opp.get(field), f"the opponent record must carry {field}"
+    assert "independent submission" in opp["name"], (
+        "the record must still say these numbers came from another submission to this brief")
+    assert len(opp["commit"]) >= 7 and all(c in "0123456789abcdef" for c in opp["commit"]), (
+        f"{opp['commit']!r} is not a commit id; without one the numbers cannot be re-measured")
     assert set(rec["captures"]) == set(h2he.CAPTURES), (
         "the opponent must be recorded on every capture we score")
     assert "NOT a consumer scanning app" in opp["note"], (
@@ -128,7 +134,7 @@ def test_the_real_captures_are_reported_and_explicitly_not_scored():
     for row in res["real_captures"]:
         assert "we_beat_or_tie" not in row, (
             f"{row['capture']}: nothing may be scored without truth")
-        for side in ("scanplan", "cozmo_scan"):
+        for side in ("scanplan", "independent_submission"):
             assert row[side]["rooms"] >= 1 and row[side]["footprint_m2"] > 0
 
 
@@ -150,7 +156,7 @@ def test_we_under_split_on_every_real_capture():
     independent implementation run on the same data."""
     res = json.loads(RESULT.read_text())
     for row in res["real_captures"]:
-        assert row["scanplan"]["rooms"] <= row["cozmo_scan"]["rooms"], (
+        assert row["scanplan"]["rooms"] <= row["independent_submission"]["rooms"], (
             f"{row['capture']}: we report MORE rooms than the opponent, which contradicts the "
             f"under-splitting this project documents. If that has changed, the docs must too")
 

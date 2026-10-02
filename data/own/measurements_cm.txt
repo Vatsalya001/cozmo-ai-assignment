@@ -22,19 +22,19 @@
 
 # ============================ BEDROOM ============================
 # --- walls, corner to corner (cm) ---
-a =          # left wall
-b =          # cupboard FRONT (its doors) — built in, counts as wall
-c =          # cupboard END (where it stops)
-d =          # top wall, from the cupboard end to the main doorway
-e =          # right wall
-f =          # bottom wall, corner to corner STRAIGHT THROUGH the bathroom door
+a = 366.8  # left wall
+b = 181.6  # cupboard FRONT (its doors) — built in, counts as wall
+c = 50.2  # cupboard END (where it stops)
+d = 89.4  # top wall, from the cupboard end to the main doorway
+e = 417  # right wall
+f = 346.6  # bottom wall, corner to corner STRAIGHT THROUGH the bathroom door
 
 # --- doorway clear widths (cm) — inner frame face to inner frame face, trim excluded ---
-g =          # bathroom doorway
-i =          # main doorway
+g = 65.1  # bathroom doorway
+i = 75.6  # main doorway
 
 # --- ceiling, TWO PARTS per spot. Do not add them up. (cm) ---
-m =          # spot 1: floor to top of chair seat
+m = 278.8  # spot 1: floor to top of chair seat
 n =          # spot 1: chair seat to ceiling
 o =          # spot 2 (at least 1 m from spot 1): floor to seat
 p =          # spot 2: seat to ceiling
@@ -43,16 +43,16 @@ p =          # spot 2: seat to ceiling
 # Stand in the doorway facing in. q is on your LEFT, r is AHEAD, s is on your RIGHT,
 # t is the wall the door is in (behind you).
 # --- walls, corner to corner (cm) ---
-q =          # wall on your left
-r =          # wall straight ahead
-s =          # wall on your right
-t =          # the door wall, corner to corner STRAIGHT THROUGH the opening
+q = 176.8  # wall on your left
+r = 164.2  # wall straight ahead
+s = 176.8  # wall on your right
+t = 164.2  # the door wall, corner to corner STRAIGHT THROUGH the opening
 
 # --- doorway clear width (cm) ---
-u =          # bathroom doorway
+u = 65.1  # bathroom doorway
 
 # --- ceiling, two parts (cm) ---
-y =          # floor to top of chair seat
+y = 278.8  # floor to top of chair seat
 z =          # chair seat to ceiling
 
 
@@ -61,6 +61,6 @@ z =          # chair seat to ceiling
 # a door height is not a dimension magicplan reports, so there is nothing to compare it against.
 # They are kept because an unused reading is still a reading, and it costs nothing to record.
 
-h =          # bathroom doorway HEIGHT (floor to underside of the frame)
-j =          # main doorway HEIGHT
-v =          # bathroom doorway HEIGHT
+h = 193.4  # bathroom doorway HEIGHT (floor to underside of the frame)
+j = 199.6  # main doorway HEIGHT
+v = 193.4  # bathroom doorway HEIGHT

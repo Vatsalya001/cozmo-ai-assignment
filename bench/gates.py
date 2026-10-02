@@ -341,8 +341,30 @@ def gate_rows(runs: dict) -> list[dict]:
     else:
         add("G-WALL-PHOTO", "photo", "within +-8%", "NOT RUN", "NOT MEASURED", "")
         add("G-PHOTO-STITCH", "photo", "one stitched plan", "NOT RUN", "NOT MEASURED", "")
-    add("G-H2H", "lidar", "beat or tie on >= 70% of shared dimensions",
-        "PENDING", "NOT MEASURED", "magicplan captured; tape measurements outstanding")
+    # Read the benchmark rather than asserting a status. This row was hardcoded to PENDING from
+    # the period when no tape measurements existed, and it kept saying PENDING after they arrived
+    # and the benchmark scored -- a gate whose status cannot move is not a gate.
+    h2h = ROOT / "bench" / "results" / "head_to_head.json"
+    if h2h.is_file():
+        d = json.loads(h2h.read_text())
+        scored, total = d["dimensions_scored"], d["dimensions_total"]
+        if d.get("missing_inputs") or not scored:
+            add("G-H2H", "lidar", "beat or tie on >= 70% of shared dimensions",
+                "PENDING", "NOT MEASURED",
+                "; ".join(d.get("missing_inputs") or ["no shared dimension could be scored"]))
+        else:
+            pct = d["beat_or_tie_pct"]
+            add("G-H2H", "lidar", "beat or tie on >= 70% of shared dimensions",
+                f"{d['beat_or_tie']}/{scored} = {pct:.1f}%",
+                "MET" if pct >= 70.0 else "NOT MET",
+                f"{scored} of {total} magicplan dimensions are shared and scoreable; the other "
+                f"{total - scored} have no counterpart in our output. Tape ground truth is the "
+                f"operator's own two rooms, measured blind of magicplan's figures. The capture is "
+                f"the PHOTO tier -- the weakest of the three and the only one available without "
+                f"a LiDAR phone -- so this scores our thinnest input, not our best")
+    else:
+        add("G-H2H", "lidar", "beat or tie on >= 70% of shared dimensions",
+            "NOT RUN", "NOT MEASURED", "run bench/head_to_head.py")
 
     # The same question against an opponent that CAN be handed our exact input. Reported as a
     # separate gate, never folded into G-H2H: the brief asks Part 3 for a consumer scanning

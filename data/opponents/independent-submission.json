@@ -1,8 +1,7 @@
 {
   "opponent": {
-    "name": "cozmo-scan",
-    "author": "Ashu Pal",
-    "repo": "https://github.com/ashupal22/cozmo-scan",
+    "name": "an independent submission to the same brief",
+    "author": "another engineer; identity withheld, credited by role",
     "commit": "a31d297",
     "note": "an independent submission to the same brief; NOT a consumer scanning app, so this supplements Part 3 rather than satisfying it"
   },

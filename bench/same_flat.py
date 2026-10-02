@@ -57,8 +57,8 @@ alternative -- pairing all five by area rank and quoting a pass rate over ten --
 resting on a correspondence this file disproves.
 
 **Credit:** that registering the two walks and pairing rooms by IoU is the way to unblock this
-gate was learned from `bench/same_flat_plans.py` in https://github.com/ashupal22/cozmo-scan, an
-independent submission to the same brief. The approach is theirs; the implementation here is
+gate was learned from the same-flat benchmark of an independent submission to the same brief.
+The approach is theirs; the implementation here is
 ours (`scanplan/geometry/register.py` is a coverage-mask FFT registration written against this
 repo's own rasters, not their wall-normal matcher), and this project had already published the
 stronger claim that no such measurement was possible.

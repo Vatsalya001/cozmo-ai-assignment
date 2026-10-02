@@ -201,8 +201,7 @@ states that no longer exist, one is wall-clock. It has caught five real defects,
 `fix_loop_diagnosis.py` was itself measuring a pipeline we do not ship.
 
 **"Has anyone else's implementation been compared against yours?"** Yes, and it is a committed
-gate. [cozmo-scan](https://github.com/ashupal22/cozmo-scan), an independent submission to this
-same brief, reads the same public capture format, so both pipelines were handed the **identical**
+gate. An independent submission to this same brief reads the same public capture format, so both pipelines were handed the **identical**
 synthetic capture of a room that is 4.00 × 3.00 m by construction. **Beat or tie on 9 of 10
 dimensions, 90%** — G-H2H-ENGINEER. The one loss is ceiling height on a capture modelling an
 *unbiased* sensor, where our 18 mm correction is unwarranted. Two captures are run on purpose,

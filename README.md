@@ -31,8 +31,8 @@ flat: room count **5 vs 5 (met)**, footprint **3.2% apart (not met)** — the me
 correction is what flipped which of those two passes, see
 [`docs/fix_loop.md`](docs/fix_loop.md) §10.
 
-**Head to head against an independent implementation of the same brief**
-([cozmo-scan](https://github.com/ashupal22/cozmo-scan)), both pipelines handed the identical
+**Head to head against an independent implementation of the same brief**, both pipelines handed
+the identical
 capture with exact truth: **beat or tie on 9 of 10 dimensions, 90%**. The one loss is ceiling
 height on a capture that models an *unbiased* sensor, where our 18 mm correction is unwarranted
 — which is the whole reason that bias was measured against a laser instead of assumed. Details

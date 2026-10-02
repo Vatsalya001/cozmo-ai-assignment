@@ -65,8 +65,8 @@ hatch and the diagnostic that names stride aliasing when it happens.
 **What it was.** A-WALL-LIDAR reads 7/12. Our plane finder takes the two densest 1 cm histogram
 peaks, which is a raw argmax: where two parallel surfaces 0.19–0.99 m apart have near-equal
 support, the choice turns on a margin as small as 2.2%, and the device and laser clouds can land
-differently. The fix adds per-point normals, a facing test and extent gates — the approach
-`cozmo-scan` uses, which reports 4/4 on this gate.
+differently. The fix adds per-point normals, a facing test and extent gates — the approach an
+independent submission to the same brief uses, which reports 4/4 on this gate.
 
 **What it measured.** The principled part works: worst row 975 mm → 612 mm, median |error|
 16.4 mm → **6.0 mm**. Tying the non-max suppression radius to the estimator's own window
@@ -81,7 +81,8 @@ what the gate penalises*, and it was introduced by the same author who then repo
 as passing. The denominator also fell from 12 to 11. Three reviewers called it tuning.
 
 Separately, the provenance claim was false. The normal computation in the new module is a
-line-for-line transliteration of `cozmo-scan`'s `fusion.py:frame_points` — identical slicing,
+line-for-line transliteration of the independent submission's frame-points fusion — identical
+slicing,
 the same epsilon, the same 0.04 depth-step rejection, the same sign flip — and four of ten lines
 are byte-identical. It was labelled "reimplemented approach". Computing normals from a depth
 grid by central differences is a standard method with few degrees of freedom, so the overlap is
@@ -114,15 +115,16 @@ changed target rather than being removed: the risk is no longer that selection b
 it is that the unfavourable reading quietly stops being published.
 
 The provenance is stated plainly in the new file instead of claimed away: normals from the depth
-grid and depth-edge rejection are `cozmo-scan`'s approach. Central differences on a depth grid
-have few degrees of freedom and I had their implementation open, so the file says so rather than
+grid and depth-edge rejection are the independent submission's approach. Central differences on
+a depth grid have few degrees of freedom and I had their implementation open, so the file says so rather than
 asserting an independence it cannot demonstrate.
 
 ---
 
 ## 3. Public defect data for A-DMG-DETECT — DECLINED as a gate validation; the appearance question was then MEASURED separately
 
-**What it was.** A-DMG-DETECT reads NOT BUILT. `cozmo-scan` validated damage *classes* on 793
+**What it was.** A-DMG-DETECT reads NOT BUILT. The independent submission validated damage
+*classes* on 793
 real defect photographs. The candidate staged synthetic protrusions at 14/20/25/30/50 mm — sizes
 derived from our detector's own declared thresholds rather than from anything on the truth
 side — and moved the gate from NOT MEASURED to measured-and-failing.
@@ -184,7 +186,8 @@ an appearance dataset gets used, it is that the benchmark quietly starts being r
 ## 4. HouseLayout3D for adjacency — DECLINED end to end, later ADOPTED at the unit level, and this section's headline finding RETRACTED
 
 **What it was.** Our `plan.adjacency` has never been checked against anything — the compliance
-matrix says so at 2.2. `cozmo-scan` validates its stitch solver on HouseLayout3D. The candidate
+matrix says so at 2.2. The independent submission validates its stitch solver on HouseLayout3D.
+The candidate
 measured our adjacency against it across 27 storeys of 16 real buildings, 225 truth rooms and
 139 truth door pairs.
 

@@ -16,8 +16,8 @@ and the difference between two unrelated surfaces was reported as a distance err
 **The approach is not mine.** Taking normals from the depth *grid* — two differences and a cross
 product per pixel, while the points still have their lattice — rather than from a neighbourhood
 search on the fused cloud, and rejecting pixels that straddle a depth discontinuity, are both
-from `cozmo/geometry/fusion.py` of github.com/ashupal22/cozmo-scan, an independent submission to
-the same brief which uses them to pass this gate.
+from the depth-fusion stage of an independent submission to the same brief, which uses them to
+pass this gate.
 
 The code below is written independently, but central differences on a projected depth grid have
 few degrees of freedom and I had their implementation open, so I am not claiming the result looks

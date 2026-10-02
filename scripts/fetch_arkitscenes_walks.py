@@ -17,9 +17,8 @@ frames -- for a large fraction of the trajectory rather than a handful of traini
 one download gives a complete walk *and* its laser truth. Nothing about the dataset changed;
 only which slice of it to ask for.
 
-**Credit where it is due:** that this slice exists was learned from reading
-`scripts/fetch_external.py` in https://github.com/ashupal22/cozmo-scan, an independent
-submission to the same brief, which measures G-CEIL this way. The venue *selection* below is
+**Credit where it is due:** that this slice exists was learned from reading the dataset-fetch
+script of an independent submission to the same brief, which measures G-CEIL this way. The venue *selection* below is
 not taken from there -- it falls out of a stated criterion -- but the approach is theirs and
 this project had concluded, wrongly, that the measurement was not available.
 

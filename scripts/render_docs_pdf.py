@@ -15,9 +15,9 @@ never a smaller font -- the type sizes in mdpdf/layout.py are fixed by readabili
 ## Provenance, stated accurately
 
 **The idea is not mine.** Rendering the submission documents to PDF *and asserting the page
-cap in the same script* is `scripts/report_pdf.py` of github.com/ashupal22/cozmo-scan, an
-independent submission to the same brief, which is also where this project's other
-cozmo-scan-derived work is credited (`bench/same_flat.py`, `bench/wall_normals.py`). Theirs is
+cap in the same script* is the report-PDF script of an independent submission to the same brief
+-- the same submission from which this project's other borrowed work is credited
+(`bench/same_flat.py`, `bench/wall_normals.py`). Theirs is
 61 lines around headless Chrome and `markdown`; `scripts/mdpdf/` is an independent ~940-line
 layout engine on matplotlib and fontTools, written that way because the walk-in test is a cold
 run on a machine we do not control and "install a headless browser first" is not a thing to say

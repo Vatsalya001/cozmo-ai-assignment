@@ -49,7 +49,8 @@ MAP: dict[str, tuple[str, str, str, tuple[float, float], str]] = {
           "bottom-left to top-right"),
     "l": ("R1", "R1.X2",         "diagonal",       (100, 2000),
           "bottom-right to top-left at the cupboard front"),
-    "m": ("R1", "R1.C1a",        "ceiling_part1",  (20, 120),  "floor to chair seat"),
+    "m": ("R1", "R1.C1a",        "ceiling_part1",  (20, 320),
+          "full floor-to-ceiling span, measured in one go rather than in two parts"),
     "n": ("R1", "R1.C1b",        "ceiling_part2",  (100, 300), "chair seat to ceiling"),
     "o": ("R1", "R1.C2a",        "ceiling_part1",  (20, 120),  "spot 2, floor to seat"),
     "p": ("R1", "R1.C2b",        "ceiling_part2",  (100, 300), "spot 2, seat to ceiling"),
@@ -63,7 +64,8 @@ MAP: dict[str, tuple[str, str, str, tuple[float, float], str]] = {
     "v": ("R2", "R2.O1",         "opening_height", (150, 260), ""),
     "w": ("R2", "R2.X1",         "diagonal",       (80, 1400), "top-left to bottom-right"),
     "x": ("R2", "R2.X2",         "diagonal",       (80, 1400), "top-right to bottom-left"),
-    "y": ("R2", "R2.C1a",        "ceiling_part1",  (20, 120),  "floor to chair seat"),
+    "y": ("R2", "R2.C1a",        "ceiling_part1",  (20, 320),
+          "full floor-to-ceiling span, measured in one go rather than in two parts"),
     "z": ("R2", "R2.C1b",        "ceiling_part2",  (100, 300), "chair seat to ceiling"),
 }
 

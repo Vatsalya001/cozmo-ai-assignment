@@ -137,7 +137,8 @@ improvement and be a bias: unobserved rooms are the small, high-sided, hard-to-s
 same ones most likely to be boxed in. On `1a8384c3f6` and `c00a170fe1` no room saw a ceiling and
 all ten stay `observed=false`, unchanged.
 
-**Independently corroborated**, one way only: `cozmo-scan`'s nine-room split of this capture
+**Independently corroborated**, one way only: an independent submission's nine-room split of
+this capture
 agrees with our five heights **within 11 mm on every one**, including the two low ones — two
 pipelines sharing no code, which is evidence the old 3.087 m was wrong, not merely coarse.
 Per-height table and the caveat: [`gates.md`](gates.md).
@@ -157,9 +158,8 @@ genuinely has no dominant floor layer: the symptom blamed on the venues twice. T
 fine throughout.
 
 **Credit:** that the full raw walks carry laser depth across the trajectory, and the three
-conventions above, were learned from `cozmo/ingest/arkitscenes.py` and `scripts/fetch_external.py`
-in github.com/ashupal22/cozmo-scan, an independent submission to the same brief that measured
-this gate. The venues here are chosen by a stated rule rather than copied, and the pipeline
+conventions above, were learned from the ARKitScenes ingest and dataset-fetch scripts of an
+independent submission to the same brief that measured this gate. The venues here are chosen by a stated rule rather than copied, and the pipeline
 measured is ours — but the approach is theirs, and this project had already published twice that
 the measurement was unavailable.
 
@@ -281,8 +281,7 @@ inside a gate *result*, and the fix-loop harness measuring an unshipped pipeline
 ## 6b. Head to head against an independent implementation
 
 An app cannot be handed our input; another engineer's pipeline reading the same public capture
-format can. So [cozmo-scan](https://github.com/ashupal22/cozmo-scan), an independent submission
-to this brief, measures the **identical** synthetic capture of a room 4.00 × 3.00 m with a
+format can. So an independent submission to this brief measures the **identical** synthetic capture of a room 4.00 × 3.00 m with a
 2.50 m ceiling by construction — truth is exact, not a tape reading.
 
 **G-H2H-ENGINEER: beat or tie on 9 of 10 dimensions, 90%, MET.** Floor area −0.05% against
@@ -322,7 +321,7 @@ Split by whether both clouds picked the same walls, **8 of 8 matched rows are wi
 8.1 mm median** — so the two failures are plane-pair selection, not the sensor. What closed the
 gap was selection that knows orientation: per-point normals, a facing test and extent gates took
 the worst row from **975 mm to 3.4 mm**. The approach is not ours — normals from the depth grid
-plus depth-edge rejection are from `cozmo-scan`'s `fusion.py`, credited in
+plus depth-edge rejection are from the independent submission's depth fusion, credited in
 `bench/wall_normals.py`; an earlier attempt was rejected for claiming independence it did not
 have. [`gates.md`](gates.md) carries both readings, the 12→10 denominator, the mechanism and
 what the gate does not measure; [`declined_changes.md`](declined_changes.md) §2 records why this
