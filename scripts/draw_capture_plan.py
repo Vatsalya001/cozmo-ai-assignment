@@ -97,11 +97,16 @@ BATHROOM = [
 # instead of one marker per shot matters: four of the bedroom shots are taken without moving,
 # and a marker per shot drew four dots on one pixel with their labels overprinted.
 # Aim is degrees anticlockwise from +x (plan east). Shot numbers sit at the arrow tips.
+# Corrected after the operator identified the rooms: the WIDE opening is the main way in, the
+# opening in the long wall leads to the bathroom, and the "notch" is a built-in cupboard --
+# W-topleft is its front (the doors) and W-notch is its end. Both are treated as wall, which is
+# what magicplan did and what a floor plan is for; the convention is recorded rather than assumed.
 BEDROOM_STATIONS = [
-    ("A", (0.08, -2.26), "in the main doorway", [(1, 90), (2, 125), (3, 158), (4, 52)]),
-    ("B", (-1.90, 0.85), "far corner, by the step", [(5, -55), (6, 25)]),
-    ("C", (0.08, -1.55), "inside, facing the main door", [(7, -90)]),
-    ("D", (0.71, 0.50),  "inside, facing the wide opening", [(8, 90)]),
+    ("A", (0.71, 1.60),  "in the MAIN doorway", [(1, -90), (2, -125), (3, -158), (4, -52)]),
+    ("B", (-1.38, -0.30), "mid-room, facing the cupboard front", [(5, 90)]),
+    ("C", (0.45, 0.80),  "right of the cupboard, looking along it", [(6, 180)]),
+    ("D", (0.08, -1.55), "inside, square at the bathroom door", [(7, -90)]),
+    ("E", (0.71, 0.05),  "inside, square at the main doorway", [(8, 90)]),
 ]
 
 BATHROOM_STATIONS = [
@@ -162,17 +167,22 @@ def main() -> int:
               # and W-topright's landed on the same point and the notch label disappeared under
               # the other one. W-bottom is shifted onto the long left run rather than the short
               # right stub, which is the segment the `seen` set happens to reach first.
-              {"W-left": (0.34, 0.0), "W-topleft": (0.0, -0.30), "W-notch": (-0.52, 0.0),
-               "W-topright": (0.10, -0.32), "W-right": (-0.34, 0.0),
+              {"W-left": (0.34, 0.0), "W-topleft": (0.0, -0.32), "W-notch": (0.46, 0.22),
+               "W-topright": (-0.02, -0.40), "W-right": (-0.34, 0.0),
                "W-bottom": (-2.10, 0.30)})
     draw_room(axes[1], BATHROOM, BATHROOM_STATIONS, "BATHROOM  (sheet rows R2.*)",
               {"W1": (0.0, -0.24), "W2": (0.28, 0.0), "W3": (0.0, 0.24), "W4": (-0.26, 0.0)})
 
     # Openings get their sheet ids too, so a reader can find them in the CSV.
-    axes[0].annotate("O-bottom", (0.08, -2.60), color=OPENING, fontsize=8.5, weight="bold",
-                     ha="center", va="top")
-    axes[0].annotate("O-right", (0.71, 1.92), color=OPENING, fontsize=8.5, weight="bold",
-                     ha="center", va="bottom")
+    axes[0].annotate("O-bottom\n\u2192 to BATHROOM", (0.08, -2.58), color=OPENING, fontsize=8.5,
+                     weight="bold", ha="center", va="top")
+    axes[0].annotate("O-right  \u2014  MAIN DOORWAY (start here)", (0.71, 1.95), color=OPENING,
+                     fontsize=9, weight="bold", ha="center", va="bottom")
+    axes[0].annotate("BUILT-IN\nCUPBOARD\n(counts as wall)",
+                     (-1.38, 1.49), color=WALL, fontsize=8, style="italic", ha="center",
+                     va="center", zorder=6,
+                     bbox=dict(boxstyle="round,pad=0.3", fc="#eef1f4", ec=WALL, lw=0.8,
+                               alpha=0.95))
     axes[1].annotate("O1", (4.16, 0.52), color=OPENING, fontsize=8.5, weight="bold",
                      ha="left", va="bottom")
 
@@ -180,6 +190,7 @@ def main() -> int:
         "dark line = wall to measure        red line = doorway (a gap, not a wall)\n"
         "green dot = where to stand         green arrow = where to point the camera\n"
         "Wall ids match the element column of measurements_to_fill.csv exactly.\n"
+        "Grey block = the built-in cupboard. It is fixed, so it counts as wall.\n"
         "No lengths, areas or scale bar appear here: the tape readings are the ground truth\n"
         "that scores magicplan, so seeing its numbers first would make them worthless."
     )
