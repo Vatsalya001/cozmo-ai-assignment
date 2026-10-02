@@ -90,8 +90,10 @@ def gate_rows(runs: dict) -> list[dict]:
         add("A-RUNTIME", "lidar", f"<= {RUNTIME_BUDGET_S:.0f} s",
             "within budget" if worst <= RUNTIME_BUDGET_S else "over budget",
             "MET" if worst <= RUNTIME_BUDGET_S else "NOT MET",
-            f"measured seconds vary with the machine and are in timing.json, not here; "
-            f"1-minute load was {load1:.1f} on {cores} cores when measured")
+            "measured seconds vary with the machine and are in timing.json, not here. The "
+            "load average at measurement time is there too: putting it in this string made "
+            "gates.json differ on every run, which is the same defect as embedding the "
+            "wall-clock and was reintroduced by the fix for it")
     (OUT / "timing.json").parent.mkdir(parents=True, exist_ok=True)
     (OUT / "timing.json").write_text(json.dumps(
         {"budget_s": RUNTIME_BUDGET_S, "worst_s": round(worst, 1),

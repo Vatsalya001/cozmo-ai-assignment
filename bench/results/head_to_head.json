@@ -130,7 +130,7 @@
     "no tape truth for this dimension"
   ],
   "missing_inputs": [
-    "tape ground truth \u2014 fill in data/own/measurements.csv, the reference both sides are scored against",
+    "tape ground truth \u2014 fill in data/own/measurements_to_fill.csv, the reference both sides are scored against",
     "our own output for these rooms (no capture of data/own has been processed into out/)"
   ]
 }

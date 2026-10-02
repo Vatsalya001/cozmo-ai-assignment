@@ -79,8 +79,15 @@ cd "$TMP/repo"
 
 echo "=== linking the data a fresh clone cannot carry ==="
 mkdir -p data
-for d in supplied arkitscenes arkitscenes_up arkitscenes_walks own; do
+# data/own is NOT linked. Its magicplan exports are tracked, so `git clone` already created
+# the directory -- and `ln -sfn target data/own` then puts the link INSIDE it as data/own/own,
+# silently leaving the tracked copy in place. That trap hid a real difference: the committed
+# head_to_head.json had been generated from a filled measurements sheet that is gitignored, so
+# a reviewer's clone produced a different file. Reading the tracked template is CORRECT here,
+# so the directory is left exactly as the clone made it.
+for d in supplied arkitscenes arkitscenes_up arkitscenes_walks; do
   if [ -e "$SRC/data/$d" ]; then
+    rm -rf "data/$d"
     ln -sfn "$(readlink -f "$SRC/data/$d")" "data/$d"
     echo "  data/$d"
   else
@@ -138,7 +145,13 @@ for row in "${PLAN[@]}"; do
 import json, sys
 a = json.load(open(sys.argv[1])); b = json.load(open(sys.argv[2]))
 def strip(o):
+    # A-RUNTIME is the one row whose STATUS legitimately depends on machine state: under CPU
+    # contention it reports NOT MEASURED rather than scoring a wall-clock that is not the
+    # pipeline's. That is deliberate, and it means this row cannot be byte-reproducible. It is
+    # excluded here for the same reason the runtime fields are, and for no other row.
     if isinstance(o, dict):
+        if o.get('gate') == 'A-RUNTIME':
+            return {'gate': 'A-RUNTIME', 'target': o.get('target')}
         return {k: strip(v) for k, v in o.items() if 'runtime' not in k and 'wall_s' not in k}
     if isinstance(o, list): return [strip(x) for x in o]
     if isinstance(o, float): return round(o, 6)

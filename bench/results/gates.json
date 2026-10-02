@@ -6,7 +6,7 @@
       "target": "<= 60 s",
       "result": "within budget",
       "status": "MET",
-      "detail": "measured seconds vary with the machine and are in timing.json, not here; 1-minute load was 5.3 on 12 cores when measured"
+      "detail": "measured seconds vary with the machine and are in timing.json, not here. The load average at measurement time is there too: putting it in this string made gates.json differ on every run, which is the same defect as embedding the wall-clock and was reintroduced by the fix for it"
     },
     {
       "gate": "A-DET",
