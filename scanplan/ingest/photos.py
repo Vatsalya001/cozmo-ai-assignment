@@ -182,6 +182,7 @@ def load(path, *, max_per_room: int = MAX_PER_ROOM, progress: bool = False) -> C
 
     per_room: dict[str, list] = {}
     room_names = []
+    aspect_mismatch: list[tuple[str, int, int]] = []
     for folder in folders:
         images = sorted(p for p in folder.iterdir()
                         if p.suffix.lower() in {".jpg", ".jpeg", ".png", ".heic", ".heif"})
@@ -196,6 +197,18 @@ def load(path, *, max_per_room: int = MAX_PER_ROOM, progress: bool = False) -> C
             bgr = cv2.imread(str(img_path))
             if bgr is None:
                 continue
+            # The resize below is to a FIXED 4:3 landscape grid and does not preserve aspect,
+            # while _intrinsics_from_exif returns one focal length for both axes. That pairing is
+            # only sound when the source is already 4:3 landscape. A portrait photo -- which
+            # cv2.imread hands back rotated, because it applies the EXIF orientation tag -- is
+            # squashed anisotropically (measured: x1.707 against y0.960, a factor of 1.78), and
+            # every length derived from it is wrong by that factor with nothing in the output
+            # saying so. Recorded per capture rather than silently rescaled: rescaling here would
+            # change the geometry of every committed photo-tier number, and the honest fix is
+            # separate fx/fy, which is a change this has not measured.
+            h0, w0 = bgr.shape[:2]
+            if abs((w0 / max(h0, 1)) - (DEPTH_W / DEPTH_H)) > 0.01:
+                aspect_mismatch.append((img_path.name, w0, h0))
             small = cv2.resize(bgr, (DEPTH_W * 2, DEPTH_H * 2), interpolation=cv2.INTER_AREA)
             out = model(Image.fromarray(cv2.cvtColor(small, cv2.COLOR_BGR2RGB)))
             depth = np.asarray(
@@ -233,4 +246,16 @@ def load(path, *, max_per_room: int = MAX_PER_ROOM, progress: bool = False) -> C
         f"can see but never located. Rooms are therefore NOT stitched: they are placed side by "
         f"side, and the whole-property stitch gate fails by construction. An L-shaped room "
         f"returns as its bounding box")
+
+    if aspect_mismatch:
+        worst = max(aspect_mismatch, key=lambda r: max(DEPTH_W / r[1], DEPTH_H / r[2])
+                    / min(DEPTH_W / r[1], DEPTH_H / r[2]))
+        sx, sy = DEPTH_W / worst[1], DEPTH_H / worst[2]
+        ir.warnings.append(
+            f"photo tier: {len(aspect_mismatch)} of {len(ir.frames)} stills are NOT 4:3 landscape "
+            f"(worst {worst[0]} at {worst[1]}x{worst[2]}). Every photo is resized to a fixed "
+            f"{DEPTH_W}x{DEPTH_H} grid without preserving aspect, while the intrinsics carry ONE "
+            f"focal length for both axes, so these are stretched by {max(sx, sy) / min(sx, sy):.2f}x "
+            f"in one direction and the lengths derived from them are wrong by that factor. "
+            f"Re-shoot in LANDSCAPE. This is a limitation of this tier, not of the photographs")
     return ir

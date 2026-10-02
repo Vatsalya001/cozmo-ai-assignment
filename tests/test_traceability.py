@@ -155,3 +155,44 @@ def test_the_capture_protocol_does_not_ask_for_an_input_the_code_rejects():
     assert "export the walkthrough video as" not in protocol, (
         "the hand-off section must not ask for a camera-roll video export; it drops the pose "
         "track that Tier 2 depends on")
+
+
+def test_the_photo_tier_warns_when_a_still_is_not_landscape():
+    """The tier resizes every still to a fixed 4:3 landscape grid WITHOUT preserving aspect,
+    while _intrinsics_from_exif carries one focal length for both axes. That pairing is only
+    sound on 4:3 landscape input. cv2.imread applies the EXIF orientation tag, so a photo shot
+    in portrait comes back rotated and is then squashed by 1.78x in one direction -- and every
+    length derived from it is wrong by that factor, with nothing in the output saying so.
+
+    Found when an operator asked whether to shoot in portrait. The protocol said "upright",
+    which reads as portrait and would have produced exactly that silent error.
+    """
+    root = Path(__file__).resolve().parents[1]
+    src = (root / "scanplan" / "ingest" / "photos.py").read_text()
+    protocol = (root / "docs" / "capture_protocol.md").read_text()
+
+    assert "aspect_mismatch" in src, (
+        "the non-landscape guard is gone; a portrait photo would be stretched silently")
+    assert "LANDSCAPE" in src, "the warning must name the fix, not just the symptom"
+
+    tier3 = protocol.split("## Tier 3")[1].split("## What to avoid")[0]
+    assert "landscape" in tier3.lower(), (
+        "Tier 3 must tell the operator to shoot landscape; 'upright' reads as portrait and is "
+        "the input this tier silently distorts")
+    assert "upright" not in tier3.lower(), (
+        "Tier 3 must not say 'upright' for photos -- that is what sent an operator toward "
+        "portrait in the first place")
+
+
+def test_the_fixed_grid_really_does_distort_portrait_by_the_factor_claimed():
+    """The 1.78x in the warning and the protocol is arithmetic, not a guess -- so it is checked
+    here rather than trusted, and it fails if DEPTH_W/DEPTH_H ever change without the prose."""
+    from scanplan.ingest.photos import DEPTH_H, DEPTH_W
+    assert (DEPTH_W, DEPTH_H) == (256, 192), "grid changed; the 1.78x figure must be re-derived"
+    for w, h in ((4032, 3024), (1920, 1440)):          # landscape 4:3
+        sx, sy = DEPTH_W / w, DEPTH_H / h
+        assert abs(max(sx, sy) / min(sx, sy) - 1.0) < 1e-6, "landscape must be isotropic"
+    for w, h in ((3024, 4032), (1440, 1920)):          # portrait 3:4
+        sx, sy = DEPTH_W / w, DEPTH_H / h
+        assert abs(max(sx, sy) / min(sx, sy) - 1.7778) < 1e-3, (
+            "portrait anisotropy is not the 1.78x the warning and the protocol both claim")

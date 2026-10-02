@@ -6,7 +6,7 @@ Follow this page exactly. No engineering knowledge needed. Total time per proper
 
 | | |
 |---|---|
-| **Phone** | **Tier 1 needs an iPhone Pro** — it is the only tier that uses the LiDAR sensor. Tiers 2 and 3 need no LiDAR and work on any iPhone 15 or newer |
+| **Phone** | **Tier 1 needs an iPhone Pro** (the only tier using LiDAR). Tiers 2 and 3 need none — any iPhone 15 or newer |
 | **Install** | **Stray Scanner** from the App Store (free). Nothing else. |
 | **Settings** | Camera app → Formats → **Most Compatible**. Video → **1080p at 30 fps**. **HDR off.** |
 | **Room prep** | Turn on every light. Open blinds. Open all internal doors fully. Do not move furniture. |
@@ -23,7 +23,7 @@ Follow this page exactly. No engineering knowledge needed. Total time per proper
 
 ## Tier 2 — Video walk (about 2 minutes)
 
-Same route, same pace, **recorded in Stray Scanner — not the Camera app**. Upright, no zoom, **under 2 minutes**. This tier infers depth but still needs the phone's pose track: a bare `.mov` carries none and `scanplan run` refuses it. Stray Scanner writes `odometry.csv` beside the clip, which is what the tier reads.
+Same route and pace, **recorded in Stray Scanner — not the Camera app**. Upright, no zoom, **under 2 minutes**. This tier infers depth but needs the phone's pose track: a bare `.mov` has none and `scanplan run` refuses it. Stray Scanner writes `odometry.csv` beside the clip, which is what it reads.
 
 ## Tier 3 — Photos (about 6 minutes)
 
@@ -31,7 +31,8 @@ For **each room**, standing in the doorway and then in two opposite corners:
 
 - Take **5 to 8 photos** that overlap by about a third, covering all four walls.
 - Take **one extra photo squarely facing each other doorway** in that room.
-- Keep every photo **level and upright**. Do not zoom.
+- Hold the phone **SIDEWAYS (landscape)** for every photo, level, no zoom. A portrait still is
+  stretched **1.78×** by this tier and every length from it is wrong; `scanplan run` warns.
 
 ## What to avoid
 
