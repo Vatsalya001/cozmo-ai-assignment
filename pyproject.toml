@@ -18,6 +18,10 @@ dependencies = [
   "pillow-heif>=0.16",
   "matplotlib>=3.7",
   "pandas>=2.0",
+  # Imported directly by scripts/mdpdf/text.py, which reads glyph widths out of the hmtx table
+  # of the TTF matplotlib draws with. It arrives transitively with matplotlib, but a transitive
+  # dependency is not a promise: declared here so a resolver cannot drop it under us.
+  "fonttools>=4.40",
 ]
 
 [project.optional-dependencies]

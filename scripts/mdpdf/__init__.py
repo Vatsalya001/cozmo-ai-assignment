@@ -16,12 +16,14 @@ same TTF matplotlib draws with, so page counts are arithmetic rather than a scre
 """
 from __future__ import annotations
 
+import hashlib
 import re
 from pathlib import Path
 
 from . import blocks, layout, text
 
-__all__ = ["render", "count_pdf_pages", "A4_POINTS", "blocks", "layout", "text"]
+__all__ = ["render", "count_pdf_pages", "structure_digest", "file_digest", "A4_POINTS",
+           "blocks", "layout", "text"]
 
 A4_POINTS = (layout.PAGE_W, layout.PAGE_H)
 
@@ -42,6 +44,24 @@ def render(src: Path, out_pdf: Path, *, label: str | None = None) -> int:
         raise AssertionError(
             f"{out_pdf}: laid out {laid_out} pages but the file contains {on_disk}")
     return on_disk
+
+
+def structure_digest(src: Path) -> str:
+    """A fingerprint of everything about a markdown file that can reach the page.
+
+    `render` is a pure function of `blocks.parse(text)` plus the footer label, so hashing the
+    parsed blocks says exactly as much about what the PDF should look like as hashing the PDF
+    does — and says it without depending on matplotlib's PDF writer being byte-stable across
+    versions, which it is not. That is what lets `tests/test_docs_pdf.py` detect a *stale*
+    committed PDF on a cold clone without accusing a different matplotlib of staleness.
+    """
+    doc = blocks.parse(Path(src).read_text())
+    canonical = "\n".join(f"{type(b).__name__}\t{b!r}" for b in doc)
+    return hashlib.sha256(canonical.encode()).hexdigest()
+
+
+def file_digest(path: Path) -> str:
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
 _PAGE_OBJECT = re.compile(rb"/Type\s*/Page(?![s/\w])")

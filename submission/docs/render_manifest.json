@@ -1,0 +1,56 @@
+{
+  "written_by": "scripts/render_docs_pdf.py",
+  "matplotlib": "3.11.2",
+  "fonttools": "4.66.1",
+  "note": "markdown_sha256 is a digest of the parsed blocks -- the whole render input. pdf_sha256 is of the committed file. Both are version-independent; a byte-for-byte re-render is only expected on the matplotlib recorded here.",
+  "documents": {
+    "docs/technical_report.md": {
+      "pdf": "submission/docs/technical_report.pdf",
+      "pages": 6,
+      "cap": 6,
+      "markdown_sha256": "9df341d55028db72501983532739c86f18e3e3fbc6ae2a9f0ff89b3a26cf85dc",
+      "pdf_sha256": "850b085bf57f26f2b16078fb8eaedae805e951ac20483bb52d7745782b81356f",
+      "pdf_bytes": 217746
+    },
+    "docs/capture_protocol.md": {
+      "pdf": "submission/docs/capture_protocol.pdf",
+      "pages": 1,
+      "cap": 1,
+      "markdown_sha256": "1a52d25113bdb575deaf43f033cbd3100d57eac4f5bfcc67756d73319c0a48e1",
+      "pdf_sha256": "6b9824a6140f1b7db04f8ea63ec57ae5a4554ba5de4addb0b7f3ee3f696107d6",
+      "pdf_bytes": 61071
+    },
+    "docs/compliance_matrix.md": {
+      "pdf": "submission/docs/compliance_matrix.pdf",
+      "pages": 7,
+      "cap": null,
+      "markdown_sha256": "c1a31a6d2036d5a8cfb95b024bc1e4f958b78211cf8000da79d80f717fbd22a6",
+      "pdf_sha256": "31dee61f77f6e8dfb5478d32349d13d83665230b1af596c0cd0c961da0fad996",
+      "pdf_bytes": 185319
+    },
+    "docs/fix_loop_declaration.md": {
+      "pdf": "submission/docs/fix_loop_declaration.pdf",
+      "pages": 2,
+      "cap": null,
+      "markdown_sha256": "704420ee5b85ac52dc9f8787509dd87e3f2972dc9c770d9e7dffbbc9bc0cf8cb",
+      "pdf_sha256": "ab787dac7c1cc5119f01badc453a9f1734b96a31e2d09f333b587bfcd0ae1baf",
+      "pdf_bytes": 93452
+    },
+    "docs/walk_in.md": {
+      "pdf": "submission/docs/walk_in.pdf",
+      "pages": 4,
+      "cap": null,
+      "markdown_sha256": "b27e5c60fd567d4b2fdcf2afa854ecebcd25275b4d3817c090a05214ec553695",
+      "pdf_sha256": "a0c24e34b3acc23f047f80c5a5f01db33a0f095cfe86744ec6107021b02376da",
+      "pdf_bytes": 160524
+    },
+    "docs/declined_changes.md": {
+      "pdf": "submission/docs/declined_changes.pdf",
+      "pages": 3,
+      "cap": null,
+      "markdown_sha256": "ecc5163a10549fdc5cc723b5cfbdceeb858b1dd875c0a9c73b33eaec5c3f9ea6",
+      "pdf_sha256": "863f7c415178e6cfe10cb1fbb84ff0ad1c87a24c3e2ab10f125c7e05d3396444",
+      "pdf_bytes": 122626
+    }
+  }
+}
