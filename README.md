@@ -60,6 +60,16 @@ the model-dependent tiers later, or pip will pull ~2.5 GB of unusable CUDA libra
 pip install "torch>=2.4,<2.10" "torchvision>=0.19,<0.25" --index-url https://download.pytorch.org/whl/cpu
 ```
 
+One benchmark needs a third extra. `bench/damage_appearance.py` and `scripts/fetch_bd3.py`
+need `scikit-learn` and `pyarrow`, which are **not** in the default install — the LiDAR tier
+stays lean and offline, and nothing under `scanplan/` imports either. Following the lines above
+and then running those two commands used to give a bare `ModuleNotFoundError`; both now exit in
+a second naming this line instead:
+
+```bash
+pip install -e ".[damage]"                 # the BD3 appearance benchmark only; not a gate
+```
+
 ### One command per capture
 
 ```bash
@@ -123,6 +133,8 @@ silently corrupted three PNGs while the archives themselves verified fine.
 | `bench/photo_vs_lidar.py` | **G-WALL-PHOTO** — photo tier vs the LiDAR reference on the same frames; 0/6, and the cause took three wrong answers |
 | `bench/arkitscenes_laser.py` | the **first** attempt at G-CEIL — returned NOT MEASURED; kept with a retraction notice |
 | `bench/ceiling_vs_laser.py` | the **second** attempt — also wrong, and the reasoning reads convincing; kept as the record |
+| `bench/damage_appearance.py` | **can a defect class be NAMED from appearance? 86.4% over 6 classes vs a 29.0% baseline** on BD3's held-out split, from OpenCV colour/edge/texture features alone. Read as an **upper bound, not a cross-building estimate**: the split carries no building id so it cannot be grouped by building, and 20 of 793 test rows are byte-identical to train (**86.0%** with those dropped). **Does NOT satisfy A-DMG-DETECT** (no staged room) and does not test the geometric detector; trains at run time and ships no weights |
+| `scripts/fetch_bd3.py` | fetches BD3 (~800 MB), with the licence position that forbids committing weights |
 | `bench/clean_clone_check.sh` | **clone, install, regenerate, diff** — reproduction from scratch |
 | `scripts/capture_manifest.py` | checksum the captures, and check them later |
 | `scripts/build_photoset.py` | the photo-tier input, at fixed frame indices |
@@ -161,10 +173,15 @@ bash bench/clean_clone_check.sh --with-models   # also the two model tiers
 ```
 
 Clones the repo, installs from scratch, runs the tests, regenerates the benchmarks and diffs
-committed against regenerated. **With `--with-models`, 8 of 11 result files come back
-byte-identical and the other 3 are named with the reason each cannot** — two are historical
-snapshots of code states that no longer exist, one is wall-clock. It reports what it did *not*
-regenerate rather than counting files it merely copied. It has caught five real defects.
+committed against regenerated. **With `--with-models`, 14 of 18 result files come back
+byte-identical and the other 4 are named with the reason each cannot** — two are historical
+snapshots of code states that no longer exist, one is wall-clock, and one is the BD3 appearance
+benchmark, whose ~800 MB input is gitignored because its licence is unknown. It reports what it
+did *not* regenerate rather than counting files it merely copied. The list of result files is no
+longer hand-maintained on trust: the script compares it against `bench/results/` and **fails on
+a file it does not classify**, which is how `ceiling_walks_uncorrected.json` and
+`damage_appearance.json` were found missing from a count that otherwise added up. It has caught
+five real defects.
 
 ## Honest limits
 

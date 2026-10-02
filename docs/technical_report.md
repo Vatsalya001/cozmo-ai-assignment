@@ -271,10 +271,12 @@ the gate. It now reports **NOT MEASURED under contention** off the load average
 **Reproduction.** `bench/clean_clone_check.sh` clones, installs from scratch, runs the tests,
 regenerates the benchmarks and diffs committed against regenerated — classifying every result
 file rather than counting files it never recomputed, after an earlier version reported "8
-identical" where seven had merely been copied by the clone and compared with themselves. It has
-caught five real defects, among them a bare `ModuleNotFoundError` on the default install,
-wall-clock seconds inside a gate *result*, and the fix-loop harness measuring an unshipped
-pipeline.
+identical" where seven had merely been copied by the clone and compared with themselves.
+"Every" is now enforced rather than asserted: the script compares its own list against
+`bench/results/` and fails on a file it does not classify, because the hand-maintained list had
+twice fallen behind the directory while still printing a total that added up. It has caught five
+real defects, among them a bare `ModuleNotFoundError` on the default install, wall-clock seconds
+inside a gate *result*, and the fix-loop harness measuring an unshipped pipeline.
 
 ## 6b. Head to head against an independent implementation
 

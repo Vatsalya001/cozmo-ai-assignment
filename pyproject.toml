@@ -27,6 +27,14 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=8"]
 models = ["torch>=2.4,<2.10", "torchvision>=0.19,<0.25", "transformers>=4.40,<5", "huggingface-hub>=0.23,<1"]
+# bench/damage_appearance.py and scripts/fetch_bd3.py only -- the appearance-classifier
+# BENCHMARK, which is not wired into the pipeline. Optional on purpose: the LiDAR tier must
+# stay lean and offline, and nothing under scanplan/ imports sklearn. pyarrow is NOT optional
+# within this extra: both files read BD3's parquet via pandas, pandas declares no parquet
+# engine of its own, and nothing else in this project pulls one in transitively -- without it
+# both documented commands die on "Unable to find a usable engine".
+# Install with: pip install -e '.[damage]'
+damage = ["scikit-learn>=1.3", "pyarrow>=14"]
 
 [project.scripts]
 scanplan = "scanplan.cli:main"
